@@ -43,8 +43,6 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
-# Claude-Arbeitsstand & interne Doku, gehört nicht ins Repo
-CLAUDE.md
-.claude/
+# Local-only working files
 docs/
 deploy.sh
