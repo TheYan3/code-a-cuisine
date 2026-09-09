@@ -1,0 +1,26 @@
+// Design tokens as CSS custom properties. Placeholder values — the real
+// palette and type scale will be filled in once the Figma design is built out.
+:root {
+  // Colors (neutral placeholders)
+  --color-background: #ffffff;
+  --color-surface: #f4f4f4;
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b6b6b;
+  --color-primary: #3a3a3a;
+  --color-border: #dcdcdc;
+
+  // Spacing scale
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2.5rem;
+
+  // Radius
+  --radius-sm: 4px;
+  --radius-md: 8px;
+}
+
+// Breakpoints as SCSS variables (used by mixins, not needed at runtime as CSS vars).
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;

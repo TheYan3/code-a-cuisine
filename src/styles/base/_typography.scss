@@ -1,0 +1,31 @@
+@use '../abstracts' as *;
+
+// Submission checklist requirement: base font size at least 16px, and fine
+// print (e.g. .fine-print) never below 14px.
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+// Reserved for legal notices, captions, etc. — must stay >= 14px.
+.fine-print {
+  font-size: 0.875rem; // 14px at the 16px base size
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,4 @@
+// 7-1 entry point: only @use statements. Design tokens live in
+// styles/abstracts/_variables.scss.
+@use 'styles/base/reset';
+@use 'styles/base/typography';

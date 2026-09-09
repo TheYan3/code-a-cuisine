@@ -1,0 +1,15 @@
+@use 'variables' as *;
+
+/// Applies the given content only from the tablet breakpoint upwards.
+@mixin tablet-up {
+  @media (min-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+/// Applies the given content only from the desktop breakpoint upwards.
+@mixin desktop-up {
+  @media (min-width: $breakpoint-desktop) {
+    @content;
+  }
+}
