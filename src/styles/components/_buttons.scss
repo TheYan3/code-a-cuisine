@@ -54,10 +54,6 @@
   &:hover {
     background-color: rgba(250, 224, 198, 0.2);
     border-radius: 0;
-    // Inset box-shadow instead of a real border: same 1px line without
-    // changing the button's box size (a real border would need extra
-    // padding-compensation math to still hit the 52px design height).
-    box-shadow: inset 0 0 0 1px var(--color-linen);
   }
 }
 
