@@ -1,0 +1,71 @@
+// Global button classes, combined like `btn btn--primary btn--creme`.
+// Only the creme color variant exists so far — `btn--primary`/`btn--secondary`
+// are separated from color (`btn--creme`) because a green variant is planned
+// for other pages.
+.btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 26px;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+.btn--primary {
+  font-family: var(--font-quicksand);
+  font-size: 24px;
+  font-weight: 600;
+  // 60px box (16px padding top/bottom) needs a 28px line height, the font's
+  // own "normal" line height is taller and would grow the button past 60px.
+  line-height: 28px;
+}
+
+.btn--secondary {
+  // Fixed (not hug) height in the design: the 24px icon is taller than the
+  // 20px text line-height and would otherwise grow the row past 52px.
+  height: 52px;
+  border-radius: 5px;
+  font-family: var(--font-quicksand);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.btn--creme.btn--primary {
+  background-color: var(--color-linen);
+  color: var(--color-button-text);
+
+  &:hover {
+    background-color: var(--color-hover-creme);
+    font-weight: 700;
+  }
+}
+
+.btn--creme.btn--secondary {
+  color: var(--color-linen);
+
+  &:hover {
+    background-color: rgba(250, 224, 198, 0.2);
+    border-radius: 0;
+    // Inset box-shadow instead of a real border: same 1px line without
+    // changing the button's box size (a real border would need extra
+    // padding-compensation math to still hit the 52px design height).
+    box-shadow: inset 0 0 0 1px var(--color-linen);
+  }
+}
+
+// Icon inside a button (e.g. the arrow in the secondary button), sized to
+// the 24px box it has in the design and colored via `currentColor` so it
+// always matches the button's text color.
+.btn__icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}

@@ -1,0 +1,58 @@
+<section class="hero">
+  <div class="hero__inner">
+    <app-header variant="creme" class="hero__header" />
+
+    <div class="hero__plates" aria-hidden="true">
+      <img
+        class="hero__plate hero__plate--chicken"
+        src="/images/hero/plate-chicken.webp"
+        alt=""
+        width="480"
+        height="430"
+      />
+      <img
+        class="hero__plate hero__plate--salmon"
+        src="/images/hero/plate-salmon.webp"
+        alt=""
+        width="494"
+        height="492"
+      />
+      <img
+        class="hero__plate hero__plate--steak"
+        src="/images/hero/plate-steak.webp"
+        alt=""
+        width="493"
+        height="453"
+      />
+    </div>
+
+    <div class="hero__main-cta">
+      <div class="hero__text">
+        <p class="hero__eyebrow">AI-Powered recipe generator</p>
+        <h1 class="hero__title">Code à Cuisine</h1>
+      </div>
+      <a routerLink="/generator" class="btn btn--primary btn--creme">Get started</a>
+    </div>
+
+    <div class="hero__secondary-cta">
+      <p class="hero__secondary-text">Hungry for inspiration?</p>
+      <a routerLink="/library" class="btn btn--secondary btn--creme">
+        Go to cookbook
+        <svg
+          class="btn__icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M0 12h15" />
+          <path d="M15 5l9 7-9 7" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>

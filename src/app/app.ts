@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 
 /**
- * Application shell: header navigation, routed page content and footer.
+ * Application shell. Each page brings its own header, so this only routes
+ * to the page content — a real navigation/footer will follow as its own
+ * task.
  */
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterOutlet],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

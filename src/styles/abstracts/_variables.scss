@@ -1,13 +1,23 @@
-// Design tokens as CSS custom properties. Placeholder values — the real
-// palette and type scale will be filled in once the Figma design is built out.
+// Design tokens as CSS custom properties.
 :root {
-  // Colors (neutral placeholders)
+  // Colors (neutral placeholders, still used by pages without a Figma design yet)
   --color-background: #ffffff;
   --color-surface: #f4f4f4;
   --color-text: #1a1a1a;
   --color-text-muted: #6b6b6b;
   --color-primary: #3a3a3a;
   --color-border: #dcdcdc;
+
+  // Colors from the Figma export — only the ones actually used so far (hero section)
+  --color-green: #396039;
+  --color-linen: #faf0e6;
+  --color-beige: #f5f5dc;
+  --color-button-text: #008000;
+  --color-hover-creme: #fae0c6;
+
+  // Fonts, self-hosted via src/styles/base/_fonts.scss
+  --font-quicksand: 'Quicksand', system-ui, sans-serif;
+  --font-ubuntu: 'Ubuntu', system-ui, sans-serif;
 
   // Spacing scale
   --spacing-xs: 0.25rem;

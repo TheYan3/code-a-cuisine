@@ -1,0 +1,103 @@
+@use '../../../styles/abstracts' as *;
+
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  background-color: var(--color-green);
+}
+
+.hero__inner {
+  // `position: absolute; inset: 0;` (rather than `height: 100%`) so this
+  // still gets a definite height even though `.hero` only has a
+  // `min-height` — percentage heights don't resolve against a min-height.
+  position: absolute;
+  inset: 0;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.hero__header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.hero__plates {
+  position: absolute;
+  inset: 0;
+}
+
+.hero__plate {
+  position: absolute;
+}
+
+.hero__plate--chicken {
+  top: -42px;
+  left: 916px;
+}
+
+.hero__plate--salmon {
+  top: 273px;
+  left: 903px;
+}
+
+.hero__plate--steak {
+  // Calibrated against the reference PNG: the exported asset is already
+  // clipped to the hero frame's bottom edge (like the chicken plate is at
+  // the top), so its bottom has to sit exactly on the frame's bottom edge.
+  top: 570px;
+  left: 908px;
+}
+
+.hero__main-cta {
+  position: absolute;
+  top: 240px;
+  left: 65px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 64px;
+  width: 755px;
+}
+
+.hero__text {
+  width: 100%;
+}
+
+.hero__eyebrow {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 60px;
+  color: var(--color-beige);
+}
+
+.hero__title {
+  margin: 0;
+  font-family: var(--font-ubuntu);
+  font-size: 104px;
+  font-weight: 700;
+  line-height: 119px;
+  color: var(--color-linen);
+}
+
+.hero__secondary-cta {
+  position: absolute;
+  bottom: 126px;
+  left: 65px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hero__secondary-text {
+  margin: 0;
+  font-family: var(--font-ubuntu);
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 104%;
+  color: var(--color-linen);
+}

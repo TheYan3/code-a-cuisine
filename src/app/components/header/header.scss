@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  height: 136px;
+  padding: 40px 40px 0 68px;
+}
+
+.site-header {
+  height: 100%;
+}
+
+.site-header__logo-link {
+  display: inline-flex;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-linen);
+    outline-offset: 4px;
+  }
+}
