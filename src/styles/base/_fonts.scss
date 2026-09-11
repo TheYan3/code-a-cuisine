@@ -1,0 +1,36 @@
+// Self-hosted fonts for the type scale used in the Figma design
+// (Quicksand 500/600/700, Ubuntu 500/700). Latin woff2 files only, no CDN.
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/fonts/quicksand-latin-500-normal.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/fonts/quicksand-latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/fonts/quicksand-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('/fonts/ubuntu-latin-500-normal.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('/fonts/ubuntu-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
