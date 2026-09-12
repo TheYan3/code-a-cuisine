@@ -1,0 +1,173 @@
+.ingredient-input {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  width: 577px;
+  padding: 25px 0;
+  border-radius: 20px;
+  background-color: rgba(57, 96, 57, 0.3);
+}
+
+.ingredient-input__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+// Column that holds the name field and, once open, the autocomplete
+// dropdown below it — the dropdown is in normal flow (not an overlay), so
+// the whole card grows taller while it's open, exactly like in Figma.
+.ingredient-input__field-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 300px;
+}
+
+.ingredient-input__label-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ingredient-input__label {
+  font-family: var(--font-quicksand);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-text-dark);
+}
+
+.ingredient-input__field-box {
+  box-sizing: border-box;
+  height: 36px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  background-color: rgba(250, 240, 230, 0.8);
+}
+
+.ingredient-input__name-input {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-text-dark);
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 2px;
+  }
+}
+
+.ingredient-input__dropdown {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0 0 0 16px;
+  list-style: none;
+}
+
+.ingredient-input__option {
+  width: fit-content;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-family: var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-text-dark);
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(250, 240, 230, 0.6);
+  }
+}
+
+// Known deviation from Figma: the export's "Serving size" column frame is
+// 178px wide, 7px narrower than its own row (amount + unit + add button =
+// 185px). The reference PNG shows the row at full, unsquished size, so this
+// column hugs its content instead of the too-narrow fixed width.
+.ingredient-input__serving-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: fit-content;
+}
+
+.ingredient-input__serving-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ingredient-input__amount-box {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 61px;
+  height: 36px;
+  padding: 3px 15px;
+  border-radius: 48px;
+  background-color: var(--color-linen);
+}
+
+.ingredient-input__amount-input {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--font-quicksand);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+
+  // Design shows a dim placeholder value ("100" at 30% opacity) rather than
+  // an empty field.
+  &::placeholder {
+    color: rgba(16, 49, 11, 0.3);
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 2px;
+  }
+
+  // Hide the native number input spinner — not present in the design.
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+
+  appearance: textfield;
+}
+
+.ingredient-input__add {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  background: url('/icons/add_default.svg') center / 36px 36px no-repeat;
+  cursor: pointer;
+
+  &:hover {
+    background-image: url('/icons/add_hover.svg');
+  }
+
+  &:active {
+    background-image: url('/icons/add_on click.svg');
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 2px;
+  }
+}

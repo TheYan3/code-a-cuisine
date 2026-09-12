@@ -1,19 +1,47 @@
+// Height is intrinsic (not fixed): 88px without a back link, ~140px with
+// one (40px top padding + 48px logo row [+ 32px gap + back row] + 0
+// bottom). The back row's own height comes from its 20px arrow icon —
+// Figma's export has a degenerate 0-height vector for it (a flattened
+// rotated arrow group), so its size follows the visible reference PNG
+// instead, 4px taller than the export's raw 16px row would suggest.
 :host {
   display: block;
   box-sizing: border-box;
-  height: 136px;
-  padding: 40px 40px 0 68px;
 }
 
 .site-header {
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 40px 40px 0 68px;
 }
 
 .site-header__logo-link {
   display: inline-flex;
+  align-self: flex-start;
 
   &:focus-visible {
     outline: 2px solid var(--color-linen);
     outline-offset: 4px;
   }
+}
+
+.site-header__back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 4px;
+  }
+}
+
+.site-header__back-label {
+  font-family: var(--font-quicksand);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 10px;
+  color: var(--color-heading-green);
 }

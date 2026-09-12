@@ -1,6 +1,30 @@
-<main>
-  <section>
-    <h1>Generator</h1>
-    <p>Here you will enter the ingredients you have and get an AI-generated recipe.</p>
-  </section>
-</main>
+<div class="page">
+  <app-header />
+
+  <main class="generator">
+    <h1 class="generator__title">Generate recipe</h1>
+
+    <div class="generator__body">
+      <p class="generator__subtitle">
+        Got random stuff in your kitchen? Pop it in—we’ve got the perfect recipe waiting.
+      </p>
+
+      <div class="generator__row">
+        <app-ingredient-input
+          [ingredientValue]="'Pas'"
+          [amount]="100"
+          [unit]="'gram'"
+          [autocompleteOpen]="true"
+          [suggestions]="suggestions"
+        />
+        <app-ingredient-list [ingredients]="ingredients" />
+      </div>
+    </div>
+
+    @if (ingredients.length > 0) {
+      <a routerLink="/generator/preferences" class="btn btn--primary btn--green generator__next">
+        Next step
+      </a>
+    }
+  </main>
+</div>

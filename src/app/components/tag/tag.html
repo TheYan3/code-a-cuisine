@@ -1,0 +1,11 @@
+<label class="tag">
+  <input
+    type="radio"
+    class="tag__input"
+    [name]="name()"
+    [value]="value()"
+    [checked]="checked()"
+    (change)="selected.emit(value())"
+  />
+  {{ label() }}
+</label>

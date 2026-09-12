@@ -1,0 +1,37 @@
+<div class="unit-select">
+  <button
+    type="button"
+    class="unit-select__trigger"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="open()"
+    (click)="toggle.emit()"
+  >
+    <span>{{ unit() }}</span>
+    <svg
+      class="unit-select__arrow"
+      width="10"
+      height="5"
+      viewBox="0 0 10 5"
+      fill="var(--color-text-dark)"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M0 0L5 5L10 0H0Z" />
+    </svg>
+  </button>
+
+  @if (open()) {
+    <ul class="unit-select__list" role="listbox">
+      @for (u of units; track u) {
+        <li
+          class="unit-select__option"
+          role="option"
+          [attr.aria-selected]="u === unit()"
+          (click)="select.emit(u)"
+        >
+          {{ u }}
+        </li>
+      }
+    </ul>
+  }
+</div>

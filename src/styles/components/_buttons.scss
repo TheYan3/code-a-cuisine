@@ -1,7 +1,6 @@
 // Global button classes, combined like `btn btn--primary btn--creme`.
-// Only the creme color variant exists so far — `btn--primary`/`btn--secondary`
-// are separated from color (`btn--creme`) because a green variant is planned
-// for other pages.
+// `btn--primary`/`btn--secondary` are separated from color (`btn--creme`,
+// `btn--green`) so the same size/shape rules serve both palettes.
 .btn {
   box-sizing: border-box;
   display: inline-flex;
@@ -54,6 +53,20 @@
   &:hover {
     background-color: rgba(250, 224, 198, 0.2);
     border-radius: 0;
+  }
+}
+
+// Known deviation from Figma: the button instances placed on the generator
+// pages are 62px tall, but the component itself (and `.btn--primary` above)
+// is 60px. The component wins.
+.btn--green.btn--primary {
+  background-color: var(--color-green);
+  color: var(--color-linen);
+
+  &:hover {
+    background-color: var(--color-hover-green);
+    color: #ffffff;
+    font-weight: 700;
   }
 }
 

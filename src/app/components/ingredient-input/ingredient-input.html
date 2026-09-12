@@ -1,0 +1,69 @@
+<div class="ingredient-input">
+  <div class="ingredient-input__row">
+    <div class="ingredient-input__field-col">
+      <div class="ingredient-input__label-group">
+        <label class="ingredient-input__label" for="ingredient-name">Ingredient</label>
+
+        <div class="ingredient-input__field-box">
+          <input
+            id="ingredient-name"
+            type="text"
+            class="ingredient-input__name-input"
+            autocomplete="off"
+            role="combobox"
+            aria-autocomplete="list"
+            [attr.aria-expanded]="autocompleteOpen()"
+            [value]="ingredientValue()"
+            (input)="ingredientValue.set($any($event.target).value)"
+          />
+        </div>
+      </div>
+
+      @if (autocompleteOpen()) {
+        <ul class="ingredient-input__dropdown" role="listbox">
+          @for (suggestion of suggestions(); track suggestion) {
+            <li
+              class="ingredient-input__option"
+              role="option"
+              (click)="suggestionSelected.emit(suggestion)"
+            >
+              {{ suggestion }}
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="ingredient-input__serving-col">
+      <label class="ingredient-input__label" for="ingredient-amount">Serving size</label>
+
+      <div class="ingredient-input__serving-row">
+        <div class="ingredient-input__amount-box">
+          <input
+            id="ingredient-amount"
+            type="number"
+            class="ingredient-input__amount-input"
+            placeholder="100"
+            min="0"
+            [value]="amount()"
+            (input)="amount.set($any($event.target).valueAsNumber || null)"
+          />
+        </div>
+
+        <app-unit-select
+          [unit]="unit()"
+          [open]="unitOpen()"
+          (toggle)="unitToggle.emit()"
+          (select)="unit.set($event)"
+        />
+
+        <button
+          type="button"
+          class="ingredient-input__add"
+          aria-label="Add ingredient"
+          (click)="add.emit()"
+        ></button>
+      </div>
+    </div>
+  </div>
+</div>

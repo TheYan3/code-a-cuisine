@@ -8,12 +8,17 @@
   --color-primary: #3a3a3a;
   --color-border: #dcdcdc;
 
-  // Colors from the Figma export — only the ones actually used so far (hero section)
+  // Colors from the Figma export — only the ones actually used so far (hero section
+  // and the generator: ingredient step + preferences step)
   --color-green: #396039;
   --color-linen: #faf0e6;
   --color-beige: #f5f5dc;
   --color-button-text: #008000;
   --color-hover-creme: #fae0c6;
+  --color-text-dark: #10310b;
+  --color-heading-green: #1e5515;
+  --color-hover-green: #055e05;
+  --color-text-list: #000000;
 
   // Fonts, self-hosted via src/styles/base/_fonts.scss
   --font-quicksand: 'Quicksand', system-ui, sans-serif;

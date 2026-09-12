@@ -1,0 +1,24 @@
+<div class="counter">
+  <button
+    type="button"
+    class="counter__btn"
+    [disabled]="value() <= min()"
+    aria-label="Decrease"
+    (click)="decrement.emit()"
+  >
+    <img src="/icons/default_minus.svg" alt="" width="20" height="20" />
+  </button>
+
+  <span class="counter__value">{{ value() }}</span>
+  <span class="counter__unit">{{ unitLabel() }}</span>
+
+  <button
+    type="button"
+    class="counter__btn"
+    [disabled]="value() >= max()"
+    aria-label="Increase"
+    (click)="increment.emit()"
+  >
+    <img src="/icons/plus_default.svg" alt="" width="20" height="20" />
+  </button>
+</div>
