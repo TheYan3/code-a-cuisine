@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
  * optional back link (e.g. the preferences step linking back to the
  * ingredient step). The logo color flips depending on the background it
  * sits on: `creme` for dark backgrounds (e.g. the green hero), `green` for
- * light ones. Without `backLink` the header is 88px tall; with it, ~140px —
+ * light ones. Without `backLink` the header is 88px tall; with it, 136px —
  * both fall out of the flex layout naturally, no fixed height needed.
  */
 @Component({

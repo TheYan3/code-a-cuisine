@@ -18,6 +18,7 @@
   font-family: var(--font-quicksand);
   font-size: 28px;
   font-weight: 600;
+  line-height: 35px;
   color: var(--color-text-dark);
   text-align: center;
 }
@@ -30,13 +31,19 @@
 
 .preferences__counters {
   display: flex;
+  justify-content: center;
   gap: 120px;
 }
 
+// Figma's authored gap here is 16px, but both counter labels render taller
+// (23px/25px) than their own specified 20px line-height (an internal
+// inconsistency in the export's auto-measured text height vs. its
+// PIXELS lineHeight) — following the 16px literally would land the counter
+// row 3-5px above its actual Figma position. 20px hits both instances.
 .preferences__counter-group {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .preferences__counter-label {
@@ -44,6 +51,7 @@
   font-family: var(--font-quicksand);
   font-size: 20px;
   font-weight: 500;
+  line-height: 20px;
   color: var(--color-text-dark);
 }
 
@@ -57,10 +65,13 @@
   background-color: rgba(57, 96, 57, 0.2);
 }
 
+// `display: flex` on the fieldset only lays out its non-legend children
+// (the legend is excluded from the flex layout by spec), so `gap` here
+// would not create any space below the legend — that space comes from a
+// margin on the legend instead.
 .preference-group {
   display: flex;
   flex-direction: column;
-  gap: 24px;
   margin: 0;
   padding: 0;
   border: none;
@@ -70,10 +81,12 @@
   display: flex;
   align-items: center;
   gap: 2px;
+  margin: 0 0 24px;
   padding: 0;
   font-family: var(--font-quicksand);
   font-size: 24px;
   font-weight: 500;
+  line-height: 30px;
   color: var(--color-text-dark);
 }
 

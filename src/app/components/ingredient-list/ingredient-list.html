@@ -4,71 +4,73 @@
   @if (ingredients().length > 0) {
     <ul class="ingredient-list__items">
       @for (item of ingredients(); track item.id) {
-        <li
-          class="ingredient-list__item"
-          [class.ingredient-list__item--edit]="editingId() === item.id"
-        >
-          @if (editingId() === item.id) {
-            <div class="ingredient-list__edit-fields">
-              <div class="ingredient-list__edit-amount">
-                <input
-                  type="number"
-                  min="0"
-                  aria-label="Amount"
-                  [value]="editAmount()"
-                  (input)="editAmount.set($any($event.target).valueAsNumber || null)"
+        <li class="ingredient-list__item">
+          <div
+            class="ingredient-list__item-row"
+            [class.ingredient-list__item-row--edit]="editingId() === item.id"
+          >
+            @if (editingId() === item.id) {
+              <div class="ingredient-list__edit-fields">
+                <div class="ingredient-list__edit-amount">
+                  <input
+                    type="number"
+                    min="0"
+                    aria-label="Amount"
+                    [value]="editAmount()"
+                    (input)="editAmount.set($any($event.target).valueAsNumber || null)"
+                  />
+                </div>
+                <app-unit-select
+                  [unit]="editUnit()"
+                  [open]="editUnitOpen()"
+                  (toggle)="editUnitToggle.emit()"
+                  (select)="editUnit.set($event)"
                 />
+                <span class="ingredient-list__name">{{ item.name }}</span>
               </div>
-              <app-unit-select
-                [unit]="editUnit()"
-                [open]="editUnitOpen()"
-                (toggle)="editUnitToggle.emit()"
-                (select)="editUnit.set($event)"
-              />
-              <span class="ingredient-list__name">{{ item.name }}</span>
-            </div>
-            <div class="ingredient-list__actions">
-              <button
-                type="button"
-                class="ingredient-list__check"
-                aria-label="Save {{ item.name }}"
-                (click)="editSave.emit(item.id)"
-              >
-                <img src="/icons/check.svg" alt="" width="19" height="19" />
-              </button>
-              <button
-                type="button"
-                class="ingredient-list__delete"
-                aria-label="Delete {{ item.name }}"
-                (click)="deleteItem.emit(item.id)"
-              >
-                <img src="/icons/delete.svg" alt="" width="19" height="19" />
-              </button>
-            </div>
-          } @else {
-            <div class="ingredient-list__info">
-              <span class="ingredient-list__amount">{{ formatAmount(item) }}</span>
-              <span class="ingredient-list__name">{{ item.name }}</span>
-            </div>
-            <div class="ingredient-list__actions">
-              <button
-                type="button"
-                class="ingredient-list__edit"
-                aria-label="Edit {{ item.name }}"
-                (click)="editStart.emit(item.id)"
-              >
-                <img src="/icons/edit.svg" alt="" width="19" height="19" />
-              </button>
-              <button
-                type="button"
-                class="ingredient-list__delete"
-                aria-label="Delete {{ item.name }}"
-                (click)="deleteItem.emit(item.id)"
-              >
-                <img src="/icons/delete.svg" alt="" width="19" height="19" />
-              </button>
-            </div>
-          }
+              <div class="ingredient-list__actions">
+                <button
+                  type="button"
+                  class="ingredient-list__check"
+                  aria-label="Save {{ item.name }}"
+                  (click)="editSave.emit(item.id)"
+                >
+                  <img src="/icons/check.svg" alt="" width="19" height="19" />
+                </button>
+                <button
+                  type="button"
+                  class="ingredient-list__delete"
+                  aria-label="Delete {{ item.name }}"
+                  (click)="deleteItem.emit(item.id)"
+                >
+                  <img src="/icons/delete.svg" alt="" width="19" height="19" />
+                </button>
+              </div>
+            } @else {
+              <div class="ingredient-list__info">
+                <span class="ingredient-list__amount">{{ formatAmount(item) }}</span>
+                <span class="ingredient-list__name">{{ item.name }}</span>
+              </div>
+              <div class="ingredient-list__actions">
+                <button
+                  type="button"
+                  class="ingredient-list__edit"
+                  aria-label="Edit {{ item.name }}"
+                  (click)="editStart.emit(item.id)"
+                >
+                  <img src="/icons/edit.svg" alt="" width="19" height="19" />
+                </button>
+                <button
+                  type="button"
+                  class="ingredient-list__delete"
+                  aria-label="Delete {{ item.name }}"
+                  (click)="deleteItem.emit(item.id)"
+                >
+                  <img src="/icons/delete.svg" alt="" width="19" height="19" />
+                </button>
+              </div>
+            }
+          </div>
         </li>
       }
     </ul>

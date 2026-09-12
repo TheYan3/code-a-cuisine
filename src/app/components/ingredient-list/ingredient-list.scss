@@ -21,16 +21,28 @@
   color: var(--color-text-dark);
 }
 
+// `list-style` markers are only generated for boxes whose own `display`
+// resolves to `list-item` — so the flex/hover/row styling below lives on an
+// inner wrapper (`__item-row`), not on the `<li>` itself, otherwise setting
+// `display: flex` on the `<li>` would suppress its bullet.
 .ingredient-list__items {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin: 0;
-  padding: 0;
-  list-style: none;
+  padding: 0 0 0 22px;
+  list-style: disc;
 }
 
 .ingredient-list__item {
+  font-family: var(--font-quicksand);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 26px;
+  color: var(--color-text-list);
+}
+
+.ingredient-list__item-row {
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -44,7 +56,7 @@
   }
 }
 
-.ingredient-list__item--edit {
+.ingredient-list__item-row--edit {
   height: 36px;
   justify-content: flex-start;
   gap: 16px;
@@ -66,17 +78,24 @@
   font-family: var(--font-quicksand);
   font-size: 18px;
   font-weight: 500;
-  line-height: 26px;
   color: var(--color-text-list);
   white-space: nowrap;
 }
 
-// A fixed-width column so ingredient names line up regardless of the
-// amount's digit count (matches the reference: "1 Egg" lines up with
-// "100g Pasta").
+// Figma's auto-height text boxes: the amount ("100g", 23px) and the name
+// ("Pasta", 26px) render at different heights for the same 18px font, so
+// each gets its own line-height rather than sharing one.
 .ingredient-list__amount {
+  // A fixed-width column so ingredient names line up regardless of the
+  // amount's digit count (matches the reference: "1 Egg" lines up with
+  // "100g Pasta").
   display: inline-block;
   min-width: 40px;
+  line-height: 23px;
+}
+
+.ingredient-list__name {
+  line-height: 26px;
 }
 
 .ingredient-list__edit-amount {
@@ -96,6 +115,7 @@
     font-family: var(--font-quicksand);
     font-size: 18px;
     font-weight: 500;
+    line-height: 23px;
     color: var(--color-text-dark);
 
     &:focus-visible {
