@@ -4,6 +4,9 @@
   gap: 8px;
 }
 
+// Figma: 28px button with 4px padding around a 20px icon. The exported SVGs
+// already contain that 4px inset (28px viewBox, icon drawn from 4 to 24), so
+// the image is shown at 28px without extra padding.
 .counter__btn {
   box-sizing: border-box;
   display: flex;
@@ -11,7 +14,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  padding: 4px;
+  padding: 0;
   border: none;
   border-radius: 4px;
   background: none;
@@ -23,13 +26,17 @@
   }
 }
 
+// Figma "Frame 819": fixed 22px wide, 20px tall (19px text box + 1px bottom
+// padding), no corner radius. `min-width` instead of `width` so two-digit
+// values (not in the design) grow the chip instead of overflowing it.
 .counter__value {
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 22px;
+  height: 20px;
   padding: 0 5px 1px;
-  border-radius: 4px;
   background-color: rgba(57, 96, 57, 0.2);
   font-family: var(--font-quicksand);
   font-size: 20px;
@@ -38,7 +45,13 @@
   color: var(--color-text-dark);
 }
 
+// Fixed-width 19px text box in Figma; the width differs per instance and is
+// set by the parent through `--counter-unit-width`. `min-width` so a longer
+// unit label (e.g. a plural not in the design) pushes the plus button instead
+// of running into it.
 .counter__unit {
+  min-width: var(--counter-unit-width, auto);
+  height: 19px;
   font-family: var(--font-quicksand);
   font-size: 20px;
   font-weight: 500;

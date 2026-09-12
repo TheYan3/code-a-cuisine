@@ -13,7 +13,10 @@
   margin: 0 auto;
 }
 
+// Figma "Headline" frame: fixed 567px, centered in the 1087px column.
 .generator__title {
+  align-self: center;
+  width: 567px;
   margin: 0 0 24px;
   font-family: var(--font-quicksand);
   font-size: 54px;

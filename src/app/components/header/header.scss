@@ -28,6 +28,7 @@
 // reference PNG's proper chevron shape instead).
 .site-header__back {
   display: flex;
+  align-self: flex-start;
   align-items: center;
   gap: 10px;
   height: 16px;
@@ -39,7 +40,9 @@
   }
 }
 
+// Figma "Back to xyz": fixed 132px text box (a minimum, the label varies).
 .site-header__back-label {
+  min-width: 132px;
   font-family: var(--font-quicksand);
   font-size: 14px;
   font-weight: 500;

@@ -21,17 +21,18 @@
   color: var(--color-text-dark);
 }
 
-// `list-style` markers are only generated for boxes whose own `display`
-// resolves to `list-item` — so the flex/hover/row styling below lives on an
-// inner wrapper (`__item-row`), not on the `<li>` itself, otherwise setting
-// `display: flex` on the `<li>` would suppress its bullet.
+// The bullet is not a native marker: in Figma it sits in a fixed 22px slot
+// inside the row (directly before the amount), which a `::marker` cannot be
+// sized or positioned into. It is drawn by `::before` further down instead.
+// `role="list"` on the `<ul>` keeps the list semantics that WebKit drops
+// for `list-style: none`.
 .ingredient-list__items {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin: 0;
-  padding: 0 0 0 22px;
-  list-style: disc;
+  padding: 0;
+  list-style: none;
 }
 
 .ingredient-list__item {
@@ -47,11 +48,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 19px;
   height: 30px;
   padding: 2px 4px;
-  border-radius: 8px;
 
+  // Radius only belongs to the hover variant (the default has none).
   &:hover {
+    border-radius: 8px;
     background-color: var(--color-linen);
   }
 }
@@ -73,6 +76,11 @@
   gap: 16px;
 }
 
+// Figma "Frame 859": fixed 347px.
+.ingredient-list__info {
+  width: 347px;
+}
+
 .ingredient-list__amount,
 .ingredient-list__name {
   font-family: var(--font-quicksand);
@@ -86,25 +94,57 @@
 // ("Pasta", 26px) render at different heights for the same 18px font, so
 // each gets its own line-height rather than sharing one.
 .ingredient-list__amount {
-  // A fixed-width column so ingredient names line up regardless of the
-  // amount's digit count (matches the reference: "1 Egg" lines up with
-  // "100g Pasta").
-  display: inline-block;
-  min-width: 40px;
+  // 22px bullet slot + a 40px amount column, so ingredient names line up
+  // regardless of the amount's digit count (matches the reference: "1 Egg"
+  // lines up with "100g Pasta").
+  display: flex;
+  align-items: center;
+  min-width: 62px;
   line-height: 23px;
+}
+
+// Bullet dot, 5px, measured in the reference PNG: 11px from the left and 9px
+// from the top of its 22x26px slot (the export only carries the empty slot).
+.ingredient-list__amount::before,
+.ingredient-list__edit-amount::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--color-text-list);
+}
+
+.ingredient-list__amount::before {
+  flex-shrink: 0;
+  margin: 9px 6px 12px 11px;
+}
+
+// Figma "Pasta": fixed 209px text box (a minimum, names come from user input).
+.ingredient-list__info .ingredient-list__name {
+  min-width: 209px;
 }
 
 .ingredient-list__name {
   line-height: 26px;
 }
 
+// Edit mode keeps the same 22px bullet slot in front of the amount field; the
+// dot sits outside the field's background, so it is positioned absolutely.
 .ingredient-list__edit-amount {
+  position: relative;
   box-sizing: border-box;
   width: 61px;
   height: 36px;
+  margin-left: 22px;
   padding: 3px 15px;
   border-radius: 48px;
   background-color: var(--color-linen);
+
+  &::before {
+    position: absolute;
+    top: 14px;
+    left: -11px;
+  }
 
   input {
     width: 100%;
@@ -133,8 +173,10 @@
   }
 }
 
+// Figma "Frame 860": fills the row height (26px).
 .ingredient-list__actions {
   display: flex;
+  align-self: stretch;
   align-items: center;
   gap: 16px;
   flex-shrink: 0;
@@ -148,7 +190,6 @@
   height: 19px;
   padding: 0;
   border: none;
-  border-radius: 2px;
   background: none;
   cursor: pointer;
 
@@ -158,6 +199,11 @@
   }
 }
 
-.ingredient-list__edit:hover {
-  background-color: rgba(57, 96, 57, 0.4);
+// Only the edit icon has a corner radius (for its hover background).
+.ingredient-list__edit {
+  border-radius: 2px;
+
+  &:hover {
+    background-color: rgba(57, 96, 57, 0.4);
+  }
 }

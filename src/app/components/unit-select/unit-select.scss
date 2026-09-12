@@ -28,6 +28,12 @@
   }
 }
 
+// Figma "gram": fixed 42x23px text box (a minimum, the unit label varies).
+.unit-select__label {
+  min-width: 42px;
+  height: 23px;
+}
+
 .unit-select__arrow {
   flex-shrink: 0;
 }

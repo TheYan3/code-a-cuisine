@@ -1,13 +1,19 @@
+// Block host so the tag can fill a fixed-width parent column (cooking time)
+// and still hug its label inside a flex row (cuisine, diet).
+:host {
+  display: block;
+}
+
 // Fixed 28px height per Yannic: the instances placed on the preferences page
 // are 28px tall, overriding the 32px hug height the standalone component
 // would get from its 6px vertical padding + 20px line height.
 .tag {
   box-sizing: border-box;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   height: 28px;
-  padding: 0 12px;
+  padding: 6px 12px;
   border-radius: 30px;
   background-color: var(--color-linen);
   font-family: var(--font-quicksand);

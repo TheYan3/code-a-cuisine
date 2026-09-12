@@ -13,7 +13,10 @@
   margin: 0 auto;
 }
 
+// Figma "Headline" frame: fixed 416px, centered in the 721px column.
 .preferences__title {
+  align-self: center;
+  width: 416px;
   margin: 0 0 56px;
   font-family: var(--font-quicksand);
   font-size: 28px;
@@ -31,22 +34,43 @@
 
 .preferences__counters {
   display: flex;
+  align-items: flex-start;
   justify-content: center;
   gap: 120px;
 }
 
-// Figma's authored gap here is 16px, but both counter labels render taller
-// (23px/25px) than their own specified 20px line-height (an internal
-// inconsistency in the export's auto-measured text height vs. its
-// PIXELS lineHeight) — following the 16px literally would land the counter
-// row 3-5px above its actual Figma position. 20px hits both instances.
+// Figma "Portions"/"Chefs": fixed-width columns (290px/263px), so the
+// centered pair starts at the same x as in the design regardless of how wide
+// the label text renders. The labels are fixed-height text boxes (23px/25px)
+// with a 20px line-height. `--counter-unit-width` feeds the fixed width of
+// the unit text inside `app-counter` ("Portions" 78px, "Person" 69px).
 .preferences__counter-group {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.preferences__counter-group--portions {
+  --counter-unit-width: 78px;
+  width: 290px;
+
+  .preferences__counter-label {
+    height: 23px;
+  }
+}
+
+.preferences__counter-group--helpers {
+  --counter-unit-width: 69px;
+  width: 263px;
+
+  .preferences__counter-label {
+    height: 25px;
+  }
 }
 
 .preferences__counter-label {
+  align-self: stretch;
   margin: 0;
   font-family: var(--font-quicksand);
   font-size: 20px;
@@ -59,6 +83,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 40px;
   padding: 32px 24px;
   border-radius: 20px;
@@ -90,17 +115,53 @@
   color: var(--color-text-dark);
 }
 
+// Figma "Frame 749": fixed-width text boxes (173px / 140px / 140px). "Diet
+// preferences" is wider than its 140px box and overflows it on one line,
+// exactly like in the design.
+.preference-group__legend-text {
+  white-space: nowrap;
+}
+
+.preference-group--time .preference-group__legend-text {
+  width: 173px;
+}
+
+.preference-group--cuisine .preference-group__legend-text,
+.preference-group--diet .preference-group__legend-text {
+  width: 140px;
+}
+
+// The diet headline frame itself is fixed at 222px (the other two hug).
+.preference-group--diet .preference-group__legend {
+  width: 222px;
+}
+
 .preference-group__tags {
   display: flex;
-  align-items: flex-start;
+  align-self: stretch;
+  align-items: center;
   gap: 20px;
 }
 
+// Figma "Frame 755/754/753": fixed-width columns (83px/102px/110px); the tag
+// fills the column, the sublabel is a fixed 79px left-aligned box under
+// "Quick" and fills the column (centered) under the other two.
 .preference-group__tag-with-sublabel {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
+
+  &:nth-child(1) {
+    width: 83px;
+  }
+
+  &:nth-child(2) {
+    width: 102px;
+  }
+
+  &:nth-child(3) {
+    width: 110px;
+  }
 }
 
 .preference-group__sublabel {
@@ -110,6 +171,12 @@
   line-height: 10px;
   color: var(--color-heading-green);
   text-align: center;
+}
+
+.preference-group__tag-with-sublabel:nth-child(1) .preference-group__sublabel {
+  align-self: center;
+  width: 79px;
+  text-align: left;
 }
 
 .preferences__submit {

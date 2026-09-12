@@ -2,7 +2,7 @@
   <h2 class="ingredient-list__title">List of your Ingredients</h2>
 
   @if (ingredients().length > 0) {
-    <ul class="ingredient-list__items">
+    <ul class="ingredient-list__items" role="list">
       @for (item of ingredients(); track item.id) {
         <li class="ingredient-list__item">
           <div

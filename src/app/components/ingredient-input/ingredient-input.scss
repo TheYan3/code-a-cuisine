@@ -46,7 +46,10 @@
   background-color: rgba(250, 240, 230, 0.8);
 }
 
+// Block, not the inline default: an inline input sits on the field's text
+// baseline and ends up 2px below the 8px top padding.
 .ingredient-input__name-input {
+  display: block;
   width: 100%;
   height: 100%;
   padding: 0;
@@ -72,10 +75,11 @@
   list-style: none;
 }
 
+// Figma "drop down options" component: fixed 300px, so the hover background
+// spans the full row (it overflows the 16px-indented list, like in Figma).
 .ingredient-input__option {
-  width: fit-content;
+  width: 300px;
   padding: 4px 8px;
-  border-radius: 8px;
   font-family: var(--font-quicksand);
   font-size: 16px;
   font-weight: 500;
@@ -83,26 +87,37 @@
   color: var(--color-text-dark);
   cursor: pointer;
 
+  // Radius only belongs to the hover variant (the default has none).
   &:hover {
+    border-radius: 8px;
     background-color: rgba(250, 240, 230, 0.6);
   }
 }
 
-// Known deviation from Figma: the export's "Serving size" column frame is
-// 178px wide, 7px narrower than its own row (amount + unit + add button =
-// 185px). The reference PNG shows the row at full, unsquished size, so this
-// column hugs its content instead of the too-narrow fixed width.
+// Figma "Frame 827": fixed 178x126px. Its row (amount + unit + add button)
+// hugs 185px and overflows the column by 7px — the fixed column width is
+// what centers the whole input row in the card, the overflowing row is what
+// the reference PNG shows at full size.
 .ingredient-input__serving-col {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: fit-content;
+  width: 178px;
+  height: 126px;
 }
 
+// Figma "Serving size": fixed 141px text box.
+.ingredient-input__label--serving {
+  width: 141px;
+}
+
+// Figma "Frame 769": hugs its content horizontally, fixed 91px tall.
 .ingredient-input__serving-row {
   display: flex;
-  align-items: center;
+  align-self: flex-start;
+  align-items: flex-start;
   gap: 8px;
+  height: 91px;
 }
 
 .ingredient-input__amount-box {
@@ -126,6 +141,8 @@
   font-weight: 500;
   line-height: 23px;
   color: var(--color-text-dark);
+  // Figma "Frame 738" centers its text.
+  text-align: center;
 
   // Design shows a dim placeholder value ("100" at 30% opacity) rather than
   // an empty field.
