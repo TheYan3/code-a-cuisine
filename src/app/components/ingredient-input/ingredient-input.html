@@ -1,21 +1,24 @@
 <div class="ingredient-input">
-  <div class="ingredient-input__row">
+  <form class="ingredient-input__row" (submit)="$event.preventDefault(); add.emit()">
     <div class="ingredient-input__field-col">
       <div class="ingredient-input__label-group">
         <label class="ingredient-input__label" for="ingredient-name">Ingredient</label>
 
         <div class="ingredient-input__field-box">
           <input
+            #nameInput
             id="ingredient-name"
             type="text"
             class="ingredient-input__name-input"
             autocomplete="off"
             maxlength="40"
+            required
             role="combobox"
             aria-autocomplete="list"
             [attr.aria-expanded]="autocompleteOpen()"
             [value]="ingredientValue()"
             (input)="ingredientValue.set($any($event.target).value)"
+            (keydown)="nameKeydown.emit($event)"
           />
           @if (ghostText()) {
             <span class="ingredient-input__ghost" aria-hidden="true">
@@ -33,6 +36,8 @@
               class="ingredient-input__option"
               role="option"
               (click)="suggestionSelected.emit(suggestion)"
+              (mouseenter)="suggestionHighlighted.emit(suggestion)"
+              (mouseleave)="suggestionHighlightCleared.emit()"
             >
               {{ suggestion }}
             </li>
@@ -55,7 +60,10 @@
             type="number"
             class="ingredient-input__amount-input"
             placeholder="100"
-            min="0"
+            required
+            min="1"
+            max="9999"
+            step="1"
             [value]="amount()"
             (input)="amount.set($any($event.target).valueAsNumber || null)"
           />
@@ -65,16 +73,11 @@
           [unit]="unit()"
           [open]="unitOpen()"
           (toggle)="unitToggle.emit()"
-          (select)="unit.set($event)"
+          (select)="unit.set($event); unitToggle.emit()"
         />
 
-        <button
-          type="button"
-          class="ingredient-input__add"
-          aria-label="Add ingredient"
-          (click)="add.emit()"
-        ></button>
+        <button type="submit" class="ingredient-input__add" aria-label="Add ingredient"></button>
       </div>
     </div>
-  </div>
+  </form>
 </div>

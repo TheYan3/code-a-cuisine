@@ -1,22 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 
 import { Counter } from '../../components/counter/counter';
 import { Header } from '../../components/header/header';
 import { Tag } from '../../components/tag/tag';
+import { Cuisine, CookingTime, Diet, RecipeRequestService } from '../../core/recipe-request';
 
 /** A cooking time option: a tag plus the sublabel shown underneath it. */
 interface CookingTimeOption {
-  value: string;
+  value: CookingTime;
   label: string;
   sublabel: string;
 }
 
+/** A cuisine or diet option: a tag value plus its visible label. */
+interface PreferenceOption<T extends string> {
+  value: T;
+  label: string;
+}
+
 /**
  * Generator page, step 2: cooking time, cuisine and diet preferences plus
- * portion/helper counters. Ships with example data matching the Figma
- * reference (none of the tags pre-selected) purely so the layout can be
- * verified — the senior-dev pass wires the counters/tags to the shared
- * recipe request state and adds the completeness check before navigating on.
+ * portion/helper counters. Reads and writes the shared `RecipeRequestService`
+ * directly — the counters and tags are presentational, this page owns the
+ * mapping between their generic string values and the service's fixed
+ * preference keys, plus the completeness check before "Generate a recipe"
+ * does anything.
  */
 @Component({
   imports: [Header, Counter, Tag],
@@ -25,6 +33,8 @@ interface CookingTimeOption {
   templateUrl: './preferences.html',
 })
 export class Preferences {
+  protected readonly recipeRequest = inject(RecipeRequestService);
+
   /** Cooking time options; sublabels intentionally differ from the Figma text (typos fixed). */
   protected readonly cookingTimeOptions: CookingTimeOption[] = [
     { value: 'quick', label: 'Quick', sublabel: 'up to 20min' },
@@ -33,15 +43,55 @@ export class Preferences {
   ];
 
   /** Cuisine options. */
-  protected readonly cuisineOptions = [
-    'German',
-    'Italian',
-    'Indian',
-    'Japanese',
-    'Gourmet',
-    'Fusion',
+  protected readonly cuisineOptions: PreferenceOption<Cuisine>[] = [
+    { value: 'german', label: 'German' },
+    { value: 'italian', label: 'Italian' },
+    { value: 'indian', label: 'Indian' },
+    { value: 'japanese', label: 'Japanese' },
+    { value: 'gourmet', label: 'Gourmet' },
+    { value: 'fusion', label: 'Fusion' },
   ];
 
   /** Diet options. */
-  protected readonly dietOptions = ['Vegetarian', 'Vegan', 'Keto', 'No preferences'];
+  protected readonly dietOptions: PreferenceOption<Diet>[] = [
+    { value: 'vegetarian', label: 'Vegetarian' },
+    { value: 'vegan', label: 'Vegan' },
+    { value: 'keto', label: 'Keto' },
+    { value: 'no-preference', label: 'No preferences' },
+  ];
+
+  /** Portions counter unit label, singular/plural depending on the value. */
+  protected readonly portionsLabel = computed(() =>
+    this.recipeRequest.portions() === 1 ? 'Portion' : 'Portions',
+  );
+  /** Helpers counter unit label, singular/plural depending on the value. */
+  protected readonly helpersLabel = computed(() =>
+    this.recipeRequest.helpers() === 1 ? 'Person' : 'Persons',
+  );
+
+  /** Applies a cooking time tag selection (value always comes from `cookingTimeOptions`). */
+  protected onCookingTimeSelected(value: string): void {
+    this.recipeRequest.cookingTime.set(value as CookingTime);
+  }
+
+  /** Applies a cuisine tag selection (value always comes from `cuisineOptions`). */
+  protected onCuisineSelected(value: string): void {
+    this.recipeRequest.cuisine.set(value as Cuisine);
+  }
+
+  /** Applies a diet tag selection (value always comes from `dietOptions`). */
+  protected onDietSelected(value: string): void {
+    this.recipeRequest.diet.set(value as Diet);
+  }
+
+  /**
+   * Logs the recipe request if it's complete (at least one ingredient and
+   * all three preference groups chosen); otherwise does nothing visible in
+   * this round — the pop-up feedback comes with the n8n integration.
+   */
+  protected onGenerate(): void {
+    if (!this.recipeRequest.isComplete()) return;
+    // ponytail: placeholder until the n8n webhook call is wired up.
+    console.log(this.recipeRequest.toRequest());
+  }
 }

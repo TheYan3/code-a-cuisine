@@ -8,11 +8,25 @@
       <div class="preferences__counters">
         <div class="preferences__counter-group preferences__counter-group--portions">
           <p class="preferences__counter-label">How many portions you need?</p>
-          <app-counter [value]="2" [min]="1" [max]="12" unitLabel="Portions" />
+          <app-counter
+            [value]="recipeRequest.portions()"
+            [min]="1"
+            [max]="12"
+            [unitLabel]="portionsLabel()"
+            (increment)="recipeRequest.incrementPortions()"
+            (decrement)="recipeRequest.decrementPortions()"
+          />
         </div>
         <div class="preferences__counter-group preferences__counter-group--helpers">
           <p class="preferences__counter-label">How many are cooking?</p>
-          <app-counter [value]="1" [min]="1" [max]="3" unitLabel="Person" />
+          <app-counter
+            [value]="recipeRequest.helpers()"
+            [min]="1"
+            [max]="3"
+            [unitLabel]="helpersLabel()"
+            (increment)="recipeRequest.incrementHelpers()"
+            (decrement)="recipeRequest.decrementHelpers()"
+          />
         </div>
       </div>
 
@@ -25,7 +39,13 @@
           <div class="preference-group__tags">
             @for (option of cookingTimeOptions; track option.value) {
               <div class="preference-group__tag-with-sublabel">
-                <app-tag name="cookingTime" [value]="option.value" [label]="option.label" />
+                <app-tag
+                  name="cookingTime"
+                  [value]="option.value"
+                  [label]="option.label"
+                  [checked]="recipeRequest.cookingTime() === option.value"
+                  (selected)="onCookingTimeSelected($event)"
+                />
                 <span class="preference-group__sublabel">{{ option.sublabel }}</span>
               </div>
             }
@@ -38,8 +58,14 @@
             <span class="preference-group__legend-text">Cuisine</span>
           </legend>
           <div class="preference-group__tags">
-            @for (option of cuisineOptions; track option) {
-              <app-tag name="cuisine" [value]="option" [label]="option" />
+            @for (option of cuisineOptions; track option.value) {
+              <app-tag
+                name="cuisine"
+                [value]="option.value"
+                [label]="option.label"
+                [checked]="recipeRequest.cuisine() === option.value"
+                (selected)="onCuisineSelected($event)"
+              />
             }
           </div>
         </fieldset>
@@ -50,15 +76,25 @@
             <span class="preference-group__legend-text">Diet preferences</span>
           </legend>
           <div class="preference-group__tags">
-            @for (option of dietOptions; track option) {
-              <app-tag name="diet" [value]="option" [label]="option" />
+            @for (option of dietOptions; track option.value) {
+              <app-tag
+                name="diet"
+                [value]="option.value"
+                [label]="option.label"
+                [checked]="recipeRequest.diet() === option.value"
+                (selected)="onDietSelected($event)"
+              />
             }
           </div>
         </fieldset>
       </div>
     </div>
 
-    <button type="button" class="btn btn--primary btn--green preferences__submit">
+    <button
+      type="button"
+      class="btn btn--primary btn--green preferences__submit"
+      (click)="onGenerate()"
+    >
       Generate a recipe
     </button>
   </main>

@@ -5,6 +5,7 @@
     aria-haspopup="listbox"
     [attr.aria-expanded]="open()"
     (click)="toggle.emit()"
+    (keydown)="onTriggerKeydown($event)"
   >
     <span class="unit-select__label">{{ unit() }}</span>
     <svg

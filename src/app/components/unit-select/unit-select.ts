@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 
 /** Measurement unit an ingredient amount can be given in. */
 export type Unit = 'gram' | 'ml' | 'piece';
@@ -8,9 +8,11 @@ export const UNITS: Unit[] = ['piece', 'ml', 'gram'];
 
 /**
  * Unit dropdown pill ("gram" / "ml" / "piece") reused by the ingredient
- * input row and the ingredient list's edit mode. Purely presentational: the
+ * input row and the ingredient list's edit mode. Presentational — the
  * `open` input controls whether the option list is shown, the parent owns
- * that state and reacts to the `toggle`/`select` outputs.
+ * that state and reacts to the `toggle`/`select` outputs — except for the
+ * arrow-key highlight while the list is open, which is purely a keyboard
+ * affordance local to this component and never needs to be seen outside it.
  */
 @Component({
   imports: [],
@@ -30,4 +32,44 @@ export class UnitSelect {
   readonly select = output<Unit>();
 
   protected readonly units = UNITS;
+  /** Option highlighted via arrow keys while the list is open; -1 = none. */
+  protected readonly highlightedIndex = signal(-1);
+
+  /**
+   * Keyboard handling for the trigger button: arrow keys move the highlight
+   * while the list is open, Enter picks the highlighted option (native
+   * button semantics already open/close it via click when nothing is
+   * highlighted), Escape closes.
+   */
+  protected onTriggerKeydown(event: KeyboardEvent): void {
+    if (!this.open()) {
+      this.highlightedIndex.set(-1);
+      return;
+    }
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.highlightedIndex.set(Math.min(this.highlightedIndex() + 1, this.units.length - 1));
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.highlightedIndex.set(Math.max(this.highlightedIndex() - 1, 0));
+        break;
+      case 'Enter': {
+        const index = this.highlightedIndex();
+        if (index >= 0) {
+          event.preventDefault();
+          this.highlightedIndex.set(-1);
+          this.select.emit(this.units[index]);
+        }
+        break;
+      }
+      case 'Escape':
+        event.preventDefault();
+        this.highlightedIndex.set(-1);
+        this.toggle.emit();
+        break;
+    }
+  }
 }

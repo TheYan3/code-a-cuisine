@@ -16,10 +16,15 @@
                     <div class="ingredient-list__edit-amount-field">
                       <input
                         type="number"
-                        min="0"
+                        required
+                        min="1"
+                        max="9999"
+                        step="1"
                         aria-label="Amount"
                         [value]="editAmount()"
                         (input)="editAmount.set($any($event.target).valueAsNumber || null)"
+                        (keydown.enter)="editSave.emit(item.id)"
+                        (keydown.escape)="editCancel.emit()"
                       />
                     </div>
                   </div>
@@ -27,7 +32,7 @@
                     [unit]="editUnit()"
                     [open]="editUnitOpen()"
                     (toggle)="editUnitToggle.emit()"
-                    (select)="editUnit.set($event)"
+                    (select)="editUnit.set($event); editUnitToggle.emit()"
                   />
                 </div>
                 <span class="ingredient-list__name">{{ item.name }}</span>

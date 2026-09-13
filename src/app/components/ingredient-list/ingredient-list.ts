@@ -39,9 +39,11 @@ export class IngredientList {
   readonly editStart = output<string>();
   /** Emitted with the ingredient id when its check (save) icon is clicked. */
   readonly editSave = output<string>();
+  /** Emitted when Escape is pressed in the edit row, discarding the edit. */
+  readonly editCancel = output<void>();
   /** Emitted with the ingredient id when its delete icon is clicked. */
   readonly deleteItem = output<string>();
-  /** Emitted when the edit row's closed unit pill is clicked. */
+  /** Emitted when the edit row's unit pill is clicked, or an option is picked (both flip `editUnitOpen`). */
   readonly editUnitToggle = output<void>();
 
   /**

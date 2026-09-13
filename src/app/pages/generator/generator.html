@@ -11,18 +11,41 @@
 
       <div class="generator__row">
         <app-ingredient-input
-          [ingredientValue]="'Pas'"
-          [ghostText]="'ta'"
-          [amount]="100"
-          [unit]="'gram'"
-          [autocompleteOpen]="true"
-          [suggestions]="suggestions"
+          [ingredientValue]="nameValue()"
+          (ingredientValueChange)="onNameInput($event)"
+          [amount]="amountValue()"
+          (amountChange)="amountValue.set($event)"
+          [unit]="unitValue()"
+          (unitChange)="unitValue.set($event)"
+          [autocompleteOpen]="autocompleteOpen() && suggestions().length > 0"
+          [suggestions]="suggestions()"
+          [ghostText]="ghostText()"
+          [unitOpen]="unitOpen()"
+          (suggestionSelected)="selectSuggestion($event)"
+          (suggestionHighlighted)="onSuggestionHighlighted($event)"
+          (suggestionHighlightCleared)="onSuggestionHighlightCleared()"
+          (unitToggle)="onUnitToggle()"
+          (nameKeydown)="onNameKeydown($event)"
+          (add)="onAddIngredient()"
         />
-        <app-ingredient-list [ingredients]="ingredients" />
+        <app-ingredient-list
+          [ingredients]="recipeRequest.ingredients()"
+          [editingId]="editingId()"
+          [editUnitOpen]="editUnitOpen()"
+          [editAmount]="editAmount()"
+          (editAmountChange)="editAmount.set($event)"
+          [editUnit]="editUnit()"
+          (editUnitChange)="editUnit.set($event)"
+          (editStart)="onEditStart($event)"
+          (editSave)="onEditSave($event)"
+          (editCancel)="onEditCancel()"
+          (deleteItem)="onDeleteIngredient($event)"
+          (editUnitToggle)="onEditUnitToggle()"
+        />
       </div>
     </div>
 
-    @if (ingredients.length > 0) {
+    @if (recipeRequest.ingredients().length > 0) {
       <a routerLink="/generator/preferences" class="btn btn--primary btn--green generator__next">
         Next step
       </a>

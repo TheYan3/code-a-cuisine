@@ -1,4 +1,4 @@
-import { Component, model, input, output } from '@angular/core';
+import { Component, ElementRef, model, input, output, viewChild } from '@angular/core';
 
 import { Unit, UnitSelect } from '../unit-select/unit-select';
 
@@ -7,7 +7,8 @@ import { Unit, UnitSelect } from '../unit-select/unit-select';
  * amount field and a unit picker, plus the add button. Presentational only
  * — `ingredientValue`/`amount`/`unit` are two-way bound form fields, the
  * autocomplete/unit-dropdown open state and the suggestion list are owned
- * by the parent and passed in, so this component has no state of its own.
+ * by the parent and passed in, so this component has no state of its own
+ * beyond the `focusName()` DOM helper.
  */
 @Component({
   imports: [UnitSelect],
@@ -16,6 +17,8 @@ import { Unit, UnitSelect } from '../unit-select/unit-select';
   templateUrl: './ingredient-input.html',
 })
 export class IngredientInput {
+  private readonly nameInput = viewChild.required<ElementRef<HTMLInputElement>>('nameInput');
+
   /** Text currently typed into the ingredient field. */
   readonly ingredientValue = model('');
   /** Amount typed into the serving size field. */
@@ -38,8 +41,23 @@ export class IngredientInput {
 
   /** Emitted when a suggestion is clicked. */
   readonly suggestionSelected = output<string>();
-  /** Emitted when the closed unit pill is clicked. */
+  /** Emitted with the suggestion the mouse moved onto (hover highlight). */
+  readonly suggestionHighlighted = output<string>();
+  /** Emitted when the mouse leaves a hovered suggestion. */
+  readonly suggestionHighlightCleared = output<void>();
+  /** Emitted when the unit pill is clicked, or a unit option is picked (both flip `unitOpen`). */
   readonly unitToggle = output<void>();
-  /** Emitted when the add button is clicked. */
+  /** Emitted on a keydown in the name field (autocomplete navigation). */
+  readonly nameKeydown = output<KeyboardEvent>();
+  /**
+   * Emitted when the form is submitted — via the add button or Enter in one
+   * of its fields (skipped by the parent if a suggestion is highlighted,
+   * see `nameKeydown`).
+   */
   readonly add = output<void>();
+
+  /** Moves focus to the ingredient name field (called by the parent after a successful add). */
+  focusName(): void {
+    this.nameInput().nativeElement.focus();
+  }
 }
