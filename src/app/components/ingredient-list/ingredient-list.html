@@ -11,21 +11,25 @@
           >
             @if (editingId() === item.id) {
               <div class="ingredient-list__edit-fields">
-                <div class="ingredient-list__edit-amount">
-                  <input
-                    type="number"
-                    min="0"
-                    aria-label="Amount"
-                    [value]="editAmount()"
-                    (input)="editAmount.set($any($event.target).valueAsNumber || null)"
+                <div class="ingredient-list__edit-amount-group">
+                  <div class="ingredient-list__edit-amount">
+                    <div class="ingredient-list__edit-amount-field">
+                      <input
+                        type="number"
+                        min="0"
+                        aria-label="Amount"
+                        [value]="editAmount()"
+                        (input)="editAmount.set($any($event.target).valueAsNumber || null)"
+                      />
+                    </div>
+                  </div>
+                  <app-unit-select
+                    [unit]="editUnit()"
+                    [open]="editUnitOpen()"
+                    (toggle)="editUnitToggle.emit()"
+                    (select)="editUnit.set($event)"
                   />
                 </div>
-                <app-unit-select
-                  [unit]="editUnit()"
-                  [open]="editUnitOpen()"
-                  (toggle)="editUnitToggle.emit()"
-                  (select)="editUnit.set($event)"
-                />
                 <span class="ingredient-list__name">{{ item.name }}</span>
               </div>
               <div class="ingredient-list__actions">

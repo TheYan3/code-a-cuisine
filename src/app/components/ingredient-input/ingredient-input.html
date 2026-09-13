@@ -10,12 +10,19 @@
             type="text"
             class="ingredient-input__name-input"
             autocomplete="off"
+            maxlength="40"
             role="combobox"
             aria-autocomplete="list"
             [attr.aria-expanded]="autocompleteOpen()"
             [value]="ingredientValue()"
             (input)="ingredientValue.set($any($event.target).value)"
           />
+          @if (ghostText()) {
+            <span class="ingredient-input__ghost" aria-hidden="true">
+              <span class="ingredient-input__ghost-typed" [textContent]="ingredientValue()"></span>
+              <span [textContent]="ghostText()"></span>
+            </span>
+          }
         </div>
       </div>
 

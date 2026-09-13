@@ -9,7 +9,8 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  width: 72px;
+  // Hugs its label in Figma (72px with "gram"); a minimum so longer labels grow it.
+  min-width: 72px;
   height: 36px;
   padding: 0 5px;
   border: none;

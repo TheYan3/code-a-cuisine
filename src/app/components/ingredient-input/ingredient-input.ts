@@ -29,6 +29,12 @@ export class IngredientInput {
   readonly autocompleteOpen = input(false);
   /** Whether the unit dropdown is expanded. */
   readonly unitOpen = input(false);
+  /**
+   * Remainder of the highlighted suggestion, previewed dimmed right after the
+   * typed text (e.g. "ta" while "Pas" is typed and "Pasta" is highlighted).
+   * Empty string = no preview.
+   */
+  readonly ghostText = input('');
 
   /** Emitted when a suggestion is clicked. */
   readonly suggestionSelected = output<string>();

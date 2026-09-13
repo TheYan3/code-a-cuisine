@@ -39,11 +39,35 @@
 }
 
 .ingredient-input__field-box {
+  position: relative;
   box-sizing: border-box;
   height: 36px;
   padding: 8px 12px;
   border-radius: 20px;
   background-color: rgba(250, 240, 230, 0.8);
+}
+
+// Autocomplete preview: an overlay with the same padding and font as the
+// input. The typed part is repeated invisibly so the suggestion's remainder
+// starts exactly where the typed text ends. Color #10310b at 40% (Yannic,
+// same value as the cursor in "Imput field / on type").
+.ingredient-input__ghost {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  padding: 8px 12px;
+  overflow: hidden;
+  font-family: var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  color: rgba(16, 49, 11, 0.4);
+  white-space: pre;
+  pointer-events: none;
+}
+
+.ingredient-input__ghost-typed {
+  visibility: hidden;
 }
 
 // Block, not the inline default: an inline input sits on the field's text

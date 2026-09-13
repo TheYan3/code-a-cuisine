@@ -43,13 +43,15 @@
   color: var(--color-text-list);
 }
 
+// Rows grow with a wrapping ingredient name; bullet, amount and icons stay
+// aligned to the first line (top-aligned, fixed-height children).
 .ingredient-list__item-row {
   box-sizing: border-box;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 19px;
-  height: 30px;
+  min-height: 30px;
   padding: 2px 4px;
 
   // Radius only belongs to the hover variant (the default has none).
@@ -59,10 +61,12 @@
   }
 }
 
+// Figma "Ingredient in the list / edit mode": no padding, 16px gap, 36px tall.
 .ingredient-list__item-row--edit {
-  height: 36px;
   justify-content: flex-start;
   gap: 16px;
+  min-height: 36px;
+  padding: 0;
 
   &:hover {
     background-color: transparent;
@@ -72,13 +76,24 @@
 .ingredient-list__info,
 .ingredient-list__edit-fields {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
 }
 
-// Figma "Frame 859": fixed 347px.
+// Figma "Frame 859": fixed 347px (default) / 357px (edit mode).
 .ingredient-list__info {
   width: 347px;
+}
+
+.ingredient-list__edit-fields {
+  width: 357px;
+}
+
+// Figma "Frame 861" in edit mode: amount field and unit pill, 4px apart.
+.ingredient-list__edit-amount-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .ingredient-list__amount,
@@ -87,7 +102,6 @@
   font-size: 18px;
   font-weight: 500;
   color: var(--color-text-list);
-  white-space: nowrap;
 }
 
 // Figma's auto-height text boxes: the amount ("100g", 23px) and the name
@@ -101,6 +115,13 @@
   align-items: center;
   min-width: 62px;
   line-height: 23px;
+  white-space: nowrap;
+}
+
+// Figma "Frame 860" in edit mode: bullet slot + amount field.
+.ingredient-list__edit-amount {
+  display: flex;
+  align-items: center;
 }
 
 // Bullet dot, 5px, measured in the reference PNG: 11px from the left and 9px
@@ -108,43 +129,36 @@
 .ingredient-list__amount::before,
 .ingredient-list__edit-amount::before {
   content: '';
+  flex-shrink: 0;
   width: 5px;
   height: 5px;
+  margin: 9px 6px 12px 11px;
   border-radius: 50%;
   background-color: var(--color-text-list);
 }
 
-.ingredient-list__amount::before {
-  flex-shrink: 0;
-  margin: 9px 6px 12px 11px;
-}
-
-// Figma "Pasta": fixed 209px text box (a minimum, names come from user input).
-.ingredient-list__info .ingredient-list__name {
-  min-width: 209px;
-}
-
+// Figma "Pasta": fixed 209px (default) / 182px (edit mode) text box. Long
+// names wrap inside it and the row grows; nothing is cut off.
 .ingredient-list__name {
   line-height: 26px;
+  overflow-wrap: anywhere;
 }
 
-// Edit mode keeps the same 22px bullet slot in front of the amount field; the
-// dot sits outside the field's background, so it is positioned absolutely.
-.ingredient-list__edit-amount {
-  position: relative;
+.ingredient-list__info .ingredient-list__name {
+  width: 209px;
+}
+
+.ingredient-list__edit-fields .ingredient-list__name {
+  width: 182px;
+}
+
+.ingredient-list__edit-amount-field {
   box-sizing: border-box;
   width: 61px;
   height: 36px;
-  margin-left: 22px;
   padding: 3px 15px;
   border-radius: 48px;
   background-color: var(--color-linen);
-
-  &::before {
-    position: absolute;
-    top: 14px;
-    left: -11px;
-  }
 
   input {
     width: 100%;
@@ -157,6 +171,8 @@
     font-weight: 500;
     line-height: 23px;
     color: var(--color-text-dark);
+    // Figma "Frame 738" centers its text.
+    text-align: center;
 
     &:focus-visible {
       outline: 2px solid var(--color-heading-green);
@@ -173,13 +189,18 @@
   }
 }
 
-// Figma "Frame 860": fills the row height (26px).
+// Figma "Frame 860" / "Frame 858": 26px (default) / 36px (edit mode) tall,
+// pinned to the first line of a wrapping name.
 .ingredient-list__actions {
   display: flex;
-  align-self: stretch;
   align-items: center;
   gap: 16px;
   flex-shrink: 0;
+  height: 26px;
+}
+
+.ingredient-list__item-row--edit .ingredient-list__actions {
+  height: 36px;
 }
 
 .ingredient-list__edit,
@@ -199,11 +220,17 @@
   }
 }
 
-// Only the edit icon has a corner radius (for its hover background).
+// Figma "edit" states: hover and on click share the background, on click
+// turns the icon white (#fffefe). Only the edit icon has a corner radius.
 .ingredient-list__edit {
   border-radius: 2px;
 
-  &:hover {
+  &:hover,
+  &:active {
     background-color: rgba(57, 96, 57, 0.4);
+  }
+
+  &:active img {
+    filter: brightness(0) invert(1);
   }
 }
