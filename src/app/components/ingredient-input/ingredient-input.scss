@@ -111,8 +111,11 @@
   color: var(--color-text-dark);
   cursor: pointer;
 
-  // Radius only belongs to the hover variant (the default has none).
-  &:hover {
+  // Radius only belongs to the hover variant (the default has none). The
+  // arrow-key/mouse-highlighted option ("on hover" in the Figma "drop down
+  // options" component) reuses the same style — it's the same visual state.
+  &:hover,
+  &.is-highlighted {
     border-radius: 8px;
     background-color: rgba(250, 240, 230, 0.6);
   }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, model, input, output, viewChild } from '@angular/core';
+import { Component, ElementRef, computed, model, input, output, viewChild } from '@angular/core';
 
 import { Unit, UnitSelect } from '../unit-select/unit-select';
 
@@ -38,6 +38,16 @@ export class IngredientInput {
    * Empty string = no preview.
    */
   readonly ghostText = input('');
+  /** Suggestion currently highlighted via arrow keys or mouse hover, if any. */
+  readonly highlightedSuggestion = input<string | null>(null);
+
+  /** `id` of the highlighted option, for `aria-activedescendant` on the combobox input. */
+  protected readonly activeDescendantId = computed(() => {
+    const highlighted = this.highlightedSuggestion();
+    if (!highlighted) return null;
+    const index = this.suggestions().indexOf(highlighted);
+    return index >= 0 ? `ingredient-option-${index}` : null;
+  });
 
   /** Emitted when a suggestion is clicked. */
   readonly suggestionSelected = output<string>();

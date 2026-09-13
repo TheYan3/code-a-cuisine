@@ -77,7 +77,11 @@ export const INGREDIENT_SUGGESTIONS: string[] = [
   'Paprika',
   'Parmesan',
   'Parsley',
+  // Deliberately out of alphabetical order: matches the "Pas" autocomplete
+  // order shown in the step 1 Figma reference (Pasta, Pastrami, Passion fruit).
   'Pasta',
+  'Pastrami',
+  'Passion fruit',
   'Peanut butter',
   'Peas',
   'Pineapple',

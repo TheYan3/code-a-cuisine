@@ -4,6 +4,7 @@
     class="unit-select__trigger"
     aria-haspopup="listbox"
     [attr.aria-expanded]="open()"
+    [attr.aria-activedescendant]="activeDescendantId()"
     (click)="toggle.emit()"
     (keydown)="onTriggerKeydown($event)"
   >
@@ -23,11 +24,13 @@
 
   @if (open()) {
     <ul class="unit-select__list" role="listbox">
-      @for (u of units; track u) {
+      @for (u of units; track u; let i = $index) {
         <li
+          [id]="optionId(i)"
           class="unit-select__option"
+          [class.is-highlighted]="i === highlightedIndex()"
           role="option"
-          [attr.aria-selected]="u === unit()"
+          [attr.aria-selected]="i === highlightedIndex()"
           (click)="select.emit(u)"
         >
           {{ u }}

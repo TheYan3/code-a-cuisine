@@ -1,10 +1,13 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 
 /** Measurement unit an ingredient amount can be given in. */
 export type Unit = 'gram' | 'ml' | 'piece';
 
 /** Selectable units in display order, matching the Figma "measurements" component. */
 export const UNITS: Unit[] = ['piece', 'ml', 'gram'];
+
+/** Gives every `UnitSelect` instance a unique id prefix — the page can render more than one. */
+let instanceCount = 0;
 
 /**
  * Unit dropdown pill ("gram" / "ml" / "piece") reused by the ingredient
@@ -34,6 +37,18 @@ export class UnitSelect {
   protected readonly units = UNITS;
   /** Option highlighted via arrow keys while the list is open; -1 = none. */
   protected readonly highlightedIndex = signal(-1);
+  private readonly instanceId = `unit-select-${instanceCount++}`;
+
+  /** `id` of the highlighted option, for `aria-activedescendant` on the trigger button. */
+  protected readonly activeDescendantId = computed(() => {
+    const index = this.highlightedIndex();
+    return index >= 0 ? this.optionId(index) : null;
+  });
+
+  /** `id` for the option at `index`, shared between the list markup and `activeDescendantId`. */
+  protected optionId(index: number): string {
+    return `${this.instanceId}-option-${index}`;
+  }
 
   /**
    * Keyboard handling for the trigger button: arrow keys move the highlight

@@ -16,6 +16,7 @@
             role="combobox"
             aria-autocomplete="list"
             [attr.aria-expanded]="autocompleteOpen()"
+            [attr.aria-activedescendant]="activeDescendantId()"
             [value]="ingredientValue()"
             (input)="ingredientValue.set($any($event.target).value)"
             (keydown)="nameKeydown.emit($event)"
@@ -31,10 +32,13 @@
 
       @if (autocompleteOpen()) {
         <ul class="ingredient-input__dropdown" role="listbox">
-          @for (suggestion of suggestions(); track suggestion) {
+          @for (suggestion of suggestions(); track suggestion; let i = $index) {
             <li
+              [id]="'ingredient-option-' + i"
               class="ingredient-input__option"
+              [class.is-highlighted]="suggestion === highlightedSuggestion()"
               role="option"
+              [attr.aria-selected]="suggestion === highlightedSuggestion()"
               (click)="suggestionSelected.emit(suggestion)"
               (mouseenter)="suggestionHighlighted.emit(suggestion)"
               (mouseleave)="suggestionHighlightCleared.emit()"

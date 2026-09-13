@@ -20,6 +20,7 @@
           [autocompleteOpen]="autocompleteOpen() && suggestions().length > 0"
           [suggestions]="suggestions()"
           [ghostText]="ghostText()"
+          [highlightedSuggestion]="highlightedSuggestion()"
           [unitOpen]="unitOpen()"
           (suggestionSelected)="selectSuggestion($event)"
           (suggestionHighlighted)="onSuggestionHighlighted($event)"

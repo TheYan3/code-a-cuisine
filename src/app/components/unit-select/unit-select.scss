@@ -63,7 +63,9 @@
   color: var(--color-text-dark);
   cursor: pointer;
 
-  &:hover {
+  // The arrow-key-highlighted option reuses the hover style — same visual state.
+  &:hover,
+  &.is-highlighted {
     background-color: rgba(250, 240, 230, 0.6);
   }
 }

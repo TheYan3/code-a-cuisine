@@ -1,12 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  inject,
-  computed,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { Component, ElementRef, inject, computed, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { Header } from '../../components/header/header';
@@ -31,6 +23,7 @@ const MAX_SUGGESTIONS = 3;
   selector: 'app-generator',
   styleUrl: './generator.scss',
   templateUrl: './generator.html',
+  host: { '(document:click)': 'onDocumentClick($event)' },
 })
 export class Generator {
   protected readonly recipeRequest = inject(RecipeRequestService);
@@ -223,7 +216,6 @@ export class Generator {
   }
 
   /** Closes the autocomplete and any open unit dropdown when clicking outside their card. */
-  @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: MouseEvent): void {
     const target = event.target as Node;
 
