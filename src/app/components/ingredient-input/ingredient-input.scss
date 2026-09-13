@@ -45,6 +45,14 @@
   padding: 8px 12px;
   border-radius: 20px;
   background-color: rgba(250, 240, 230, 0.8);
+
+  // Focus ring on the pill instead of the inner input (no focus state in
+  // Figma, Yannic): same stroke and offset as the unit select trigger, and an
+  // outline follows the pill's radius without shifting the layout.
+  &:focus-within {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 2px;
+  }
 }
 
 // Autocomplete preview: an overlay with the same padding and font as the
@@ -85,9 +93,9 @@
   line-height: 20px;
   color: var(--color-text-dark);
 
-  &:focus-visible {
-    outline: 2px solid var(--color-heading-green);
-    outline-offset: 2px;
+  // The focus ring is drawn on the surrounding pill (`__field-box`).
+  &:focus {
+    outline: none;
   }
 }
 
@@ -157,6 +165,12 @@
   padding: 3px 0;
   border-radius: 48px;
   background-color: var(--color-linen);
+
+  // Same pill focus ring as the name field.
+  &:focus-within {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 2px;
+  }
 }
 
 .ingredient-input__amount-input {
@@ -180,9 +194,9 @@
     opacity: 1;
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--color-heading-green);
-    outline-offset: 2px;
+  // The focus ring is drawn on the surrounding pill (`__amount-box`).
+  &:focus {
+    outline: none;
   }
 
   // Hide the native number input spinner — not present in the design.
