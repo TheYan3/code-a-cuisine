@@ -152,11 +152,13 @@
   width: 182px;
 }
 
+// No side padding (Yannic, deviates from Figma's 15px): the centered value
+// renders at the same spot, and four digits ("9999") fit the 61px field.
 .ingredient-list__edit-amount-field {
   box-sizing: border-box;
   width: 61px;
   height: 36px;
-  padding: 3px 15px;
+  padding: 3px 0;
   border-radius: 48px;
   background-color: var(--color-linen);
 
