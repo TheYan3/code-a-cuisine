@@ -1,0 +1,41 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+// Full-viewport green background from the Figma frame; `min-height` (not
+// `height`) so the content can still push it taller than the viewport.
+.loading {
+  min-height: 100dvh;
+  background-color: var(--color-green);
+}
+
+// Centers the spinner + text in the space below the header, so it stays
+// visually centered regardless of the header's own height.
+.loading__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+.loading__spinner {
+  display: block;
+}
+
+.loading__text {
+  margin: 0;
+  font-family: var(--font-ubuntu);
+  font-size: 48px;
+  font-weight: 700;
+  // AUTO line height, resolved via the project's established Ubuntu Bold
+  // ratio (see `.hero__title`: 104px → 119px, ×1.144).
+  line-height: 55px;
+  color: var(--color-linen);
+  text-align: center;
+}

@@ -5,6 +5,7 @@ import { Generator } from './pages/generator/generator';
 import { Home } from './pages/home/home';
 import { Imprint } from './pages/imprint/imprint';
 import { Library } from './pages/library/library';
+import { Loading } from './pages/loading/loading';
 import { Preferences } from './pages/preferences/preferences';
 import { RecipeDetail } from './pages/recipe-detail/recipe-detail';
 
@@ -19,6 +20,7 @@ export const routes: Routes = [
   { path: '', component: Home },
   { path: 'generator', component: Generator },
   { path: 'generator/preferences', component: Preferences, canActivate: [hasIngredientsGuard] },
+  { path: 'generator/loading', component: Loading },
   { path: 'library', component: Library },
   { path: 'recipe/:id', component: RecipeDetail },
   { path: 'imprint', component: Imprint },
