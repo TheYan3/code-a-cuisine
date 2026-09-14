@@ -8,6 +8,7 @@ import { Library } from './pages/library/library';
 import { Loading } from './pages/loading/loading';
 import { Preferences } from './pages/preferences/preferences';
 import { RecipeDetail } from './pages/recipe-detail/recipe-detail';
+import { Results } from './pages/results/results';
 
 /**
  * Application routes. Only six pages exist, so lazy loading would add
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'generator', component: Generator },
   { path: 'generator/preferences', component: Preferences, canActivate: [hasIngredientsGuard] },
   { path: 'generator/loading', component: Loading },
+  { path: 'generator/results', component: Results },
   { path: 'library', component: Library },
   { path: 'recipe/:id', component: RecipeDetail },
   { path: 'imprint', component: Imprint },

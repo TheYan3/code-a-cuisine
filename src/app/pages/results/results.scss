@@ -1,0 +1,173 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.results-page {
+  min-height: 100dvh;
+  background-color: var(--color-green);
+}
+
+// Figma content column: 80px inset on both sides, so the intro row, the
+// card grid and the CTA all share the same left/right edge.
+.results {
+  display: flex;
+  flex-direction: column;
+  padding: 0 80px;
+}
+
+.results__content {
+  display: flex;
+  flex-direction: column;
+  gap: 88px;
+}
+
+.results__intro {
+  display: flex;
+  gap: 96px;
+}
+
+.results__text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 610px;
+}
+
+.results__title {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 54px;
+  font-weight: 600;
+  line-height: 65px;
+  color: var(--color-linen);
+}
+
+.results__subtitle {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 30px;
+  color: var(--color-linen);
+}
+
+.results__tags {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.results__tag {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 6px 12px;
+  border-radius: 30px;
+  background-color: var(--color-linen);
+  font-family: var(--font-quicksand);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--color-heading-green);
+}
+
+// Clips the hero image to the frame's rounded corners; the image itself is
+// taller than the frame and shifted up, matching the crop in the Figma
+// export (natural 574×383 image, 222px-tall frame, 65px pushed off the top).
+.results__hero-frame {
+  width: 574px;
+  height: 222px;
+  overflow: hidden;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.results__hero {
+  display: block;
+  width: 574px;
+  height: 383px;
+  margin-top: -65px;
+}
+
+.results__cards {
+  display: flex;
+  gap: 24px;
+}
+
+.results__card {
+  display: flex;
+  flex-direction: column;
+  // `flex-start` (not the flex default `stretch`) so the "View" button hugs
+  // its own content width instead of stretching to the card's full width.
+  align-items: flex-start;
+  gap: 48px;
+  padding: 32px 24px;
+  border-radius: 20px;
+  background-color: var(--color-card-sage);
+}
+
+.results__card-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.results__card-number-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.results__card-number {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 30px;
+  color: var(--color-heading-green);
+}
+
+.results__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 363px;
+}
+
+.results__card-headline {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+  color: var(--color-text-dark);
+}
+
+.results__card-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-green);
+}
+
+// Matches `.generator__next`/`.preferences__submit`: an explicit margin
+// (not the `.results__content` gap) since the Figma spacing to this button
+// (64px) differs from the gap between the sections above it (88px).
+.results__cta {
+  align-self: flex-end;
+  margin-top: 64px;
+}
