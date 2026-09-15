@@ -1,16 +1,22 @@
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: 64px;
-  max-width: 1440px;
-  margin: 0 auto;
-}
-
-// Full-viewport green background from the Figma frame; `min-height` (not
+// Full-bleed green background from the Figma frame — carried by this outer
+// wrapper (not `.page`) so it reaches the viewport edges on wide screens
+// instead of stopping at the 1440px content column. `min-height` (not
 // `height`) so the content can still push it taller than the viewport.
 .loading {
+  display: flex;
+  flex-direction: column;
   min-height: 100dvh;
   background-color: var(--color-green);
+}
+
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 64px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
 // Centers the spinner + text in the space below the header, so it stays
@@ -24,27 +30,26 @@
   gap: 32px;
 }
 
-// Figma "Loader" panel: 253×309, corner-radius 20, fill --color-loader-sage.
-// The spinner graphic sits flush at the panel's top-left (253×291) — 18px of
-// panel background stays visible below it.
+// Figma's "Loader" node fill is type IMAGE but was never actually rendered
+// by the export plugin (animated/video fills export only their placeholder
+// box, not real frames — the reference PNG shows a flat grey box here). Its
+// 253×291 box size is therefore not a trustworthy crop hint: at 253px wide
+// the real 436×613 asset is ≈356px tall, and cropping to 291px cut off part
+// of the animation at different points in its loop. Panel and image are now
+// sized from the asset's real aspect ratio instead, so nothing is ever
+// cropped; corner-radius 20 and the sage fill are unchanged from Figma.
 .loading__panel {
+  display: flex;
   overflow: hidden;
-  width: 253px;
-  height: 309px;
   border-radius: 20px;
   background-color: var(--color-loader-sage);
 }
 
-// Figma's image node is 253×291 — narrower than the source animation's own
-// aspect ratio (436×613 native). `object-fit: cover` + `object-position: top`
-// scales the animation to fill that width, then crops only from the bottom
-// (never the file itself), matching the flush top-left placement in Figma.
 .loading__spinner {
   display: block;
   width: 253px;
-  height: 291px;
-  object-fit: cover;
-  object-position: top;
+  height: auto;
+  aspect-ratio: 436 / 613;
 }
 
 .loading__text {
