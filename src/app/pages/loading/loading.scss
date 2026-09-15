@@ -24,8 +24,27 @@
   gap: 32px;
 }
 
+// Figma "Loader" panel: 253×309, corner-radius 20, fill --color-loader-sage.
+// The spinner graphic sits flush at the panel's top-left (253×291) — 18px of
+// panel background stays visible below it.
+.loading__panel {
+  overflow: hidden;
+  width: 253px;
+  height: 309px;
+  border-radius: 20px;
+  background-color: var(--color-loader-sage);
+}
+
+// Figma's image node is 253×291 — narrower than the source animation's own
+// aspect ratio (436×613 native). `object-fit: cover` + `object-position: top`
+// scales the animation to fill that width, then crops only from the bottom
+// (never the file itself), matching the flush top-left placement in Figma.
 .loading__spinner {
   display: block;
+  width: 253px;
+  height: 291px;
+  object-fit: cover;
+  object-position: top;
 }
 
 .loading__text {
