@@ -1,70 +1,72 @@
-<div class="page results-page">
-  <app-header variant="creme" />
+<div class="results-page">
+  <div class="page">
+    <app-header variant="creme" />
 
-  <main class="results">
-    <div class="results__content">
-      <div class="results__intro">
-        <div class="results__text">
-          <h1 class="results__title">The recipe results</h1>
-          <p class="results__subtitle">
-            We took what you have and let our AI do the thinking. Here are 3 easy recipes you can
-            make right now!
-          </p>
-          <ul class="results__tags">
-            @for (tag of tags; track tag) {
-              <li class="results__tag">{{ tag }}</li>
-            }
-          </ul>
+    <main class="results">
+      <div class="results__content">
+        <div class="results__intro">
+          <div class="results__text">
+            <h1 class="results__title">The recipe results</h1>
+            <p class="results__subtitle">
+              We took what you have and let our AI do the thinking. Here are 3 easy recipes you can
+              make right now!
+            </p>
+            <ul class="results__tags">
+              @for (tag of tags; track tag) {
+                <li class="results__tag">{{ tag }}</li>
+              }
+            </ul>
+          </div>
+          <div class="results__hero-frame">
+            <img
+              class="results__hero"
+              src="/images/results/robot-cloche.webp"
+              alt=""
+              width="574"
+              height="383"
+            />
+          </div>
         </div>
-        <div class="results__hero-frame">
-          <img
-            class="results__hero"
-            src="/images/results/robot-cloche.webp"
-            alt=""
-            width="574"
-            height="383"
-          />
+
+        <div class="results__cards">
+          @for (recipe of recipes; track recipe.id) {
+            <article class="results__card">
+              <div class="results__card-top">
+                <div class="results__card-number-row">
+                  <img src="/icons/Recipe_card_icon.svg" alt="" width="40" height="28" />
+                  <p class="results__card-number">{{ recipe.number }}</p>
+                </div>
+                <div class="results__card-text">
+                  <h2 class="results__card-headline">{{ recipe.headline }}</h2>
+                  <p class="results__card-time">
+                    <img src="/icons/clock.svg" alt="" width="24" height="24" />
+                    Cooking time: {{ recipe.cookingTimeMinutes }}min
+                  </p>
+                </div>
+              </div>
+              <a [routerLink]="['/recipe', recipe.id]" class="btn btn--primary btn--creme">View</a>
+            </article>
+          }
         </div>
       </div>
 
-      <div class="results__cards">
-        @for (recipe of recipes; track recipe.id) {
-          <article class="results__card">
-            <div class="results__card-top">
-              <div class="results__card-number-row">
-                <img src="/icons/Recipe_card_icon.svg" alt="" width="40" height="28" />
-                <p class="results__card-number">{{ recipe.number }}</p>
-              </div>
-              <div class="results__card-text">
-                <h2 class="results__card-headline">{{ recipe.headline }}</h2>
-                <p class="results__card-time">
-                  <img src="/icons/clock.svg" alt="" width="24" height="24" />
-                  Cooking time: {{ recipe.cookingTimeMinutes }}min
-                </p>
-              </div>
-            </div>
-            <a [routerLink]="['/recipe', recipe.id]" class="btn btn--primary btn--creme">View</a>
-          </article>
-        }
-      </div>
-    </div>
-
-    <a routerLink="/generator" class="btn btn--secondary btn--creme results__cta">
-      Generate new recipe
-      <svg
-        class="btn__icon"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path d="M1 12h22" />
-        <path d="M17 6l6 6-6 6" />
-      </svg>
-    </a>
-  </main>
+      <a routerLink="/generator" class="btn btn--secondary btn--creme results__cta">
+        Generate new recipe
+        <svg
+          class="btn__icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M1 12h22" />
+          <path d="M17 6l6 6-6 6" />
+        </svg>
+      </a>
+    </main>
+  </div>
 </div>

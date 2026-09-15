@@ -1,14 +1,22 @@
-.page {
+// Full-bleed green background from the Figma frame — carried by this outer
+// wrapper (not `.page`) so it reaches the viewport edges on wide screens
+// instead of stopping at the 1440px content column. `min-height` (not
+// `height`) so the content can still push it taller than the viewport.
+.results-page {
   display: flex;
   flex-direction: column;
-  gap: 64px;
-  max-width: 1440px;
-  margin: 0 auto;
-}
-
-.results-page {
   min-height: 100dvh;
   background-color: var(--color-green);
+}
+
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 64px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
 // Figma content column: 80px inset on both sides, so the intro row, the
