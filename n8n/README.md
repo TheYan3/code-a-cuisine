@@ -1,8 +1,26 @@
 # n8n Workflows
 
 This folder holds the exported n8n workflow JSONs that power recipe
-generation. There are no workflow files here yet — this is the drop
-location for once the workflows exist.
+generation.
+
+| File | Workflow | Purpose |
+| --- | --- | --- |
+| `error-handler.json` | Error handler — mail on workflow failure | Mails workflow name, failing node, error message and execution link when any workflow fails |
+
+Still to come: the recipe generation workflow (`POST /webhook/generate-recipe`)
+and the quota lookup (`GET /webhook/quota`).
+
+## Error handling
+
+Two things about error workflows that cost a few failed attempts to establish,
+so they are written down rather than rediscovered:
+
+- **An error workflow only fires while it is active.** Inactive, it stays
+  silent and nothing indicates why.
+- **It is not global.** Every workflow that should report failures needs
+  `settings.errorWorkflow` pointing at the error handler's id.
+- Handler runs show up in the execution list a moment *after* the failing run,
+  so checking immediately gives a false negative.
 
 ## Exporting
 
