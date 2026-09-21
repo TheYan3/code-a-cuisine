@@ -12,13 +12,18 @@ and the quota lookup (`GET /webhook/quota`).
 
 ## Error handling
 
-Two things about error workflows that cost a few failed attempts to establish,
-so they are written down rather than rediscovered:
+A few things about error workflows that cost several failed attempts, written
+down rather than rediscovered:
 
-- **An error workflow only fires while it is active.** Inactive, it stays
-  silent and nothing indicates why.
 - **It is not global.** Every workflow that should report failures needs
   `settings.errorWorkflow` pointing at the error handler's id.
+- **Keep the error handler active.** The documentation says publishing is not
+  required, but here it only produced a handler run once it was activated —
+  one observation per state, so treat this as a working setup rather than a
+  proven rule.
+- **The error trigger ignores manual runs** by design, so test through the
+  webhook or a schedule. `n8n-nodes-base.stopAndError` is the documented way
+  to fail a workflow on purpose.
 - Handler runs show up in the execution list a moment *after* the failing run,
   so checking immediately gives a false negative.
 
