@@ -1,0 +1,57 @@
+{
+  "name": "Error handler — mail on workflow failure",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "aaaaaaa1-0000-4000-8000-000000000001",
+      "name": "On workflow error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "Feuert, wenn ein Workflow scheitert, der diesen hier unter Settings als 'Error Workflow' eingetragen hat. Feuert NICHT automatisch fuer alle Workflows."
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.JOIN_MAIL_USER }}",
+        "toEmail": "3.j.yannic@gmail.com",
+        "subject": "=n8n-Fehler: {{ $json.workflow.name }}",
+        "emailFormat": "text",
+        "text": "=Ein n8n-Workflow ist fehlgeschlagen.\n\nWorkflow : {{ $json.workflow.name }} ({{ $json.workflow.id }})\nZeitpunkt: {{ $now.setZone('Europe/Berlin').toFormat('dd.MM.yyyy HH:mm:ss') }}\nLetzter Node: {{ $json.execution.lastNodeExecuted }}\n\nFehlermeldung:\n{{ $json.execution.error.message }}\n\nAusfuehrung: {{ $json.execution.url }}\n",
+        "options": {}
+      },
+      "id": "aaaaaaa2-0000-4000-8000-000000000002",
+      "name": "Notify Yannic by email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        0
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "Hap4YDNAMBaOKZAK",
+          "name": "SMTP account"
+        }
+      },
+      "notes": "Schickt Workflow-Name, letzten Node, Fehlermeldung und Link zur Ausfuehrung. Erfuellt den Checklistenpunkt 'Fehlerbehandlung und Logging ... Email-Benachrichtigung bei Fehlern'.",
+      "webhookId": "773f7275-a4a7-480d-aa7c-556bf1c0eb14"
+    }
+  ],
+  "connections": {
+    "On workflow error": {
+      "main": [
+        [
+          {
+            "node": "Notify Yannic by email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}
