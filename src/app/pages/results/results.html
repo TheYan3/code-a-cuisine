@@ -12,7 +12,7 @@
               make right now!
             </p>
             <ul class="results__tags">
-              @for (tag of tags; track tag) {
+              @for (tag of tags(); track tag) {
                 <li class="results__tag">{{ tag }}</li>
               }
             </ul>
@@ -29,15 +29,15 @@
         </div>
 
         <div class="results__cards">
-          @for (recipe of recipes; track recipe.id) {
+          @for (recipe of recipes(); track recipe.id; let i = $index) {
             <article class="results__card">
               <div class="results__card-top">
                 <div class="results__card-number-row">
                   <img src="/icons/Recipe_card_icon.svg" alt="" width="40" height="28" />
-                  <p class="results__card-number">{{ recipe.number }}</p>
+                  <p class="results__card-number">Recipe {{ i + 1 }}</p>
                 </div>
                 <div class="results__card-text">
-                  <h2 class="results__card-headline">{{ recipe.headline }}</h2>
+                  <h2 class="results__card-headline">{{ recipe.title }}</h2>
                   <p class="results__card-time">
                     <img src="/icons/clock.svg" alt="" width="24" height="24" />
                     Cooking time: {{ recipe.cookingTimeMinutes }}min
@@ -46,6 +46,10 @@
               </div>
               <a [routerLink]="['/recipe', recipe.id]" class="btn btn--primary btn--creme">View</a>
             </article>
+          } @empty {
+            <p class="results__empty">
+              {{ loading() ? 'Loading your recipes ...' : 'These recipes are no longer available.' }}
+            </p>
           }
         </div>
       </div>

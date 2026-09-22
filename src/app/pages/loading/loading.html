@@ -3,16 +3,28 @@
     <app-header variant="creme" />
 
     <main class="loading__content">
-      <div class="loading__panel">
-        <img
-          class="loading__spinner"
-          src="/images/loading/generating-spinner.webp"
-          alt=""
-          width="436"
-          height="613"
-        />
-      </div>
-      <p class="loading__text">Generating ...</p>
+      @if (errorMessage()) {
+        <section class="loading__failure">
+          <h1 class="loading__failure-title">
+            {{ outOfQuota() ? 'No generations left today' : 'That did not work' }}
+          </h1>
+          <p class="loading__failure-text">{{ errorMessage() }}</p>
+          <button type="button" class="btn btn--primary btn--creme" (click)="onBack()">
+            Back to your preferences
+          </button>
+        </section>
+      } @else {
+        <div class="loading__panel">
+          <img
+            class="loading__spinner"
+            src="/images/loading/generating-spinner.webp"
+            alt=""
+            width="436"
+            height="613"
+          />
+        </div>
+        <p class="loading__text" role="status">Generating ...</p>
+      }
     </main>
   </div>
 </div>

@@ -1,4 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Counter } from '../../components/counter/counter';
 import { Header } from '../../components/header/header';
@@ -34,6 +35,7 @@ interface PreferenceOption<T extends string> {
 })
 export class Preferences {
   protected readonly recipeRequest = inject(RecipeRequestService);
+  private readonly router = inject(Router);
 
   /** Cooking time options; sublabels intentionally differ from the Figma text (typos fixed). */
   protected readonly cookingTimeOptions: CookingTimeOption[] = [
@@ -85,13 +87,12 @@ export class Preferences {
   }
 
   /**
-   * Logs the recipe request if it's complete (at least one ingredient and
-   * all three preference groups chosen); otherwise does nothing visible in
-   * this round — the pop-up feedback comes with the n8n integration.
+   * Hands over to the loading page, which runs the generation. Does nothing
+   * while the request is incomplete — at least one ingredient and all three
+   * preference groups have to be chosen.
    */
   protected onGenerate(): void {
     if (!this.recipeRequest.isComplete()) return;
-    // ponytail: placeholder until the n8n webhook call is wired up.
-    console.log(this.recipeRequest.toRequest());
+    this.router.navigate(['/generator/loading']);
   }
 }
