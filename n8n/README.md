@@ -3,12 +3,38 @@
 This folder holds the exported n8n workflow JSONs that power recipe
 generation.
 
-| File | Workflow | Purpose |
+| File | Endpoint | Purpose |
 | --- | --- | --- |
-| `error-handler.json` | Error handler — mail on workflow failure | Mails workflow name, failing node, error message and execution link when any workflow fails |
+| `recipe-generation.json` | `POST /webhook/generate-recipe` | Validates the request, checks the daily quota, asks Gemini, verifies the reply, stores three recipes and answers with their ids |
+| `quota-lookup.json` | `GET /webhook/quota` | How many generations the calling IP has left today |
+| `error-handler.json` | — | Mails workflow name, failing node, error message and execution link when any workflow fails |
 
-Still to come: the recipe generation workflow (`POST /webhook/generate-recipe`)
-and the quota lookup (`GET /webhook/quota`).
+## Why the generation workflow verifies so much
+
+The Gemini API only promises *syntactically* valid JSON. `minItems`, `maxItems`
+and `minimum` in a response schema are not guaranteed to be honoured, and this
+node does not pass schema options through to the API at all — so the prompt
+asks for the shape and the `Parse and verify recipes` node is what enforces it:
+exactly three recipes, each using at least 70 percent of the listed ingredients
+(capped at eight), at most three extra ingredients, cuisine, diet and time
+bracket matching the request, steps renumbered without gaps, no step assigned
+to a cook who is not there, nutrition present and positive.
+
+A violation throws. That reaches the error workflow and sends mail, instead of
+putting a broken recipe into the public library.
+
+## Quota
+
+Three generations per IP per day, twelve across the whole system. Both counters
+live under `/quota/<date>` in Firebase, which the database rules hide from
+clients — only the service account reads and writes them. The check runs
+*before* Gemini is called, because the paid call is what needs protecting, and
+the counters are raised *after* the recipes are stored, so a failed write does
+not consume quota.
+
+When the visitor IP cannot be determined, the request counts against the
+system-wide cap instead of a per-IP bucket. Otherwise a broken proxy setup
+would silently turn the per-IP limit into no limit at all.
 
 ## Error handling
 
