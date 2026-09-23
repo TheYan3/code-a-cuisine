@@ -90,9 +90,14 @@ export class Preferences {
    * Hands over to the loading page, which runs the generation. Does nothing
    * while the request is incomplete — at least one ingredient and all three
    * preference groups have to be chosen.
+   *
+   * Arms the generation first: the loading page's guard only lets a run
+   * through once per press, so a reload or a back navigation cannot spend a
+   * second slot of the daily quota.
    */
   protected onGenerate(): void {
     if (!this.recipeRequest.isComplete()) return;
+    this.recipeRequest.armGeneration();
     this.router.navigate(['/generator/loading']);
   }
 }

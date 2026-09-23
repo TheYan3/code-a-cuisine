@@ -198,6 +198,28 @@ export class RecipeRequestService {
     this.helpers.set(clamp(this.helpers() - 1, HELPERS_MIN, HELPERS_MAX));
   }
 
+  /**
+   * One-shot permission to run a generation, set when the user presses
+   * "Generate a recipe" and consumed by the loading page's guard.
+   *
+   * Deliberately a plain field and deliberately not part of `toRequest()`:
+   * it must never reach `sessionStorage`, or it would survive a reload and
+   * hand out a second generation — each one costs a slot of the daily quota.
+   */
+  private generationArmed = false;
+
+  /** Allows exactly one upcoming navigation to the loading page to generate. */
+  armGeneration(): void {
+    this.generationArmed = true;
+  }
+
+  /** Takes the permission away again, reporting whether there was one. */
+  consumeGeneration(): boolean {
+    const armed = this.generationArmed;
+    this.generationArmed = false;
+    return armed;
+  }
+
   /** Whether the request has everything needed to generate a recipe. */
   isComplete(): boolean {
     return (
