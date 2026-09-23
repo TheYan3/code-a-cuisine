@@ -44,11 +44,18 @@
                   </p>
                 </div>
               </div>
-              <a [routerLink]="['/recipe', recipe.id]" class="btn btn--primary btn--creme">View</a>
+              <a
+                [routerLink]="['/recipe', recipe.id]"
+                [queryParams]="{ ids: ids() }"
+                class="btn btn--primary btn--creme"
+                >View</a
+              >
             </article>
           } @empty {
             <p class="results__empty">
-              {{ loading() ? 'Loading your recipes ...' : 'These recipes are no longer available.' }}
+              {{
+                loading() ? 'Loading your recipes ...' : 'These recipes are no longer available.'
+              }}
             </p>
           }
         </div>

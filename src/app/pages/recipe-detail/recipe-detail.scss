@@ -1,0 +1,374 @@
+// Detail view of one recipe, built from the Figma frame "One recipe view".
+// The frame is 1440 wide with a 1248 content column; the outer card carries
+// the linen tint at 30% so the two section banners (full-color linen) read as
+// raised bands inside it.
+
+.recipe-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-background);
+}
+
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 64px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  padding: 0 96px;
+  // Set once here: every text in this view uses Quicksand on the dark green,
+  // the handful of exceptions override the color only.
+  font-family: var(--font-quicksand);
+  color: var(--color-text-dark);
+}
+
+.detail__status {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+// Matches `.results__cta`: the CTA sits apart from the content above it.
+.detail__new {
+  align-self: flex-end;
+}
+
+.recipe {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 40px 48px;
+  border-radius: 20px;
+  // The frame fills this card with linen at 30% — mixed against white here so
+  // the banners inside can use the same linen at full strength.
+  background-color: color-mix(in srgb, var(--color-linen) 30%, #ffffff);
+}
+
+.recipe__head {
+  display: flex;
+  gap: 161px;
+  justify-content: space-between;
+  padding: 24px;
+  border-radius: 20px;
+  background-color: var(--color-linen);
+}
+
+.recipe__name {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 619px;
+}
+
+.recipe__time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--color-green);
+}
+
+.recipe__title {
+  margin: 0;
+  font-size: 54px;
+  font-weight: 600;
+  line-height: 65px;
+  color: var(--color-heading-green);
+}
+
+.recipe__chefs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--color-green);
+}
+
+// The badges ship as complete SVGs (pill, icon and label baked in), so they
+// keep their own width — only the height is pinned to the design's 27px.
+.recipe__chef-badge {
+  display: block;
+  width: auto;
+  height: 27px;
+}
+
+.recipe__facts {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.recipe__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recipe__tag {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 6px 12px;
+  border-radius: 30px;
+  background-color: color-mix(in srgb, var(--color-green) 20%, transparent);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+.recipe__nutrition {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 8px;
+}
+
+.recipe__nutrition-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 23px;
+}
+
+.recipe__nutrition-grid {
+  display: flex;
+  gap: 24px;
+  margin: 0;
+}
+
+.recipe__nutrient {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  dt {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+}
+
+.recipe__section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// The banner artwork overflows its band (the bowl sticks out at the top, the
+// jug at the bottom), which is why the SVG is taller than the visible strip
+// and is placed as a background rather than an <img> behind the heading.
+.recipe__banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+  color: var(--color-heading-green);
+}
+
+.recipe__banner--ingredients {
+  aspect-ratio: 1152 / 148;
+  background-image: url('/icons/Ingredients.svg');
+}
+
+.recipe__banner--directions {
+  aspect-ratio: 1152 / 134;
+  background-image: url('/icons/Directions.svg');
+}
+
+// For headings whose word is already drawn into the banner artwork: keep the
+// text in the document for screen readers, take it out of the picture.
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.recipe__ingredients {
+  display: flex;
+  gap: 80px;
+  padding: 0 32px;
+}
+
+.recipe__ingredient-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recipe__ingredient-heading {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 30px;
+  color: var(--color-button-text);
+}
+
+.recipe__ingredient-list {
+  margin: 0;
+  padding-left: 24px;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 30px;
+}
+
+// Fixed column for the amount so the names line up, the way the Figma text
+// block fakes it with padded spaces.
+.recipe__amount {
+  display: inline-block;
+  min-width: 84px;
+}
+
+// Two columns regardless of the number of cooks, as in the frame: the steps
+// read left-to-right per pair, and every step carries its chef badge even
+// when one person does all of them.
+.recipe__steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px 64px;
+  margin: 0;
+  padding: 0 32px;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.step__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.step__number {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-linen);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 23px;
+}
+
+.step__chef {
+  display: block;
+  width: auto;
+  height: 27px;
+}
+
+.step__parallel {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-green);
+}
+
+.step__text {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 30px;
+}
+
+.cookbook-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 40px 0;
+  border-radius: 20px;
+  background-color: color-mix(in srgb, var(--color-green) 10%, transparent);
+}
+
+.cookbook-cta__text {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 30px;
+}
+
+@media (max-width: 1024px) {
+  .detail {
+    padding: 0 32px;
+  }
+
+  .recipe__head {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .recipe__ingredients {
+    flex-direction: column;
+    gap: 32px;
+    padding: 0;
+  }
+
+  .recipe__steps {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .recipe {
+    padding: 24px;
+  }
+
+  .recipe__title {
+    font-size: 36px;
+    line-height: 44px;
+  }
+
+  .recipe__nutrition-grid {
+    flex-wrap: wrap;
+  }
+
+  .cookbook-cta {
+    flex-direction: column;
+    padding: 32px 24px;
+    text-align: center;
+  }
+}

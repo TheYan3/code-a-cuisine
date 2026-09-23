@@ -21,6 +21,8 @@ export class Header {
   readonly backLink = input<string>();
   /** Label shown next to the back arrow. */
   readonly backLabel = input<string>();
+  /** Query parameters the back link needs, e.g. the result set to return to. */
+  readonly backQueryParams = input<Record<string, string>>({});
 
   /** Path to the logo asset matching the current variant. */
   protected readonly logoSrc = computed(() =>

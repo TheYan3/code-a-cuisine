@@ -4,7 +4,7 @@
   </a>
 
   @if (backLink()) {
-    <a [routerLink]="backLink()" class="site-header__back">
+    <a [routerLink]="backLink()" [queryParams]="backQueryParams()" class="site-header__back">
       <svg
         width="20"
         height="20"

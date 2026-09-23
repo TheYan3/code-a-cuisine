@@ -1,6 +1,160 @@
-<main>
-  <section>
-    <h1>Recipe Detail</h1>
-    <p>Here the full recipe, identified by its id, will be shown.</p>
-  </section>
-</main>
+<div class="recipe-page">
+  <div class="page">
+    <app-header
+      variant="green"
+      [backLink]="backLink()"
+      [backLabel]="backLabel()"
+      [backQueryParams]="backParams()"
+    />
+
+    <main class="detail">
+      @if (recipe(); as recipe) {
+        <article class="recipe">
+          <header class="recipe__head">
+            <div class="recipe__name">
+              <p class="recipe__time">
+                <img src="/icons/clock.svg" alt="" width="24" height="24" />
+                Cooking time: {{ recipe.cookingTimeMinutes }}min
+              </p>
+
+              <h1 class="recipe__title">{{ recipe.title }}</h1>
+
+              <p class="recipe__chefs">
+                <span class="recipe__chefs-label">
+                  Cooking {{ recipe.helpers === 1 ? 'person' : 'persons' }}: {{ recipe.helpers }}
+                </span>
+                @for (chef of chefs(); track chef) {
+                  <img
+                    class="recipe__chef-badge"
+                    [src]="chefBadge(chef)"
+                    [alt]="'Chef ' + chef"
+                    height="27"
+                  />
+                }
+              </p>
+            </div>
+
+            <div class="recipe__facts">
+              <ul class="recipe__tags">
+                @for (tag of tags(); track tag) {
+                  <li class="recipe__tag">{{ tag }}</li>
+                }
+              </ul>
+
+              <div class="recipe__nutrition">
+                <p class="recipe__nutrition-title">Nutritional information (per portion)</p>
+                <dl class="recipe__nutrition-grid">
+                  <div class="recipe__nutrient">
+                    <dt>Energy</dt>
+                    <dd>{{ recipe.nutrition.caloriesPerPortion }} kcal</dd>
+                  </div>
+                  <div class="recipe__nutrient">
+                    <dt>Protein</dt>
+                    <dd>{{ recipe.nutrition.proteinG }}g</dd>
+                  </div>
+                  <div class="recipe__nutrient">
+                    <dt>Fat</dt>
+                    <dd>{{ recipe.nutrition.fatG }}g</dd>
+                  </div>
+                  <div class="recipe__nutrient">
+                    <dt>Carbs</dt>
+                    <dd>{{ recipe.nutrition.carbsG }}g</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </header>
+
+          <section class="recipe__section">
+            <h2 class="recipe__banner recipe__banner--ingredients">
+              <span>Ingredients</span>
+            </h2>
+
+            <div class="recipe__ingredients">
+              <div class="recipe__ingredient-group">
+                <h3 class="recipe__ingredient-heading">Your ingredients</h3>
+                <ul class="recipe__ingredient-list">
+                  @for (item of recipe.ingredientsUsed; track item.name) {
+                    <li>
+                      <span class="recipe__amount">{{ amount(item) }}</span>
+                      {{ item.name }}
+                    </li>
+                  }
+                </ul>
+              </div>
+
+              @if (recipe.ingredientsMissing.length) {
+                <div class="recipe__ingredient-group">
+                  <h3 class="recipe__ingredient-heading">Extra ingredients</h3>
+                  <ul class="recipe__ingredient-list">
+                    @for (item of recipe.ingredientsMissing; track item.name) {
+                      <li>
+                        <span class="recipe__amount">{{ amount(item) }}</span>
+                        {{ item.name }}
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </section>
+
+          <section class="recipe__section">
+            <!-- The word "Directions" is part of this banner's artwork, so the
+                 heading text is there for screen readers only. -->
+            <h2 class="recipe__banner recipe__banner--directions">
+              <span class="visually-hidden">Directions</span>
+            </h2>
+
+            <ol class="recipe__steps">
+              @for (step of recipe.steps; track step.number) {
+                <li class="step">
+                  <div class="step__head">
+                    <span class="step__number">{{ step.number }}.</span>
+                    <img
+                      class="step__chef"
+                      [src]="chefBadge(step.assignedTo)"
+                      [alt]="'Chef ' + step.assignedTo"
+                      height="27"
+                    />
+                    @if (step.parallel) {
+                      <span class="step__parallel">runs alongside the previous step</span>
+                    }
+                  </div>
+                  <p class="step__text">{{ step.text }}</p>
+                </li>
+              }
+            </ol>
+          </section>
+        </article>
+
+        <section class="cookbook-cta">
+          <p class="cookbook-cta__text">Find inspiration for your next culinary adventure!</p>
+          <a routerLink="/library" class="btn btn--primary btn--green">Cookbook</a>
+        </section>
+      } @else {
+        <p class="detail__status">
+          {{ loading() ? 'Loading the recipe ...' : 'This recipe is no longer available.' }}
+        </p>
+      }
+
+      <a routerLink="/generator" class="btn btn--secondary btn--green detail__new">
+        Generate new recipe
+        <svg
+          class="btn__icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M1 12h22" />
+          <path d="M17 6l6 6-6 6" />
+        </svg>
+      </a>
+    </main>
+  </div>
+</div>
