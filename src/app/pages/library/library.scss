@@ -103,9 +103,8 @@
   scroll-snap-align: start;
 }
 
-// Fixed per Yannic: was a single flex row (time/title/likes side by side),
-// squeezing the title into a narrow middle column. The Figma card is two
-// rows — time+likes on top, the title below spanning the full width.
+// Two rows as in Figma: time + likes on top, the title below spanning the
+// full card width.
 .most-liked__card {
   box-sizing: border-box;
   display: flex;
