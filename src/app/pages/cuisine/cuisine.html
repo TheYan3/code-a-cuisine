@@ -15,11 +15,19 @@
           <h1 class="cuisine__banner-title">{{ meta()?.label }}</h1>
         </div>
 
-        @if (pageRecipes().length) {
+        @if (loading()) {
+          <p class="cuisine__empty">Loading recipes ...</p>
+        } @else if (error()) {
+          <p class="cuisine__empty">Recipes could not be loaded. Please try again later.</p>
+        } @else if (pageRecipes().length) {
           <ol class="cuisine__list" [start]="startNumber()">
             @for (recipe of pageRecipes(); track recipe.id; let i = $index) {
               <li>
-                <a [routerLink]="['/recipe', recipe.id]" class="cuisine__row">
+                <a
+                  [routerLink]="['/recipe', recipe.id]"
+                  [queryParams]="{ cuisine: cuisine(), page: currentPage() }"
+                  class="cuisine__row"
+                >
                   <span class="cuisine__number" aria-hidden="true">{{ i + startNumber() }}.</span>
 
                   <span class="cuisine__row-main">

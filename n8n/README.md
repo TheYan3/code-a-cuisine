@@ -23,6 +23,16 @@ to a cook who is not there, nutrition present and positive.
 A violation throws. That reaches the error workflow and sends mail, instead of
 putting a broken recipe into the public library.
 
+## Recipe language
+
+The prompt in `Build prompt` tells the model to write every piece of recipe
+text — title, ingredient names, steps — in English, regardless of the
+language the request's ingredients were given in (the library is public and
+in English throughout). `Parse and verify recipes` does not check the
+language of the reply; there is no cheap, reliable way to verify that in
+code, so a non-English reply would only be caught by a human noticing it in
+the library.
+
 ## Quota
 
 Three generations per IP per day, twelve across the whole system. Both counters

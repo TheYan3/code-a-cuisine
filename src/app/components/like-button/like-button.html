@@ -8,12 +8,12 @@
     <button
       type="button"
       class="like__heart"
-      [class.like__heart--liked]="clicked()"
-      [disabled]="clicked()"
-      [attr.aria-pressed]="clicked()"
+      [class.like__heart--liked]="isLiked()"
+      [disabled]="isLiked()"
+      [attr.aria-pressed]="isLiked()"
       aria-label="Mark this recipe as cooked and liked"
       (click)="onClick()"
     ></button>
-    <span class="like__count">{{ displayCount() }}</span>
+    <span class="like__count">{{ count() }}</span>
   </div>
 </div>

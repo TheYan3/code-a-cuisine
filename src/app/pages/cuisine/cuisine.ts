@@ -1,11 +1,11 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { Header } from '../../components/header/header';
 import { Pagination } from '../../components/pagination/pagination';
 import { cuisineMeta } from '../../core/cuisine-meta';
-import { MOCK_RECIPES } from '../../core/mock-recipes';
 import { Recipe } from '../../core/recipe';
+import { RecipeApi } from '../../core/recipe-api';
 
 /** Recipes shown per page, matching the Figma list ("page 2 starts at 21"). */
 const PAGE_SIZE = 20;
@@ -15,9 +15,8 @@ const PAGE_SIZE = 20;
  * tile: the cuisine banner, a numbered list of its recipes with pagination,
  * and the empty state for a cuisine that has none yet.
  *
- * An unknown `:cuisine` key is not redirected here — `meta()` is simply
- * `undefined` and the page shows the empty state. Phase C adds the redirect
- * to `/library`.
+ * An unknown `:cuisine` key never reaches this component — `knownCuisineGuard`
+ * redirects to `/library` before it is created.
  */
 @Component({
   imports: [Header, Pagination, RouterLink],
@@ -25,7 +24,9 @@ const PAGE_SIZE = 20;
   styleUrl: './cuisine.scss',
   templateUrl: './cuisine.html',
 })
-export class CuisinePage {
+export class CuisinePage implements OnInit {
+  private readonly api = inject(RecipeApi);
+
   /** Cuisine key, bound from the `:cuisine` route parameter. */
   readonly cuisine = input<string>('');
   /** 1-based page number, bound from `?page=`. */
@@ -34,22 +35,32 @@ export class CuisinePage {
   /** Display data (label, emoji, banner) for the current cuisine key. */
   protected readonly meta = computed(() => cuisineMeta(this.cuisine()));
 
-  // ponytail: mock data, wired to RecipeApi in phase C — replace this list
-  // with `api.list()` filtered by `cuisine()`, keep the paging computeds.
-  private readonly allRecipes: Recipe[] = MOCK_RECIPES;
+  /** Every stored recipe, newest first. Empty while loading or on error. */
+  protected readonly allRecipes = signal<Recipe[]>([]);
+  /** True until the request settles, so the list does not flash "empty". */
+  protected readonly loading = signal(true);
+  /** True when the request failed. */
+  protected readonly error = signal(false);
 
-  /** Every recipe of the current cuisine, oldest-first id order for stable paging. */
+  /** This cuisine's recipes, newest first (the order `RecipeApi.list()` already returns). */
   protected readonly recipes = computed(() =>
-    this.allRecipes.filter((recipe) => recipe.cuisine === this.cuisine()),
+    this.allRecipes().filter((recipe) => recipe.cuisine === this.cuisine()),
   );
-
-  /** Current page, clamped to at least 1. */
-  protected readonly currentPage = computed(() => Math.max(1, Number(this.page()) || 1));
 
   /** Number of pages this cuisine's recipes need at 20 per page. */
   protected readonly totalPages = computed(() =>
     Math.max(1, Math.ceil(this.recipes().length / PAGE_SIZE)),
   );
+
+  /**
+   * Current page, clamped into `[1, totalPages()]` — a missing, non-numeric,
+   * too-small or too-large `?page=` all fall back to the closest valid page
+   * instead of an empty or broken list.
+   */
+  protected readonly currentPage = computed(() => {
+    const requested = Math.max(1, Number(this.page()) || 1);
+    return Math.min(requested, this.totalPages());
+  });
 
   /** The 20 (at most) recipes shown on the current page. */
   protected readonly pageRecipes = computed(() => {
@@ -59,6 +70,19 @@ export class CuisinePage {
 
   /** List start number for `<ol start>`, so page 2 continues at 21. */
   protected readonly startNumber = computed(() => (this.currentPage() - 1) * PAGE_SIZE + 1);
+
+  ngOnInit(): void {
+    this.api.list().subscribe({
+      next: (recipes) => {
+        this.allRecipes.set(recipes);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
+    });
+  }
 
   /**
    * Diet and time-category tags for one recipe. "No preference" is left out

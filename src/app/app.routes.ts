@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { canGenerateGuard } from './core/can-generate.guard';
 import { hasIngredientsGuard } from './core/has-ingredients.guard';
 import { hasRecipeIdsGuard } from './core/has-recipe-ids.guard';
+import { knownCuisineGuard } from './core/known-cuisine.guard';
 import { CuisinePage } from './pages/cuisine/cuisine';
 import { Generator } from './pages/generator/generator';
 import { Home } from './pages/home/home';
@@ -30,7 +31,7 @@ export const routes: Routes = [
   { path: 'generator/loading', component: Loading, canActivate: [canGenerateGuard] },
   { path: 'generator/results', component: Results, canActivate: [hasRecipeIdsGuard] },
   { path: 'library', component: Library },
-  { path: 'library/:cuisine', component: CuisinePage },
+  { path: 'library/:cuisine', component: CuisinePage, canActivate: [knownCuisineGuard] },
   { path: 'recipe/:id', component: RecipeDetail },
   { path: 'imprint', component: Imprint },
   { path: '**', redirectTo: '' },

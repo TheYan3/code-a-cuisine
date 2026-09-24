@@ -18,25 +18,33 @@
             <img src="/icons/heart_default.svg" alt="" width="28" height="26" />
           </h2>
 
-          <ul class="most-liked">
-            @for (recipe of mostLiked; track recipe.id) {
-              <li class="most-liked__item">
-                <a [routerLink]="['/recipe', recipe.id]" class="most-liked__card">
-                  <span class="most-liked__top">
-                    <span class="most-liked__time">
-                      <img src="/icons/clock.svg" alt="" width="24" height="24" />
-                      Cooking time: {{ recipe.cookingTimeMinutes }}min
+          @if (loading()) {
+            <p class="intro__most-liked-status">Loading recipes ...</p>
+          } @else if (error()) {
+            <p class="intro__most-liked-status">
+              Recipes could not be loaded. Please try again later.
+            </p>
+          } @else {
+            <ul class="most-liked">
+              @for (recipe of mostLiked(); track recipe.id) {
+                <li class="most-liked__item">
+                  <a [routerLink]="['/recipe', recipe.id]" class="most-liked__card">
+                    <span class="most-liked__top">
+                      <span class="most-liked__time">
+                        <img src="/icons/clock.svg" alt="" width="24" height="24" />
+                        Cooking time: {{ recipe.cookingTimeMinutes }}min
+                      </span>
+                      <span class="most-liked__likes">
+                        <img src="/icons/favorite_count.svg" alt="" width="20" height="20" />
+                        {{ recipe.likes }}
+                      </span>
                     </span>
-                    <span class="most-liked__likes">
-                      <img src="/icons/favorite_count.svg" alt="" width="20" height="20" />
-                      {{ recipe.likes }}
-                    </span>
-                  </span>
-                  <p class="most-liked__title">{{ recipe.title }}</p>
-                </a>
-              </li>
-            }
-          </ul>
+                    <p class="most-liked__title">{{ recipe.title }}</p>
+                  </a>
+                </li>
+              }
+            </ul>
+          }
         </div>
       </section>
 

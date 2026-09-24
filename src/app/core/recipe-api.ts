@@ -1,10 +1,18 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, catchError, map, of, switchMap, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { GenerateRecipesResponse, QuotaStatus, Recipe } from './recipe';
 import { RecipeRequest } from './recipe-request';
+
+/**
+ * How many times {@link RecipeApi.like} retries a like after Firebase
+ * rejects the write because another visitor's like landed first (HTTP 412,
+ * stale ETag) — a couple of quick retries clear a real race, more than that
+ * points at something else being wrong.
+ */
+const LIKE_RETRY_LIMIT = 3;
 
 /**
  * Error body the generation webhook returns when a request is refused. A 400
@@ -19,9 +27,9 @@ export interface RecipeApiError {
 
 /**
  * Talks to the two backends: the n8n webhooks for generating recipes and for
- * the remaining quota, and Firebase for reading stored recipes. Writing is not
- * offered on purpose — the database rules deny every client write, only the
- * n8n workflow stores recipes.
+ * the remaining quota, and Firebase for reading and — for the one field the
+ * database rules allow, `likes` — writing stored recipes. Every other write
+ * is refused by the rules; only the n8n workflow stores recipes.
  */
 @Injectable({ providedIn: 'root' })
 export class RecipeApi {
@@ -57,7 +65,7 @@ export class RecipeApi {
       .pipe(
         map((byId) =>
           Object.entries(byId ?? {})
-            .map(([id, recipe]) => ({ id, ...recipe }))
+            .map(([id, recipe]) => withLikes(id, recipe))
             .sort((a, b) => b.createdAt - a.createdAt),
         ),
       );
@@ -67,6 +75,75 @@ export class RecipeApi {
   byId(id: string): Observable<Recipe | null> {
     return this.http
       .get<Omit<Recipe, 'id'> | null>(`${environment.firebaseUrl}/recipes/${id}.json`)
-      .pipe(map((recipe) => (recipe ? { id, ...recipe } : null)));
+      .pipe(map((recipe) => (recipe ? withLikes(id, recipe) : null)));
   }
+
+  /**
+   * Increments one recipe's `likes` counter by exactly 1 — the only write the
+   * database rules allow from the client, and only when the new value is
+   * exactly the old value plus 1. That is enforced with Firebase's ETag
+   * concurrency control (see the Firebase REST API docs on conditional
+   * requests): a GET with `X-Firebase-ETag: true` returns the current value
+   * and its ETag, and the PUT carries that ETag in `if-match`. If another
+   * visitor's like won the race, Firebase answers 412 and hands back the
+   * fresh value and ETag in the same response — used here to retry without a
+   * second GET, up to {@link LIKE_RETRY_LIMIT} times.
+   *
+   * Resolves with the new like count once the write is accepted.
+   */
+  like(id: string): Observable<number> {
+    return this.likeAttempt(id, undefined, undefined, 0);
+  }
+
+  /**
+   * One try of {@link like}. `current`/`etag` are only set on a retry, where
+   * they come straight from the 412 response instead of a fresh GET.
+   */
+  private likeAttempt(
+    id: string,
+    current: number | undefined,
+    etag: string | undefined,
+    attempt: number,
+  ): Observable<number> {
+    const url = `${environment.firebaseUrl}/recipes/${id}/likes.json`;
+
+    const current$ =
+      etag !== undefined
+        ? of({ value: current ?? 0, etag })
+        : this.http
+            .get<number | null>(url, {
+              headers: { 'X-Firebase-ETag': 'true' },
+              observe: 'response',
+            })
+            .pipe(
+              map((response) => ({
+                value: response.body ?? 0,
+                etag: response.headers.get('ETag') ?? '',
+              })),
+            );
+
+    return current$.pipe(
+      switchMap(({ value, etag: currentEtag }) => {
+        const next = value + 1;
+        return this.http
+          .put(url, next, { headers: { 'if-match': currentEtag }, responseType: 'text' })
+          .pipe(
+            map(() => next),
+            catchError((error: HttpErrorResponse) => {
+              if (error.status === 412 && attempt < LIKE_RETRY_LIMIT) {
+                const freshEtag = error.headers.get('ETag') ?? undefined;
+                const freshValue = typeof error.error === 'number' ? error.error : undefined;
+                return this.likeAttempt(id, freshValue, freshEtag, attempt + 1);
+              }
+              return throwError(() => error);
+            }),
+          );
+      }),
+    );
+  }
+}
+
+/** Fills in `id` and defaults a missing `likes` field to 0 — recipes stored before this field existed have none. */
+function withLikes(id: string, recipe: Omit<Recipe, 'id'>): Recipe {
+  return { id, ...recipe, likes: recipe.likes ?? 0 };
 }

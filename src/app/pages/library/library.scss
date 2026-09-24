@@ -78,6 +78,14 @@
   color: var(--color-heading-green);
 }
 
+.intro__most-liked-status {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+}
+
 // Horizontal, touch-scrollable strip — the Figma frame clips card 4/5 to
 // hint that more follow.
 .most-liked {

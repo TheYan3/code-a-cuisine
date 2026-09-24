@@ -3,6 +3,8 @@ import { RouterLink } from '@angular/router';
 
 import { Header } from '../../components/header/header';
 import { LikeButton } from '../../components/like-button/like-button';
+import { cuisineMeta } from '../../core/cuisine-meta';
+import { hasLiked, markLiked } from '../../core/liked-recipes';
 import { Recipe, RecipeIngredient } from '../../core/recipe';
 import { RecipeApi } from '../../core/recipe-api';
 
@@ -32,25 +34,59 @@ export class RecipeDetail implements OnInit {
   readonly id = input<string>('');
   /**
    * Ids of the result set the visitor came from, passed along by the results
-   * page. Present means "came from the generator", absent means "came from
-   * the library" — that is what the back link points at.
+   * page. Present means "came from the generator" — that is what the back
+   * link points at, ahead of `cuisine`/`page` below.
    */
   readonly ids = input<string>('');
+  /**
+   * Cuisine key the visitor came from, passed along by a `/library/:cuisine`
+   * row. Present (and `ids` absent) means "came from a cuisine page" — the
+   * back link returns to that exact cuisine.
+   */
+  readonly cuisine = input<string>('');
+  /** Page the visitor came from within that cuisine, passed along with `cuisine`. */
+  readonly page = input<string>('');
 
   /** The loaded recipe, `null` while loading and when the id is unknown. */
   protected readonly recipe = signal<Recipe | null>(null);
   /** True until the request settled, so the page does not flash "not found". */
   protected readonly loading = signal(true);
+  /** Like count shown next to the heart — starts at the loaded value, then tracks the pending/confirmed like. */
+  protected readonly likeCount = signal(0);
+  /** Whether this browser already gave (or just gave) this recipe its heart. */
+  protected readonly isLiked = signal(false);
 
-  /** Where the back link goes: the result set if we came from it, else the library. */
-  protected readonly backLink = computed(() => (this.ids() ? '/generator/results' : '/library'));
+  /** Display data for `cuisine()`, or `undefined` when it is empty or not a known key. */
+  private readonly cuisineInfo = computed(() => cuisineMeta(this.cuisine()));
+
+  /**
+   * Where the back link goes: the result set if we came from it, else the
+   * cuisine page we came from, else the library overview.
+   */
+  protected readonly backLink = computed(() => {
+    if (this.ids()) return '/generator/results';
+    const meta = this.cuisineInfo();
+    if (meta) return `/library/${meta.key}`;
+    return '/library';
+  });
+
   /** Label of the back link, matching its target. */
-  protected readonly backLabel = computed(() => (this.ids() ? 'Recipe results' : 'Cookbook'));
-  /** Query parameters the back link needs to restore the result set. */
+  protected readonly backLabel = computed(() => {
+    if (this.ids()) return 'Recipe results';
+    const meta = this.cuisineInfo();
+    if (meta) return meta.label;
+    return 'Cookbook';
+  });
+
+  /** Query parameters the back link needs to restore the result set or the cuisine page. */
   protected readonly backParams = computed<Record<string, string>>(() => {
     const ids = this.ids();
+    if (ids) return { ids };
+
+    const meta = this.cuisineInfo();
+    const page = this.page();
     const params: Record<string, string> = {};
-    if (ids) params['ids'] = ids;
+    if (meta && page) params['page'] = page;
     return params;
   });
 
@@ -70,6 +106,10 @@ export class RecipeDetail implements OnInit {
       next: (recipe) => {
         this.recipe.set(recipe);
         this.loading.set(false);
+        if (recipe) {
+          this.likeCount.set(recipe.likes);
+          this.isLiked.set(hasLiked(recipe.id));
+        }
       },
       error: () => this.loading.set(false),
     });
@@ -97,11 +137,29 @@ export class RecipeDetail implements OnInit {
 
   /**
    * Fired once by `app-like-button` when a visitor gives this recipe a
-   * heart. Persisting the like (Firebase increment) is not built yet — this
-   * is the hook point for it.
+   * heart. Shows the +1 and the liked state immediately (the button is
+   * already disabled at that point), then persists it through `RecipeApi`.
+   * A successful write remembers the id in `localStorage` so a reload keeps
+   * the heart disabled; a failed write reverts both the count and the liked
+   * state, since nothing was actually saved.
    */
   protected onLiked(): void {
-    // ponytail: no persistence yet, phase C wires this to Firebase.
+    const recipe = this.recipe();
+    if (!recipe) return;
+
+    this.likeCount.update((count) => count + 1);
+    this.isLiked.set(true);
+
+    this.api.like(recipe.id).subscribe({
+      next: (newCount) => {
+        this.likeCount.set(newCount);
+        markLiked(recipe.id);
+      },
+      error: () => {
+        this.likeCount.update((count) => count - 1);
+        this.isLiked.set(false);
+      },
+    });
   }
 
   /** Renders an amount the way the design writes it: "80g", "30ml", "1 piece". */
