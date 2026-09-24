@@ -110,6 +110,23 @@
   gap: 24px;
 }
 
+// No Figma frame for the "no recipes" state exists yet. Derived from
+// `.results__subtitle` (same green page, same informational-sentence
+// role) so it reads like the rest of this page's body copy instead of an
+// afterthought; `width: 100%` centers it across the row `.results__cards`
+// would otherwise leave it hugging its own content width.
+.results__empty {
+  width: 100%;
+  margin: 0;
+  padding: 64px 0;
+  font-family: var(--font-quicksand);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 30px;
+  color: var(--color-linen);
+  text-align: center;
+}
+
 .results__card {
   display: flex;
   flex-direction: column;
@@ -170,6 +187,15 @@
   font-weight: 500;
   line-height: 20px;
   color: var(--color-green);
+}
+
+// `.results__cards` stretches every `.results__card` to the row's tallest
+// card by default (flex row, `align-items` left at its `stretch` default),
+// so cards with less text end up with spare height below the fixed 48px
+// gap. `margin-top: auto` claims that spare height instead of leaving it
+// above the button, so "View" always sits flush with the card bottom.
+.results__card-cta {
+  margin-top: auto;
 }
 
 // Matches `.generator__next`/`.preferences__submit`: an explicit margin

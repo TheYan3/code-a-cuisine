@@ -63,3 +63,36 @@
   color: var(--color-linen);
   text-align: center;
 }
+
+// No Figma frame for the error state exists yet (checked the export
+// folder — nothing named for this state). Derived instead of the page's
+// own tokens: sizing follows `.preferences__title` (the app's smaller
+// headline size, fitting for a self-contained message rather than a full
+// page hero like `.results__title`), color follows every other text node
+// on this green full-bleed page (`--color-linen`).
+.loading__failure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  max-width: 480px;
+  text-align: center;
+}
+
+.loading__failure-title {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 35px;
+  color: var(--color-linen);
+}
+
+.loading__failure-text {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 26px;
+  color: var(--color-linen);
+}
