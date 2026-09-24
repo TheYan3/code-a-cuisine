@@ -1,0 +1,49 @@
+@if (totalPages() > 1) {
+  <nav class="pagination" aria-label="Pages">
+    @if (previousPage(); as page) {
+      <a
+        class="pagination__item"
+        routerLink="."
+        [queryParams]="{ page }"
+        queryParamsHandling="merge"
+        aria-label="Previous page"
+        >&lt;</a
+      >
+    } @else {
+      <span class="pagination__item pagination__item--disabled" aria-hidden="true">&lt;</span>
+    }
+
+    <div class="pagination__numbers">
+      @for (item of items(); track item) {
+        @if (item === 'ellipsis') {
+          <span class="pagination__ellipsis">. . .</span>
+        } @else if (item === currentPage()) {
+          <span class="pagination__item pagination__item--active" aria-current="page">{{
+            item
+          }}</span>
+        } @else {
+          <a
+            class="pagination__item"
+            routerLink="."
+            [queryParams]="{ page: item }"
+            queryParamsHandling="merge"
+            >{{ item }}</a
+          >
+        }
+      }
+    </div>
+
+    @if (nextPage(); as page) {
+      <a
+        class="pagination__item"
+        routerLink="."
+        [queryParams]="{ page }"
+        queryParamsHandling="merge"
+        aria-label="Next page"
+        >&gt;</a
+      >
+    } @else {
+      <span class="pagination__item pagination__item--disabled" aria-hidden="true">&gt;</span>
+    }
+  </nav>
+}

@@ -1,0 +1,238 @@
+// Built from the Figma frames "cookbook" (desktop) and "mobile-cookbook".
+// Page column: 1440px frame, 55px inset on both sides (1330px content).
+.library-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-background);
+}
+
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.library {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  padding: 64px 55px 64px;
+}
+
+.intro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 17px;
+  padding: 40px 24px;
+  border-radius: 20px;
+  background-color: color-mix(in srgb, var(--color-green) 4%, transparent);
+}
+
+.intro__cookbook {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1 1 400px;
+  max-width: 454px;
+}
+
+.intro__title {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 65px;
+  color: var(--color-heading-green);
+}
+
+.intro__text {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-text-dark);
+}
+
+.intro__most-liked {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 2 1 600px;
+  min-width: 0;
+}
+
+.intro__most-liked-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 30px;
+  color: var(--color-heading-green);
+}
+
+// Horizontal, touch-scrollable strip — the Figma frame clips card 4/5 to
+// hint that more follow.
+.most-liked {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+}
+
+.most-liked__item {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+.most-liked__card {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  width: 370px;
+  height: 124px;
+  padding: 16px 12px;
+  border-radius: 16px;
+  background-color: color-mix(in srgb, var(--color-card-sage) 70%, transparent);
+  text-decoration: none;
+}
+
+.most-liked__time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-green);
+  white-space: nowrap;
+}
+
+.most-liked__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 8px 0 0;
+  font-family: var(--font-quicksand);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 30px;
+  color: var(--color-heading-green);
+}
+
+.most-liked__likes {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-green);
+}
+
+.cuisines {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 52px 65px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cuisine-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.cuisine-tile__heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 35px;
+  color: var(--color-heading-green);
+}
+
+.cuisine-tile__emoji {
+  font-size: 28px;
+  transition: font-size 0.15s ease;
+}
+
+.cuisine-tile:hover .cuisine-tile__emoji {
+  font-size: 38px;
+}
+
+.cuisine-tile__image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.library__generate {
+  align-self: flex-end;
+}
+
+@media (max-width: 1024px) {
+  .cuisines {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .library {
+    gap: 48px;
+    padding: 32px 20px 48px;
+  }
+
+  .intro {
+    padding: 24px;
+  }
+
+  .intro__title {
+    font-size: 44px;
+    line-height: 48px;
+  }
+
+  .intro__text {
+    font-size: 18px;
+  }
+
+  .intro__most-liked-heading {
+    font-size: 20px;
+  }
+
+  .cuisines {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .cuisine-tile__image {
+    aspect-ratio: 320 / 260;
+  }
+
+  .library__generate {
+    align-self: center;
+  }
+}

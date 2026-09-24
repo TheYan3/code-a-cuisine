@@ -1,0 +1,56 @@
+<div class="cuisine-page">
+  <div class="page">
+    <app-header variant="green" backLink="/library" backLabel="Cookbook" />
+
+    <div class="cuisine__actions">
+      <a routerLink="/generator" class="btn btn--primary btn--green">Generate a recipe</a>
+    </div>
+
+    <main class="cuisine">
+      <div class="cuisine__column">
+        <div class="cuisine__banner">
+          @if (meta(); as cuisineMeta) {
+            <img [src]="cuisineMeta.banner" alt="" class="cuisine__banner-image" />
+          }
+          <h1 class="cuisine__banner-title">{{ meta()?.label }}</h1>
+        </div>
+
+        @if (pageRecipes().length) {
+          <ol class="cuisine__list" [start]="startNumber()">
+            @for (recipe of pageRecipes(); track recipe.id; let i = $index) {
+              <li>
+                <a [routerLink]="['/recipe', recipe.id]" class="cuisine__row">
+                  <span class="cuisine__number" aria-hidden="true">{{ i + startNumber() }}.</span>
+
+                  <span class="cuisine__row-main">
+                    <span class="cuisine__time">
+                      <img src="/icons/clock.svg" alt="" width="24" height="24" />
+                      Cooking time: {{ recipe.cookingTimeMinutes }}min
+                    </span>
+                    <span class="cuisine__row-title">{{ recipe.title }}</span>
+                  </span>
+
+                  <span class="cuisine__row-meta">
+                    @for (tag of tags(recipe); track tag) {
+                      <span class="cuisine__tag">{{ tag }}</span>
+                    }
+                    <span class="cuisine__likes">
+                      <img src="/icons/favorite_count.svg" alt="" width="20" height="20" />
+                      {{ recipe.likes }}
+                    </span>
+                  </span>
+                </a>
+              </li>
+            }
+          </ol>
+        } @else {
+          <p class="cuisine__empty">
+            No {{ meta()?.name }} recipes yet – be the first to generate one.
+          </p>
+        }
+
+        <app-pagination [currentPage]="currentPage()" [totalPages]="totalPages()" />
+      </div>
+    </main>
+  </div>
+</div>

@@ -57,6 +57,18 @@
   }
 }
 
+// Missing counterpart of `.btn--creme.btn--secondary` above (Figma
+// "Secondary button green"): same rgba-tint-on-hover pattern, just the
+// green palette used on white/linen pages (library, cuisine, recipe detail).
+.btn--green.btn--secondary {
+  color: var(--color-green);
+
+  &:hover {
+    background-color: rgba(57, 96, 57, 0.1);
+    border-radius: 0;
+  }
+}
+
 // Known deviation from Figma: the button instances placed on the generator
 // pages are 62px tall, but the component itself (and `.btn--primary` above)
 // is 60px. The component wins.

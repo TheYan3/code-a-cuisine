@@ -1,0 +1,78 @@
+// Figma node "CTA giving a heart" (one-recipe-view-one-cook). Its two
+// sentences use "Mulish" Bold/Regular, which this project does not
+// self-host (only Quicksand and Ubuntu, see src/styles/base/_fonts.scss) —
+// falls back to Quicksand at the closest weights it has (700 / 500, Quicksand
+// has no 400). The heart icon and its three states reuse the existing
+// public/icons/heart_*.svg assets, which already match this exact component
+// (52x48, #008000).
+:host {
+  display: block;
+}
+
+.like {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 24px;
+}
+
+.like__text {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+
+  strong {
+    font-weight: 700;
+  }
+}
+
+.like__control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.like__heart {
+  box-sizing: border-box;
+  width: 52px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  background: url('/icons/heart_default.svg') no-repeat center / contain;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-image: url('/icons/heart_hover.svg');
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.like__heart--liked {
+  background-image: url('/icons/heart_clicked.svg');
+}
+
+.like__count {
+  font-family: var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-button-text);
+}
+
+@media (max-width: 640px) {
+  .like {
+    justify-content: flex-start;
+    text-align: left;
+  }
+}

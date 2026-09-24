@@ -79,6 +79,12 @@ export interface Recipe {
   steps: RecipeStep[];
   /** Estimated nutrition per portion. */
   nutrition: RecipeNutrition;
+  /**
+   * Number of visitors who marked this recipe as cooked and liked it (the
+   * "Just finished this meal?" heart on the detail page). Shown read-only on
+   * every card in the library; incrementing it is not part of this phase.
+   */
+  likes: number;
 }
 
 /**

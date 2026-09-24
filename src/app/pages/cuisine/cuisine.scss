@@ -1,0 +1,236 @@
+// Built from the Figma frames "it-recipes" (desktop) and
+// "mobile-list-recipes-of-one-categorie". The content column (banner, list,
+// pagination) is a FIXED 1143px in the export, not FILL — Yannic confirmed
+// that is deliberate ("size stays the same no matter how big the screen,
+// just center it; only smaller devices change it"), so it is built as a
+// hard max-width here instead of the page's usual 100%-until-1440 column.
+.cuisine-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-background);
+}
+
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.cuisine__actions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 1143px;
+  margin: 24px auto 0;
+  padding: 0 20px;
+}
+
+.cuisine {
+  padding: 40px 20px 64px;
+}
+
+.cuisine__column {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 100%;
+  max-width: 1143px;
+  margin: 0 auto;
+}
+
+// The banner image (public/images/cookbook/banner-*.webp) already contains
+// the tinted background band and illustrations, the title is not baked in —
+// each cuisine's source is a different aspect ratio, so the image keeps its
+// own height instead of a shared one.
+.cuisine__banner {
+  position: relative;
+}
+
+.cuisine__banner-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+}
+
+.cuisine__banner-title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.04;
+  color: var(--color-text-dark);
+  text-align: center;
+}
+
+.cuisine__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cuisine__row {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 66px;
+  padding: 8px 10px;
+  border-radius: 16px;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    background-color: color-mix(in srgb, var(--color-linen) 70%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: -2px;
+  }
+}
+
+.cuisine__row-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 300px;
+  min-width: 0;
+}
+
+.cuisine__number {
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background-color: var(--color-number-badge);
+  font-family: var(--font-quicksand);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-heading-green);
+}
+
+.cuisine__time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--color-green);
+}
+
+.cuisine__row-title {
+  font-family: var(--font-quicksand);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 30px;
+  color: var(--color-heading-green);
+}
+
+.cuisine__row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.cuisine__tag {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 6px 12px;
+  border-radius: 30px;
+  background-color: color-mix(in srgb, var(--color-green) 20%, transparent);
+  font-family: var(--font-quicksand);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+}
+
+.cuisine__likes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-green);
+}
+
+.cuisine__empty {
+  padding: 64px 0;
+  font-family: var(--font-quicksand);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  text-align: center;
+}
+
+// Mobile: the row stacks (number+time, title, tags+heart) and every other
+// row gets a tint — the Figma mobile frame alternates "Default"/"on click"
+// states on the rows purely for zebra rhythm, not a real click state.
+@media (max-width: 767px) {
+  .cuisine__actions {
+    justify-content: center;
+    margin-top: 16px;
+  }
+
+  .cuisine {
+    padding: 24px 16px 48px;
+  }
+
+  .cuisine__banner-title {
+    font-size: 24px;
+  }
+
+  // Keeps the row a wrapping flex row instead of a column: the number and
+  // the time/title block share the first line, the tags/heart row wraps
+  // onto its own line via `flex-basis: 100%` below.
+  .cuisine__row {
+    align-items: flex-start;
+    gap: 8px 0;
+    padding: 16px;
+  }
+
+  .cuisine__row:hover {
+    background-color: transparent;
+  }
+
+  .cuisine__list li:nth-child(even) .cuisine__row {
+    background-color: color-mix(in srgb, var(--color-linen) 70%, transparent);
+  }
+
+  .cuisine__row-main {
+    flex: 1 1 200px;
+  }
+
+  .cuisine__row-meta {
+    flex-basis: 100%;
+  }
+
+  .cuisine__row-title {
+    font-size: 20px;
+  }
+}

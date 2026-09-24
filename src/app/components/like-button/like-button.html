@@ -1,0 +1,19 @@
+<div class="like">
+  <p class="like__text">
+    <strong>Just finished this meal?</strong>
+    Give it a heart, so that the others know this is delicious.
+  </p>
+
+  <div class="like__control">
+    <button
+      type="button"
+      class="like__heart"
+      [class.like__heart--liked]="clicked()"
+      [disabled]="clicked()"
+      [attr.aria-pressed]="clicked()"
+      aria-label="Mark this recipe as cooked and liked"
+      (click)="onClick()"
+    ></button>
+    <span class="like__count">{{ displayCount() }}</span>
+  </div>
+</div>

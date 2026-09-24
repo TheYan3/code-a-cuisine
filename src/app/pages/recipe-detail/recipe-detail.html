@@ -126,6 +126,8 @@
               }
             </ol>
           </section>
+
+          <app-like-button [count]="recipe.likes" (liked)="onLiked()" />
         </article>
 
         <section class="cookbook-cta">

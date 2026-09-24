@@ -2,6 +2,7 @@ import { Component, OnInit, computed, inject, input, signal } from '@angular/cor
 import { RouterLink } from '@angular/router';
 
 import { Header } from '../../components/header/header';
+import { LikeButton } from '../../components/like-button/like-button';
 import { Recipe, RecipeIngredient } from '../../core/recipe';
 import { RecipeApi } from '../../core/recipe-api';
 
@@ -19,7 +20,7 @@ const CHEF_BADGES = [
  * as a shared link without any state from the generator.
  */
 @Component({
-  imports: [Header, RouterLink],
+  imports: [Header, RouterLink, LikeButton],
   selector: 'app-recipe-detail',
   styleUrl: './recipe-detail.scss',
   templateUrl: './recipe-detail.html',
@@ -92,6 +93,15 @@ export class RecipeDetail implements OnInit {
   /** Badge image for a cook; cooks beyond the four designed badges reuse the last one. */
   protected chefBadge(chef: number): string {
     return CHEF_BADGES[Math.min(chef, CHEF_BADGES.length) - 1];
+  }
+
+  /**
+   * Fired once by `app-like-button` when a visitor gives this recipe a
+   * heart. Persisting the like (Firebase increment) is not built yet — this
+   * is the hook point for it.
+   */
+  protected onLiked(): void {
+    // ponytail: no persistence yet, phase C wires this to Firebase.
   }
 
   /** Renders an amount the way the design writes it: "80g", "30ml", "1 piece". */
