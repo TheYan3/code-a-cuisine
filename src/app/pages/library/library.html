@@ -22,15 +22,17 @@
             @for (recipe of mostLiked; track recipe.id) {
               <li class="most-liked__item">
                 <a [routerLink]="['/recipe', recipe.id]" class="most-liked__card">
-                  <p class="most-liked__time">
-                    <img src="/icons/clock.svg" alt="" width="24" height="24" />
-                    Cooking time: {{ recipe.cookingTimeMinutes }}min
-                  </p>
-                  <p class="most-liked__title">{{ recipe.title }}</p>
-                  <span class="most-liked__likes">
-                    <img src="/icons/favorite_count.svg" alt="" width="20" height="20" />
-                    {{ recipe.likes }}
+                  <span class="most-liked__top">
+                    <span class="most-liked__time">
+                      <img src="/icons/clock.svg" alt="" width="24" height="24" />
+                      Cooking time: {{ recipe.cookingTimeMinutes }}min
+                    </span>
+                    <span class="most-liked__likes">
+                      <img src="/icons/favorite_count.svg" alt="" width="20" height="20" />
+                      {{ recipe.likes }}
+                    </span>
                   </span>
+                  <p class="most-liked__title">{{ recipe.title }}</p>
                 </a>
               </li>
             }
@@ -52,7 +54,6 @@
                 [alt]="cuisine.alt"
                 width="400"
                 height="400"
-                loading="lazy"
               />
             </a>
           </li>

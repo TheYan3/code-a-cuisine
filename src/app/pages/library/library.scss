@@ -95,12 +95,14 @@
   scroll-snap-align: start;
 }
 
+// Fixed per Yannic: was a single flex row (time/title/likes side by side),
+// squeezing the title into a narrow middle column. The Figma card is two
+// rows — time+likes on top, the title below spanning the full width.
 .most-liked__card {
   box-sizing: border-box;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
+  flex-direction: column;
+  gap: 8px;
   width: 370px;
   height: 124px;
   padding: 16px 12px;
@@ -109,11 +111,17 @@
   text-decoration: none;
 }
 
+.most-liked__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .most-liked__time {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin: 0;
   font-family: var(--font-quicksand);
   font-size: 16px;
   font-weight: 500;
@@ -122,12 +130,14 @@
   white-space: nowrap;
 }
 
+// `-webkit-line-clamp` only kicks in once the title actually exceeds 2
+// lines — a short title still just takes its natural 1 line, no ellipsis.
 .most-liked__title {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  margin: 8px 0 0;
+  margin: 0;
   font-family: var(--font-quicksand);
   font-size: 24px;
   font-weight: 500;
