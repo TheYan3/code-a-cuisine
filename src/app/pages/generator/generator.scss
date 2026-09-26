@@ -1,53 +1,94 @@
+@use '../../../styles/abstracts' as *;
+
 .page {
   display: flex;
   flex-direction: column;
-  gap: 64px;
+  gap: 40px;
   max-width: 1440px;
   margin: 0 auto;
+
+  @include desktop-up {
+    gap: 64px;
+  }
 }
 
+// Fluidly fills the viewport minus the shared page gutter until it hits the
+// Figma desktop frame's fixed 1087px column (reached once the viewport is
+// wide enough — the same formula also keeps the column narrower than the
+// viewport at the 1024px desktop breakpoint, where a bare `1087px` would
+// still overflow). Below that, no tablet frame exists in the export, so
+// this is what "fließend skaliert" between the 375 and 1440 frames.
 .generator {
   display: flex;
   flex-direction: column;
-  width: 1087px;
+  width: min(1087px, calc(100% - 2 * var(--page-gutter)));
   margin: 0 auto;
 }
 
-// Figma "Headline" frame: fixed 567px, centered in the 1087px column.
+// Figma "Headline" frame: left-aligned, fixed 32px mobile / centered fixed
+// 54px desktop-up 567px column.
 .generator__title {
-  align-self: center;
-  width: 567px;
   margin: 0 0 24px;
   font-family: var(--font-quicksand);
-  font-size: 54px;
+  font-size: 32px;
   font-weight: 600;
-  line-height: 65px;
+  line-height: 40px;
   color: var(--color-heading-green);
-  text-align: center;
+
+  @include desktop-up {
+    align-self: center;
+    width: 567px;
+    font-size: 54px;
+    line-height: 65px;
+    text-align: center;
+  }
 }
 
 .generator__body {
   display: flex;
   flex-direction: column;
-  gap: 64px;
+  gap: 40px;
+
+  @include desktop-up {
+    gap: 64px;
+  }
 }
 
 .generator__subtitle {
   margin: 0;
   font-family: var(--font-quicksand);
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 30px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 23px;
   color: var(--color-text-dark);
-  text-align: center;
+
+  @include desktop-up {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 30px;
+    text-align: center;
+  }
 }
 
+// Figma "Imput components" mobile: the ingredient card and the list card
+// stack; desktop-up restores the original side-by-side row.
 .generator__row {
   display: flex;
-  gap: 32px;
+  flex-direction: column;
+  gap: 24px;
+
+  @include desktop-up {
+    flex-direction: row;
+    gap: 32px;
+  }
 }
 
 .generator__next {
-  align-self: flex-end;
-  margin-top: 56px;
+  align-self: center;
+  margin-top: 40px;
+
+  @include desktop-up {
+    align-self: flex-end;
+    margin-top: 56px;
+  }
 }

@@ -1,17 +1,33 @@
+@use '../../../styles/abstracts' as *;
+
 .ingredient-input {
   box-sizing: border-box;
   display: flex;
   justify-content: center;
-  width: 577px;
+  width: 100%;
   padding: 25px 0;
   border-radius: 20px;
   background-color: rgba(57, 96, 57, 0.3);
+
+  @include desktop-up {
+    width: 577px;
+  }
 }
 
+// Figma "Imput ingredient component" mobile: the name field and the
+// serving-size row stack in one centered column; desktop-up restores the
+// original two-column row.
 .ingredient-input__row {
   display: flex;
-  align-items: flex-start;
-  gap: 32px;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+
+  @include desktop-up {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+  }
 }
 
 // Column that holds the name field and, once open, the autocomplete
@@ -32,10 +48,14 @@
 
 .ingredient-input__label {
   font-family: var(--font-quicksand);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
   line-height: 20px;
   color: var(--color-text-dark);
+
+  @include desktop-up {
+    font-size: 20px;
+  }
 }
 
 .ingredient-input__field-box {
@@ -129,16 +149,22 @@
   }
 }
 
-// Figma "Frame 827": fixed 178x126px. Its row (amount + unit + add button)
-// hugs 185px and overflows the column by 7px — the fixed column width is
-// what centers the whole input row in the card, the overflowing row is what
-// the reference PNG shows at full size.
+// Figma "Serving size" mobile: 300px, matching the name field column so
+// both stack with the same width. Desktop-up restores the fixed 178x126px
+// "Frame 827": its row (amount + unit + add button) hugs 185px and
+// overflows the column by 7px — the fixed column width is what centers the
+// whole input row in the card, the overflowing row is what the reference
+// PNG shows at full size.
 .ingredient-input__serving-col {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 178px;
-  height: 126px;
+  width: 300px;
+
+  @include desktop-up {
+    width: 178px;
+    height: 126px;
+  }
 }
 
 // Figma "Serving size": fixed 141px text box.
@@ -146,13 +172,17 @@
   width: 141px;
 }
 
-// Figma "Frame 769": hugs its content horizontally, fixed 91px tall.
+// Figma "Frame 769": hugs its content (36px tall on mobile). Desktop-up
+// fixes it at 91px tall instead.
 .ingredient-input__serving-row {
   display: flex;
   align-self: flex-start;
   align-items: flex-start;
   gap: 8px;
-  height: 91px;
+
+  @include desktop-up {
+    height: 91px;
+  }
 }
 
 // No side padding (deliberately deviates from Figma's 15px): the centered value

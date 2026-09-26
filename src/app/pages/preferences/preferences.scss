@@ -1,29 +1,46 @@
+@use '../../../styles/abstracts' as *;
+
 .page {
   display: flex;
   flex-direction: column;
-  gap: 64px;
+  gap: 40px;
   max-width: 1440px;
   margin: 0 auto;
+
+  @include desktop-up {
+    gap: 64px;
+  }
 }
 
+// Same fluid formula as the generator page: fills the viewport minus the
+// shared page gutter until it hits the Figma desktop frame's fixed 721px
+// column. No tablet frame exists in the export, so this is what "fließend
+// skaliert" between the 375 and 1440 frames.
 .preferences {
   display: flex;
   flex-direction: column;
-  width: 721px;
+  width: min(721px, calc(100% - 2 * var(--page-gutter)));
   margin: 0 auto;
 }
 
-// Figma "Headline" frame: fixed 416px, centered in the 721px column.
+// Figma "Headline" frame: left-aligned mobile, centered fixed 416px column
+// desktop-up.
 .preferences__title {
-  align-self: center;
-  width: 416px;
-  margin: 0 0 56px;
+  margin: 0 0 24px;
   font-family: var(--font-quicksand);
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
-  line-height: 35px;
+  line-height: 30px;
   color: var(--color-text-dark);
-  text-align: center;
+
+  @include desktop-up {
+    align-self: center;
+    width: 416px;
+    margin: 0 0 56px;
+    font-size: 28px;
+    line-height: 35px;
+    text-align: center;
+  }
 }
 
 .preferences__body {
@@ -32,23 +49,36 @@
   gap: 32px;
 }
 
+// Figma "Adjustments" mobile: Portions/Chefs stack; desktop-up restores the
+// original centered row.
 .preferences__counters {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
-  gap: 120px;
+  gap: 24px;
+
+  @include desktop-up {
+    flex-direction: row;
+    justify-content: center;
+    gap: 120px;
+  }
 }
 
-// Figma "Portions"/"Chefs": fixed-width columns (290px/263px), so the
-// centered pair starts at the same x as in the design regardless of how wide
-// the label text renders. The labels are fixed-height text boxes (23px/25px)
-// with a 20px line-height. `--counter-unit-width` feeds the fixed width of
-// the unit text inside `app-counter` ("Portions" 78px, "Person" 69px).
+// Figma "Portions"/"Chefs": fixed-width columns (290px/263px, same at every
+// breakpoint), so the pair starts at the same x as in the design regardless
+// of how wide the label text renders. The labels are fixed-height text
+// boxes (23px/25px) with a 20px line-height. `--counter-unit-width` feeds
+// the fixed width of the unit text inside `app-counter` ("Portions" 78px,
+// "Person" 69px).
 .preferences__counter-group {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 16px;
+  gap: 8px;
+
+  @include desktop-up {
+    gap: 16px;
+  }
 }
 
 .preferences__counter-group--portions {
@@ -73,10 +103,14 @@
   align-self: stretch;
   margin: 0;
   font-family: var(--font-quicksand);
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   line-height: 20px;
   color: var(--color-text-dark);
+
+  @include desktop-up {
+    font-size: 20px;
+  }
 }
 
 .preferences__form {
@@ -138,9 +172,32 @@
 
 .preference-group__tags {
   display: flex;
+  flex-wrap: wrap;
   align-self: stretch;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
+
+  @include desktop-up {
+    gap: 20px;
+  }
+}
+
+// Figma "Cooking time" mobile: the three time tags keep their tighter 8px
+// gap so they still fit on one row at 375px. Even so, their fixed 83/102/
+// 110px columns plus that gap add up to 311px — 16px more than the 295px
+// left inside the card's 24px padding — so like the desktop "Frame 827"
+// ingredient-input row (see its own comment), the row is deliberately
+// allowed to spill slightly past its nominal box rather than wrap or
+// shrink the columns. Desktop-up removes the spill and matches the other
+// groups' 20px gap.
+.preference-group--time .preference-group__tags {
+  gap: 8px;
+  margin: 0 -8px;
+
+  @include desktop-up {
+    gap: 20px;
+    margin: 0;
+  }
 }
 
 // Figma "Frame 755/754/753": fixed-width columns (83px/102px/110px); the tag
@@ -181,5 +238,9 @@
 
 .preferences__submit {
   align-self: center;
-  margin-top: 56px;
+  margin-top: 40px;
+
+  @include desktop-up {
+    margin-top: 56px;
+  }
 }

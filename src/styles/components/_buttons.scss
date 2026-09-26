@@ -1,16 +1,28 @@
+@use '../abstracts' as *;
+
 // Global button classes, combined like `btn btn--primary btn--creme`.
 // `btn--primary`/`btn--secondary` are separated from color (`btn--creme`,
 // `btn--green`) so the same size/shape rules serve both palettes.
+//
+// Mobile default matches the Figma "Mobile primary/secondary button"
+// components (e.g. mobile-home, mobile-generate-recipe); desktop-up
+// restores the "Primary/Secondary button" values from the 1440px frames
+// (e.g. hero). No tablet frame exists in the export, so the mobile sizing
+// simply continues flowing until the desktop breakpoint takes over.
 .btn {
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 16px 26px;
+  padding: 4px 16px;
   border: none;
   text-decoration: none;
   cursor: pointer;
+
+  @include desktop-up {
+    padding: 16px 26px;
+  }
 
   &:focus-visible {
     outline: 2px solid currentColor;
@@ -19,23 +31,43 @@
 }
 
 .btn--primary {
+  // Fixed (not hug) 52px on mobile — the Figma "Mobile primary button"
+  // component sets it explicitly, unlike its desktop counterpart, which
+  // hugs to 60px via its own padding/line-height instead (`height: auto`
+  // hands sizing back to that).
+  height: 52px;
   font-family: var(--font-quicksand);
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 600;
-  // 60px box (16px padding top/bottom) needs a 28px line height, the font's
-  // own "normal" line height is taller and would grow the button past 60px.
-  line-height: 28px;
+  // Figma "Get started" mobile text box: 20px (matches the natural AUTO
+  // line height at this size).
+  line-height: 20px;
+
+  @include desktop-up {
+    height: auto;
+    font-size: 24px;
+    // 60px box (16px padding top/bottom) needs a 28px line height, the font's
+    // own "normal" line height is taller and would grow the button past 60px.
+    line-height: 28px;
+  }
 }
 
 .btn--secondary {
-  // Fixed (not hug) height in the design: the 24px icon is taller than the
-  // 20px text line-height and would otherwise grow the row past 52px.
+  // Fixed (not hug) height in the design: the icon is taller than the text
+  // line-height and would otherwise grow the row past 52px. 52px is the
+  // same at every breakpoint, so it stays outside the media query.
   height: 52px;
   border-radius: 5px;
   font-family: var(--font-quicksand);
-  font-size: 20px;
+  font-size: 18px;
+  // Figma "Go to cookbook" mobile text box: 23px.
+  line-height: 23px;
   font-weight: 500;
-  line-height: 20px;
+
+  @include desktop-up {
+    font-size: 20px;
+    line-height: 20px;
+  }
 }
 
 .btn--creme.btn--primary {
@@ -84,10 +116,15 @@
 }
 
 // Icon inside a button (e.g. the arrow in the secondary button), sized to
-// the 24px box it has in the design and colored via `currentColor` so it
-// always matches the button's text color.
+// the box it has in the design (20px mobile, 24px desktop) and colored via
+// `currentColor` so it always matches the button's text color.
 .btn__icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
+
+  @include desktop-up {
+    width: 24px;
+    height: 24px;
+  }
 }

@@ -24,9 +24,45 @@
   width: 100%;
 }
 
-.hero__plates {
+// Figma "Visuals": the three plate photos clipped to circles with their own
+// drop shadow baked into the SVG (mobile-home). Positioned/sized exactly as
+// exported; `.hero{overflow:hidden}` above clips what spills past the
+// 375px-wide frame, same as the desktop plates below.
+.hero__mobile-visuals {
+  display: block;
+
+  @include desktop-up {
+    display: none;
+  }
+}
+
+.hero__ellipse {
   position: absolute;
-  inset: 0;
+}
+
+.hero__ellipse--chicken {
+  top: 23px;
+  left: 244px;
+}
+
+.hero__ellipse--salmon {
+  top: 226px;
+  left: 180px;
+}
+
+.hero__ellipse--steak {
+  top: 485px;
+  left: 164px;
+}
+
+.hero__plates {
+  display: none;
+
+  @include desktop-up {
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
 }
 
 .hero__plate {
@@ -51,53 +87,108 @@
   left: 908px;
 }
 
+// Figma "Main CTA" mobile: top-left under the header, hugging its own
+// 240px column; desktop-up restores the original centered-column position.
 .hero__main-cta {
   position: absolute;
-  top: 240px;
-  left: 65px;
+  top: 96px;
+  left: 16px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 64px;
-  width: 755px;
+  gap: 40px;
+  width: 240px;
+
+  @include desktop-up {
+    top: 240px;
+    left: 65px;
+    gap: 64px;
+    width: 755px;
+  }
 }
 
 .hero__text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
+
+  @include desktop-up {
+    gap: 0;
+  }
 }
 
 .hero__eyebrow {
   margin: 0;
+  // Figma "small headline": fixed 203px so "AI-Powered recipe generator"
+  // wraps onto two lines exactly like the mobile reference.
+  width: 203px;
   font-family: var(--font-quicksand);
-  font-size: 48px;
+  font-size: 24px;
   font-weight: 600;
-  line-height: 60px;
+  line-height: 30px;
   color: var(--color-beige);
+
+  @include desktop-up {
+    width: auto;
+    font-size: 48px;
+    line-height: 60px;
+  }
 }
 
 .hero__title {
   margin: 0;
+  // Figma "Name": fixed 222px so "Code à Cuisine" wraps after "à" exactly
+  // like the mobile reference, without a hard-coded line break that would
+  // also force desktop (which fits on one line) onto two lines.
+  width: 222px;
   font-family: var(--font-ubuntu);
-  font-size: 104px;
+  font-size: 64px;
   font-weight: 700;
-  line-height: 119px;
+  line-height: 72px;
   color: var(--color-linen);
+
+  @include desktop-up {
+    width: auto;
+    font-size: 104px;
+    line-height: 119px;
+  }
 }
 
+// Figma "Secoond CTA" mobile: text stacked above the button, both centered;
+// desktop-up restores the original side-by-side row, bottom-anchored to the
+// viewport either way (126px desktop, 38px mobile — both match the export's
+// gap to the 812px mobile frame's / 1440px desktop frame's bottom edge).
 .hero__secondary-cta {
   position: absolute;
-  bottom: 126px;
-  left: 65px;
+  bottom: 38px;
+  left: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 16px;
+
+  @include desktop-up {
+    bottom: 126px;
+    left: 65px;
+    flex-direction: row;
+  }
 }
 
 .hero__secondary-text {
   margin: 0;
+  // Figma "Hungry for inspiration?" mobile: fixed 164px so it wraps onto
+  // two lines exactly like the mobile reference.
+  width: 164px;
   font-family: var(--font-ubuntu);
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 500;
-  line-height: 104%;
+  line-height: 120%;
   color: var(--color-linen);
+
+  @include desktop-up {
+    width: auto;
+    font-size: 32px;
+    line-height: 104%;
+  }
 }
