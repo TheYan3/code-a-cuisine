@@ -60,6 +60,10 @@ down rather than rediscovered:
 - **The error trigger ignores manual runs** by design, so test through the
   webhook or a schedule. `n8n-nodes-base.stopAndError` is the documented way
   to fail a workflow on purpose.
+- **Addresses come from the environment.** The mail node reads its sender
+  from `JOIN_MAIL_USER` and its recipient from `ALERT_MAIL_TO`, so no address
+  is committed here. Both must be set on the n8n container, and n8n must be
+  allowed to read environment variables in expressions.
 - Handler runs show up in the execution list a moment *after* the failing run,
   so checking immediately gives a false negative.
 

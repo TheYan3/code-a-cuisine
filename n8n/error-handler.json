@@ -16,7 +16,7 @@
     {
       "parameters": {
         "fromEmail": "={{ $env.JOIN_MAIL_USER }}",
-        "toEmail": "3.j.yannic@gmail.com",
+        "toEmail": "={{ $env.ALERT_MAIL_TO }}",
         "subject": "=n8n-Fehler: {{ $json.workflow.name }}",
         "emailFormat": "text",
         "text": "=Ein n8n-Workflow ist fehlgeschlagen.\n\nWorkflow : {{ $json.workflow.name }} ({{ $json.workflow.id }})\nZeitpunkt: {{ $now.setZone('Europe/Berlin').toFormat('dd.MM.yyyy HH:mm:ss') }}\nLetzter Node: {{ $json.execution.lastNodeExecuted }}\n\nFehlermeldung:\n{{ $json.execution.error.message }}\n\nAusfuehrung: {{ $json.execution.url }}\n",
