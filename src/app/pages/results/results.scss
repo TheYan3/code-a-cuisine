@@ -1,3 +1,5 @@
+@use '../../../styles/abstracts' as *;
+
 // Full-bleed green background from the Figma frame — carried by this outer
 // wrapper (not `.page`) so it reaches the viewport edges on wide screens
 // instead of stopping at the 1440px content column. `min-height` (not
@@ -9,61 +11,114 @@
   background-color: var(--color-green);
 }
 
+// Figma "Results" mobile root: 40px gap between header/content/CTA;
+// desktop-up restores the "Rresults" frame's 64px gap.
 .page {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 64px;
+  gap: 40px;
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
+
+  @include desktop-up {
+    gap: 64px;
+  }
 }
 
-// Figma content column: 80px inset on both sides, so the intro row, the
-// card grid and the CTA all share the same left/right edge.
+// Figma content column: shared page gutter on mobile, 80px inset desktop-up
+// — so the intro row, the card grid and the CTA all share the same
+// left/right edge at every width.
 .results {
   display: flex;
   flex-direction: column;
-  padding: 0 80px;
+  padding: 0 var(--page-gutter);
+
+  @include desktop-up {
+    padding: 0 80px;
+  }
 }
 
+// Figma "Whole content" mobile: 48px gap between the intro and the card
+// list; desktop-up restores the 88px gap.
 .results__content {
   display: flex;
   flex-direction: column;
-  gap: 88px;
+  gap: 48px;
+
+  @include desktop-up {
+    gap: 88px;
+  }
 }
 
+// Figma "Text + visual" mobile: title, hero image, subtitle and tags stack
+// in that order with a 16px gap; desktop-up restores the side-by-side row
+// (text column left, hero image right) with its 96px gap.
 .results__intro {
   display: flex;
-  gap: 96px;
-}
-
-.results__text {
-  display: flex;
   flex-direction: column;
-  gap: 24px;
-  width: 610px;
+  gap: 16px;
+
+  @include desktop-up {
+    flex-direction: row;
+    gap: 96px;
+  }
 }
 
+// `display: contents` on mobile un-boxes this wrapper so title, subtitle
+// and tags become direct flex items of `.results__intro` — needed because
+// the mobile frame interleaves the hero image between the title and the
+// subtitle, while desktop groups all three as one text column beside the
+// image. The `order` values below place them without touching the HTML.
+.results__text {
+  display: contents;
+
+  @include desktop-up {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 610px;
+  }
+}
+
+// Figma "Generated recipes" mobile: 32px; desktop-up restores 54px.
 .results__title {
+  order: 1;
   margin: 0;
   font-family: var(--font-quicksand);
-  font-size: 54px;
+  font-size: 32px;
   font-weight: 600;
-  line-height: 65px;
+  line-height: 40px;
   color: var(--color-linen);
+
+  @include desktop-up {
+    font-size: 54px;
+    line-height: 65px;
+  }
 }
 
+// Figma "Text" mobile: 18px (matches the project's established Quicksand
+// 18→23 ratio, e.g. `.generator__subtitle`); desktop-up restores 24px.
 .results__subtitle {
+  order: 3;
   margin: 0;
   font-family: var(--font-quicksand);
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 500;
-  line-height: 30px;
+  line-height: 23px;
   color: var(--color-linen);
+
+  @include desktop-up {
+    font-size: 24px;
+    line-height: 30px;
+  }
 }
 
+// Same 32px height / 18px tag typography at mobile and desktop — nothing to
+// scale here.
 .results__tags {
+  order: 4;
   display: flex;
   gap: 16px;
   margin: 0;
@@ -89,54 +144,96 @@
 
 // Clips the hero image to the frame's rounded corners; the image itself is
 // taller than the frame and shifted up, matching the crop in the Figma
-// export (natural 574×383 image, 222px-tall frame, 65px pushed off the top).
+// export. Fixed px at both breakpoints — same "flows" pattern as the rest
+// of the app: the mobile size (340×131 frame, 344×229 image) holds until
+// desktop-up swaps in the 574×383/222px-frame values, no interpolation
+// in between (no tablet frame exists to interpolate towards).
 .results__hero-frame {
-  width: 574px;
-  height: 222px;
+  order: 2;
+  width: 340px;
+  height: 131px;
   overflow: hidden;
   border-radius: 20px;
   flex-shrink: 0;
+
+  @include desktop-up {
+    width: 574px;
+    height: 222px;
+  }
 }
 
 .results__hero {
   display: block;
-  width: 574px;
-  height: 383px;
-  margin-top: -65px;
+  width: 344px;
+  height: 229px;
+  margin-top: -40px;
+
+  @include desktop-up {
+    width: 574px;
+    height: 383px;
+    margin-top: -65px;
+  }
 }
 
+// Figma "Resipes" mobile: cards stack with a 16px gap; desktop-up restores
+// the side-by-side row with its 24px gap.
 .results__cards {
   display: flex;
-  gap: 24px;
+  flex-direction: column;
+  gap: 16px;
+
+  @include desktop-up {
+    flex-direction: row;
+    gap: 24px;
+  }
 }
 
 // No Figma frame for the "no recipes" state exists yet. Derived from
-// `.results__subtitle` (same green page, same informational-sentence
-// role) so it reads like the rest of this page's body copy instead of an
-// afterthought; `width: 100%` centers it across the row `.results__cards`
-// would otherwise leave it hugging its own content width.
+// `.results__subtitle` (same green page, same informational-sentence role,
+// same mobile/desktop sizing) so it reads like the rest of this page's body
+// copy instead of an afterthought; `width: 100%` centers it across the row
+// `.results__cards` would otherwise leave it hugging its own content width.
+// The 40/64 padding pair matches this file's own `.page` gap rhythm.
 .results__empty {
   width: 100%;
   margin: 0;
-  padding: 64px 0;
+  padding: 40px 0;
   font-family: var(--font-quicksand);
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 500;
-  line-height: 30px;
+  line-height: 23px;
   color: var(--color-linen);
   text-align: center;
+
+  @include desktop-up {
+    padding: 64px 0;
+    font-size: 24px;
+    line-height: 30px;
+  }
 }
 
+// Figma "Recipe card mob." bg (#d7dfd7) differs from the desktop "Recipe
+// card (by results)" bg (#dbe0db, `--color-card-sage`) — a genuine
+// per-breakpoint value in the export, not rounding noise, so it is kept
+// distinct rather than aligned. `--color-back-chip` already holds the exact
+// mobile hex elsewhere in the app, reused here instead of adding a
+// duplicate token. Padding (32px/24px) and radius (20px) match at both
+// breakpoints already, so only the gap and background change.
 .results__card {
   display: flex;
   flex-direction: column;
   // `flex-start` (not the flex default `stretch`) so the "View" button hugs
   // its own content width instead of stretching to the card's full width.
   align-items: flex-start;
-  gap: 48px;
+  gap: 32px;
   padding: 32px 24px;
   border-radius: 20px;
-  background-color: var(--color-card-sage);
+  background-color: var(--color-back-chip);
+
+  @include desktop-up {
+    gap: 48px;
+    background-color: var(--color-card-sage);
+  }
 }
 
 .results__card-top {
@@ -165,28 +262,45 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 363px;
+  width: 100%;
+
+  @include desktop-up {
+    width: 363px;
+  }
 }
 
+// Figma "headline" mobile: 24px; desktop-up restores 32px.
 .results__card-headline {
   margin: 0;
   font-family: var(--font-quicksand);
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 600;
-  line-height: 40px;
+  line-height: 30px;
   color: var(--color-text-dark);
+
+  @include desktop-up {
+    font-size: 32px;
+    line-height: 40px;
+  }
 }
 
+// Figma "Cooking time: 20min" mobile: 18px, its 24px text box lining up
+// with the 24×24 clock icon; desktop-up restores the tighter 20px/20px.
 .results__card-time {
   display: flex;
   align-items: center;
   gap: 4px;
   margin: 0;
   font-family: var(--font-quicksand);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
-  line-height: 20px;
+  line-height: 24px;
   color: var(--color-green);
+
+  @include desktop-up {
+    font-size: 20px;
+    line-height: 20px;
+  }
 }
 
 // `.results__cards` stretches every `.results__card` to the row's tallest
@@ -200,8 +314,15 @@
 
 // Matches `.generator__next`/`.preferences__submit`: an explicit margin
 // (not the `.results__content` gap) since the Figma spacing to this button
-// (64px) differs from the gap between the sections above it (88px).
+// (40px mobile / 64px desktop) differs from the gap between the sections
+// above it. Centered on mobile (root frame's `counterAxisAlignItems:
+// CENTER`), right-aligned desktop-up.
 .results__cta {
-  align-self: flex-end;
-  margin-top: 64px;
+  align-self: center;
+  margin-top: 40px;
+
+  @include desktop-up {
+    align-self: flex-end;
+    margin-top: 64px;
+  }
 }

@@ -1,3 +1,5 @@
+@use '../../../styles/abstracts' as *;
+
 // Full-bleed green background from the Figma frame — carried by this outer
 // wrapper (not `.page`) so it reaches the viewport edges on wide screens
 // instead of stopping at the 1440px content column. `min-height` (not
@@ -9,18 +11,27 @@
   background-color: var(--color-green);
 }
 
+// Figma "Loading" mobile root: 40px gap between header and content;
+// desktop-up restores the 64px gap.
 .page {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 64px;
+  gap: 40px;
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
+
+  @include desktop-up {
+    gap: 64px;
+  }
 }
 
 // Centers the spinner + text in the space below the header, so it stays
-// visually centered regardless of the header's own height.
+// visually centered regardless of the header's own height. The 32px gap
+// between spinner and text ("Frame 1039") is the same at both breakpoints.
+// `padding` keeps the failure text off the viewport edge on narrow phones,
+// matching `.results`' own gutter on the sibling page.
 .loading__content {
   display: flex;
   flex: 1;
@@ -28,6 +39,7 @@
   align-items: center;
   justify-content: center;
   gap: 32px;
+  padding: 0 var(--page-gutter);
 }
 
 // Figma's "Loader" node fill is type IMAGE but was never actually rendered
@@ -52,24 +64,35 @@
   aspect-ratio: 436 / 613;
 }
 
+// Figma "Generating ..." mobile: 36px/41px (AUTO); desktop-up restores
+// 48px/55px, still the project's established Ubuntu Bold ratio ×1.144
+// (see `.hero__title`: 104px → 119px).
 .loading__text {
   margin: 0;
   font-family: var(--font-ubuntu);
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 700;
-  // AUTO line height, resolved via the project's established Ubuntu Bold
-  // ratio (see `.hero__title`: 104px → 119px, ×1.144).
-  line-height: 55px;
+  line-height: 41px;
   color: var(--color-linen);
   text-align: center;
+
+  @include desktop-up {
+    font-size: 48px;
+    line-height: 55px;
+  }
 }
 
-// No Figma frame for the error state exists yet (checked the export
-// folder — nothing named for this state). Derived instead of the page's
-// own tokens: sizing follows `.preferences__title` (the app's smaller
-// headline size, fitting for a self-contained message rather than a full
-// page hero like `.results__title`), color follows every other text node
-// on this green full-bleed page (`--color-linen`).
+// No Figma frame for the error state itself exists, but the export folder
+// does have "mobile-pop-up"/"pop-up" — a different feature (the ingredient
+// quantity warning), not this one — so its card look isn't copied wholesale
+// (no pop-up/modal is built here). Only its typography is borrowed as the
+// closest real reference: its headline is 28px Quicksand SemiBold at both
+// breakpoints (matches `.loading__failure-title` below, unchanged), and its
+// body text is 16px on mobile / 18–20px on desktop. The body font family
+// switches from Quicksand (desktop) to "Mulish" (mobile) in that export,
+// which reads as a Figma slip rather than an intentional second font — the
+// project only ships Quicksand and Ubuntu, so Quicksand is kept throughout
+// and just the mobile size (16px) is taken from it.
 .loading__failure {
   display: flex;
   flex-direction: column;
@@ -91,8 +114,13 @@
 .loading__failure-text {
   margin: 0;
   font-family: var(--font-quicksand);
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 26px;
+  line-height: 20px;
   color: var(--color-linen);
+
+  @include desktop-up {
+    font-size: 20px;
+    line-height: 26px;
+  }
 }
