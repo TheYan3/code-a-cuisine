@@ -1,7 +1,7 @@
 // Built from the Figma frames "it-recipes" (desktop) and
 // "mobile-list-recipes-of-one-categorie". The content column (banner, list,
-// pagination) is a FIXED 1143px in the export, not FILL — Yannic confirmed
-// that is deliberate ("size stays the same no matter how big the screen,
+// pagination) is a FIXED 1143px in the export, not FILL — a Figma note
+// makes that deliberate ("size stays the same no matter how big the screen,
 // just center it; only smaller devices change it"), so it is built as a
 // hard max-width here instead of the page's usual 100%-until-1440 column.
 .cuisine-page {

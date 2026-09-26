@@ -47,7 +47,7 @@
   background-color: rgba(250, 240, 230, 0.8);
 
   // Focus ring on the pill instead of the inner input (no focus state in
-  // Figma, Yannic): same stroke and offset as the unit select trigger, and an
+  // Figma): same stroke and offset as the unit select trigger, and an
   // outline follows the pill's radius without shifting the layout.
   &:focus-within {
     outline: 2px solid var(--color-heading-green);
@@ -57,8 +57,8 @@
 
 // Autocomplete preview: an overlay with the same padding and font as the
 // input. The typed part is repeated invisibly so the suggestion's remainder
-// starts exactly where the typed text ends. Color #10310b at 50% (Yannic,
-// measured in the reference PNG; the export only has MIXED here).
+// starts exactly where the typed text ends. Color #10310b at 50% (measured
+// in the reference PNG; the export only has MIXED here).
 .ingredient-input__ghost {
   position: absolute;
   inset: 0;
@@ -155,7 +155,7 @@
   height: 91px;
 }
 
-// No side padding (Yannic, deviates from Figma's 15px): the centered value
+// No side padding (deliberately deviates from Figma's 15px): the centered value
 // renders at the same spot, and four digits ("9999") fit the 61px field.
 .ingredient-input__amount-box {
   box-sizing: border-box;

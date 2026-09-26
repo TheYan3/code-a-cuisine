@@ -9,8 +9,8 @@ import { Component, input, output } from '@angular/core';
  * actually succeeded.
  *
  * Split out of `RecipeDetail` instead of styled inline: `recipe-detail.scss`
- * already sits above the 4kB component-style budget, and Yannic asked for
- * that warning to stay rather than grow it further.
+ * already sits above the 4kB component-style budget, and that warning is
+ * meant to stay rather than grow further.
  */
 @Component({
   selector: 'app-like-button',

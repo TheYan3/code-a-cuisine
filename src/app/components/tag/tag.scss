@@ -4,7 +4,7 @@
   display: block;
 }
 
-// Fixed 28px height per Yannic: the instances placed on the preferences page
+// Fixed 28px height: the instances placed on the preferences page
 // are 28px tall, overriding the 32px hug height the standalone component
 // would get from its 6px vertical padding + 20px line height.
 .tag {
