@@ -1,5 +1,10 @@
-// Height is intrinsic (not fixed): 88px without a back link, 136px with one
-// (40px top padding + 48px logo row + 32px gap + 16px back row + 0 bottom).
+@use '../../../styles/abstracts' as *;
+
+// Mobile default matches Figma "Menu bar mob." (e.g. mobile-home,
+// mobile-cookbook); desktop-up restores the "Menu bar" values from the
+// 1440px frames (e.g. hero). No tablet frame exists in the export, so the
+// mobile layout simply continues flowing until the desktop breakpoint
+// takes over — no separate step in between.
 :host {
   display: block;
   box-sizing: border-box;
@@ -8,8 +13,25 @@
 .site-header {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  padding: 40px 40px 0 68px;
+  gap: 16px;
+  padding: 12px 16px 0;
+
+  @include desktop-up {
+    gap: 32px;
+    padding: 40px 40px 0 68px;
+  }
+}
+
+// Figma: "Home" and "Generate recipe" (step 1) carry 8px more bottom
+// padding below the logo than the other logo-only mobile frames
+// ("Loading", "Results") — see the `spacious` input's JSDoc. Desktop uses
+// the same padding (0) either way.
+.site-header--spacious {
+  padding-bottom: 8px;
+
+  @include desktop-up {
+    padding-bottom: 0;
+  }
 }
 
 .site-header__logo-link {
@@ -22,16 +44,21 @@
   }
 }
 
-// Fixed 16px per Figma — the 20px arrow icon overflows this row slightly
-// top and bottom rather than stretching it (its own export vector is a
-// degenerate 0-height line, so the icon's rendered size follows the
-// reference PNG's proper chevron shape instead).
+.site-header__logo {
+  width: 95px;
+  height: 32px;
+
+  @include desktop-up {
+    width: 142px;
+    height: 48px;
+  }
+}
+
 .site-header__back {
   display: flex;
   align-self: flex-start;
   align-items: center;
   gap: 10px;
-  height: 16px;
   text-decoration: none;
 
   &:focus-visible {
@@ -40,12 +67,50 @@
   }
 }
 
-// Figma "Back to xyz": fixed 132px text box (a minimum, the label varies).
+// Figma mobile-only chip behind the arrow ("Back button green"/"cremy");
+// the desktop "Back" frame has no chip, just the bare arrow.
+.site-header__back-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 20px;
+  padding: 6px;
+  border-radius: 2px; // Figma "Back button green/cremy": fixed 2px corner radius
+  background-color: var(--color-back-chip);
+
+  @include desktop-up {
+    width: auto;
+    height: 16px;
+    padding: 0;
+    background-color: transparent;
+  }
+}
+
+// Figma hides the "Back to xyz" label on every mobile frame — visually
+// hidden rather than removed, so the link keeps an accessible name.
 .site-header__back-label {
-  min-width: 132px;
-  font-family: var(--font-quicksand);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 10px;
-  color: var(--color-heading-green);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+
+  @include desktop-up {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    // Figma "Back to xyz": fixed 132px text box (a minimum, the label varies).
+    min-width: 132px;
+    font-family: var(--font-quicksand);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 10px;
+    color: var(--color-heading-green);
+  }
 }

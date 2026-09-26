@@ -1,0 +1,9 @@
+// Shared horizontal page gutter. 16px matches every 375px Figma mobile
+// frame (e.g. the header's own inset, the "Choose your preferences" body
+// copy). Pages still carry their own Figma-specific desktop insets in
+// their own SCSS for now — each gets its responsive pass in a later
+// phase — this token is what those phases build on instead of re-deriving
+// the mobile value each time.
+:root {
+  --page-gutter: 16px;
+}

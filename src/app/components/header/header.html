@@ -1,25 +1,33 @@
-<header class="site-header">
+<header class="site-header" [class.site-header--spacious]="spacious()">
   <a routerLink="/" class="site-header__logo-link">
-    <img [src]="logoSrc()" alt="Code à Cuisine – home" width="142" height="48" />
+    <img
+      [src]="logoSrc()"
+      alt="Code à Cuisine – home"
+      width="95"
+      height="32"
+      class="site-header__logo"
+    />
   </a>
 
   @if (backLink()) {
     <a [routerLink]="backLink()" [queryParams]="backQueryParams()" class="site-header__back">
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#1e5515"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path d="M23 12H1" />
-        <path d="M7 6L1 12L7 18" />
-      </svg>
+      <span class="site-header__back-icon">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#1e5515"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M23 12H1" />
+          <path d="M7 6L1 12L7 18" />
+        </svg>
+      </span>
       <span class="site-header__back-label">{{ backLabel() }}</span>
     </a>
   }
