@@ -40,9 +40,8 @@ export interface RecipeStep {
 /**
  * Nutrition values for one portion. Estimated by the language model, not
  * measured — the UI says so next to the chart (User Story 10). Only grams
- * per portion are stored; the whole-recipe totals (grams × `portions`) and
- * the macronutrient percentages are derived in the frontend, see
- * `RecipeDetail.nutritionTotal` and `RecipeDetail.macroPercent`.
+ * per portion are stored; the whole-recipe totals (grams × `portions`) are
+ * derived in the frontend, see `RecipeDetail.nutritionTotal`.
  */
 export interface RecipeNutrition {
   /** Calories per portion, in kcal. */

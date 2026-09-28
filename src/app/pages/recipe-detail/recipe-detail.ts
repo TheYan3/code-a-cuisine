@@ -172,23 +172,6 @@ export class RecipeDetail implements OnInit {
     return recipe ? Math.round(perPortion * recipe.portions) : 0;
   }
 
-  /**
-   * Share of one macronutrient in the recipe's total macronutrient weight
-   * (protein + carbs + fat, in grams). Not a percent daily value — the model
-   * has no reliable reference intake to compare against — so this is the
-   * mix of the three macros relative to each other, e.g. "40% protein"
-   * means 40% of the protein+carbs+fat grams, not 40% of a recommended
-   * daily amount. Identical for the per-portion and the whole-recipe number,
-   * since scaling every macro by `portions` does not change their ratio.
-   */
-  protected macroPercent(grams: number): number {
-    const recipe = this.recipe();
-    if (!recipe) return 0;
-    const { proteinG, carbsG, fatG } = recipe.nutrition;
-    const total = proteinG + carbsG + fatG;
-    return total > 0 ? Math.round((grams / total) * 100) : 0;
-  }
-
   /** Renders an amount the way the design writes it: "80g", "30ml", "1 piece". */
   protected amount(ingredient: RecipeIngredient): string {
     switch (ingredient.unit) {
