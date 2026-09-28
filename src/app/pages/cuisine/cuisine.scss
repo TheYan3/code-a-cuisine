@@ -1,3 +1,5 @@
+@use '../../../styles/abstracts' as *;
+
 // Built from the Figma frames "it-recipes" (desktop) and
 // "mobile-list-recipes-of-one-categorie". The content column (banner, list,
 // pagination) is a FIXED 1143px in the export, not FILL — a Figma note
@@ -20,17 +22,27 @@
   margin: 0 auto;
 }
 
+// No equivalent in the mobile frame — its "Generate a recipe" button lives
+// below the pagination instead, see `.cuisine__generate-mobile`.
 .cuisine__actions {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  max-width: 1143px;
-  margin: 24px auto 0;
-  padding: 0 20px;
+  display: none;
+
+  @include desktop-up {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 1143px;
+    margin: 24px auto 0;
+    padding: 0 20px;
+  }
 }
 
 .cuisine {
-  padding: 40px 20px 64px;
+  padding: 24px var(--page-gutter) 48px;
+
+  @include desktop-up {
+    padding: 40px 20px 64px;
+  }
 }
 
 .cuisine__column {
@@ -50,11 +62,22 @@
   position: relative;
 }
 
+// ponytail: no mobile crop exists yet for the banner images (source is
+// 2286x288px, Figma's mobile frame wants roughly 340x92px) — interim fix
+// crops the existing desktop image with `object-fit: cover` into the
+// mobile aspect ratio. Replace with a real mobile export once Yannic has
+// cut one per cuisine.
 .cuisine__banner-image {
   display: block;
   width: 100%;
   height: auto;
+  aspect-ratio: 340 / 92;
+  object-fit: cover;
   border-radius: 20px;
+
+  @include desktop-up {
+    aspect-ratio: auto;
+  }
 }
 
 .cuisine__banner-title {
@@ -65,11 +88,17 @@
   justify-content: center;
   margin: 0;
   font-family: var(--font-quicksand);
-  font-size: 40px;
-  font-weight: 700;
-  line-height: 1.04;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 23px;
   color: var(--color-text-dark);
   text-align: center;
+
+  @include desktop-up {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.04;
+  }
 }
 
 .cuisine__list {
@@ -79,6 +108,17 @@
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+// Every other row gets a tint on mobile for zebra rhythm (no real click
+// state) — the Figma mobile frame only alternates "Default"/"on click" for
+// that reason. Desktop has no zebra striping, only the interactive states.
+.cuisine__list li:nth-child(even) .cuisine__row {
+  background-color: color-mix(in srgb, var(--color-linen) 70%, transparent);
+
+  @include desktop-up {
+    background-color: transparent;
+  }
 }
 
 .cuisine__row {
@@ -93,12 +133,14 @@
   border-radius: 16px;
   text-decoration: none;
 
-  &:hover,
-  &:focus-visible {
-    background-color: color-mix(in srgb, var(--color-linen) 70%, transparent);
+  &:hover {
+    @include desktop-up {
+      background-color: color-mix(in srgb, var(--color-linen) 70%, transparent);
+    }
   }
 
   &:focus-visible {
+    background-color: color-mix(in srgb, var(--color-linen) 70%, transparent);
     outline: 2px solid var(--color-heading-green);
     outline-offset: -2px;
   }
@@ -107,8 +149,13 @@
 .cuisine__row-main {
   display: flex;
   flex-direction: column;
-  flex: 1 1 300px;
+  gap: 4px;
+  flex: 1 1 200px;
   min-width: 0;
+
+  @include desktop-up {
+    flex: 1 1 300px;
+  }
 }
 
 .cuisine__number {
@@ -135,16 +182,36 @@
   font-family: var(--font-quicksand);
   font-size: 16px;
   font-weight: 500;
-  line-height: 24px;
+  line-height: 20px;
   color: var(--color-green);
+
+  img {
+    width: 16px;
+    height: 16px;
+
+    @include desktop-up {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  @include desktop-up {
+    line-height: 24px;
+  }
 }
 
 .cuisine__row-title {
   font-family: var(--font-quicksand);
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 30px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 23px;
   color: var(--color-heading-green);
+
+  @include desktop-up {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 30px;
+  }
 }
 
 .cuisine__row-meta {
@@ -152,6 +219,11 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  flex-basis: 100%;
+
+  @include desktop-up {
+    flex-basis: auto;
+  }
 }
 
 .cuisine__tag {
@@ -188,49 +260,15 @@
   text-align: center;
 }
 
-// Mobile: the row stacks (number+time, title, tags+heart) and every other
-// row gets a tint — the Figma mobile frame alternates "Default"/"on click"
-// states on the rows purely for zebra rhythm, not a real click state.
-@media (max-width: 767px) {
-  .cuisine__actions {
-    justify-content: center;
-    margin-top: 16px;
-  }
+// Only visible on mobile, where the Figma frame places the "Generate
+// recipe" button below the pagination instead of the top action bar (see
+// `.cuisine__actions`). `.cuisine__column` is a column flex container, so
+// `align-self` keeps this button hugging its own width instead of
+// stretching, matching `.library__generate`'s pattern.
+.cuisine__generate-mobile {
+  align-self: center;
 
-  .cuisine {
-    padding: 24px 16px 48px;
-  }
-
-  .cuisine__banner-title {
-    font-size: 24px;
-  }
-
-  // Keeps the row a wrapping flex row instead of a column: the number and
-  // the time/title block share the first line, the tags/heart row wraps
-  // onto its own line via `flex-basis: 100%` below.
-  .cuisine__row {
-    align-items: flex-start;
-    gap: 8px 0;
-    padding: 16px;
-  }
-
-  .cuisine__row:hover {
-    background-color: transparent;
-  }
-
-  .cuisine__list li:nth-child(even) .cuisine__row {
-    background-color: color-mix(in srgb, var(--color-linen) 70%, transparent);
-  }
-
-  .cuisine__row-main {
-    flex: 1 1 200px;
-  }
-
-  .cuisine__row-meta {
-    flex-basis: 100%;
-  }
-
-  .cuisine__row-title {
-    font-size: 20px;
+  @include desktop-up {
+    display: none;
   }
 }

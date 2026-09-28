@@ -1,23 +1,49 @@
-// Figma node "CTA giving a heart" (one-recipe-view-one-cook). Its two
-// sentences use "Mulish" Bold/Regular, which this project does not
-// self-host (only Quicksand and Ubuntu, see src/styles/base/_fonts.scss) —
-// falls back to Quicksand at the closest weights it has (700 / 500, Quicksand
-// has no 400). The heart icon and its three states reuse the existing
+@use '../../../styles/abstracts' as *;
+
+// Figma nodes "CTA giving a heart" (desktop, one-recipe-view-one-cook) and
+// "Heart CTA" (mobile, mobile-recipe, id 4236:1998). Both sentences use
+// "Mulish" Bold/Regular, which this project does not self-host (only
+// Quicksand and Ubuntu, see src/styles/base/_fonts.scss) — falls back to
+// Quicksand at the closest weights it has (700 / 500, Quicksand has no
+// 400). The heart icon and its three states reuse the existing
 // public/icons/heart_*.svg assets, which already match this exact component
 // (52x48, #008000).
 :host {
   display: block;
 }
 
+// Mobile stacks the two children top-aligned with the heart pinned to the
+// far edge (Figma: counterAxisAlignItems MIN, primaryAxisAlignItems MAX);
+// desktop-up restores the previous centered/wrapped row.
 .like {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 8px 24px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  @include desktop-up {
+    align-items: center;
+    justify-content: center;
+    gap: 8px 24px;
+  }
 }
 
+// Mobile stacks the bold lead-in above the description (Figma: itemSpacing
+// 4, title 18px); desktop-up flows them inline on one line at the previous
+// unconditional 16px for both.
+//
+// `flex: 1 1 0` + `min-width: 0` mobile-only: without a zero basis, this
+// item's own preferred (unwrapped) width is wider than the space left next
+// to the heart, so `flex-wrap` on `.like` would push the whole heart+count
+// control onto its own line instead of just wrapping this text within its
+// column (Figma: a 265px text column next to a 52px heart in a 320px row —
+// the recipe-detail card's own padding narrows that further, so the split
+// is driven by the available space, not a fixed px column).
+// desktop-up drops back to the previous unconstrained sizing.
 .like__text {
+  flex: 1 1 0;
+  min-width: 0;
   margin: 0;
   font-family: var(--font-quicksand);
   font-size: 16px;
@@ -25,12 +51,26 @@
   color: var(--color-text-dark);
 
   strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 18px;
     font-weight: 700;
+
+    @include desktop-up {
+      display: inline;
+      margin-bottom: 0;
+      font-size: inherit;
+    }
+  }
+
+  @include desktop-up {
+    flex: 0 1 auto;
   }
 }
 
 .like__control {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 8px;
 }
@@ -68,11 +108,4 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--color-button-text);
-}
-
-@media (max-width: 640px) {
-  .like {
-    justify-content: flex-start;
-    text-align: left;
-  }
 }
