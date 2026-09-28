@@ -56,10 +56,12 @@
     font-size: 18px;
     font-weight: 700;
 
+    // Figma desktop ("CTA giving a heart"): 20px, not the 16px the rest of
+    // the sentence uses.
     @include desktop-up {
       display: inline;
       margin-bottom: 0;
-      font-size: inherit;
+      font-size: 20px;
     }
   }
 

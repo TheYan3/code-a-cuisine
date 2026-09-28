@@ -1,0 +1,56 @@
+@use '../../../styles/abstracts' as *;
+
+// No Figma frame exists for this page (see the responsive plan's export
+// gap list). Layout reuses the page/container rhythm every other page
+// shares (`.page` max-width + `--page-gutter`, `desktop-up` for the wider
+// inset); typography reuses `.results__card-headline`'s "content heading"
+// role (not the larger hero-style titles) and the global body defaults from
+// `src/styles/base/_typography.scss`, which already give paragraph text
+// Quicksand at 16px.
+
+.imprint-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-background);
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+
+  @include desktop-up {
+    gap: 64px;
+  }
+}
+
+.imprint {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 720px;
+  padding: 0 var(--page-gutter) 40px;
+  color: var(--color-text);
+
+  @include desktop-up {
+    padding: 0 96px 64px;
+  }
+}
+
+.imprint__title {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 30px;
+  color: var(--color-text-dark);
+
+  @include desktop-up {
+    font-size: 32px;
+    line-height: 40px;
+  }
+}

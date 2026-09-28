@@ -1,7 +1,10 @@
-// Detail view of one recipe, built from the Figma frame "One recipe view".
-// The frame is 1440 wide with a 1248 content column; the outer card carries
-// the linen tint at 30% so the two section banners (full-color linen) read as
-// raised bands inside it.
+@use '../../../styles/abstracts' as *;
+
+// Detail view of one recipe. Mobile-first from the Figma frame "mobile-recipe"
+// (375px, plus "mob-ingredients"/"mob-directions" for the section banners);
+// `desktop-up` restores the "One recipe view - one cook" frame (1440px, plus
+// "ingredients"/"nutrition-facts-tags"/"hero-for-silgle-recipe-view"). No
+// tablet frame exists in the export, so mobile values hold until 1024px.
 
 .recipe-page {
   display: flex;
@@ -10,25 +13,34 @@
   background-color: var(--color-background);
 }
 
+// Figma root: 40px gap between header and content; desktop-up restores 64px.
 .page {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 64px;
+  gap: 40px;
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
+
+  @include desktop-up {
+    gap: 64px;
+  }
 }
 
 .detail {
   display: flex;
   flex-direction: column;
   gap: 56px;
-  padding: 0 96px;
+  padding: 0 var(--page-gutter);
   // Set once here: every text in this view uses Quicksand on the dark green,
   // the handful of exceptions override the color only.
   font-family: var(--font-quicksand);
   color: var(--color-text-dark);
+
+  @include desktop-up {
+    padding: 0 96px;
+  }
 }
 
 .detail__status {
@@ -42,30 +54,53 @@
   align-self: flex-end;
 }
 
+// Figma "Recipe frame" (mobile): fill 20%, 16px radius, asymmetric padding
+// (top 12 / sides 8 / bottom 32), 40px gap between the head and the
+// ingredients+directions block. desktop-up restores "Recipe" (30% fill, 20px
+// radius, even 40/48 padding, 48px gap).
 .recipe {
   display: flex;
   flex-direction: column;
-  gap: 48px;
-  padding: 40px 48px;
-  border-radius: 20px;
-  // The frame fills this card with linen at 30% — mixed against white here so
-  // the banners inside can use the same linen at full strength.
-  background-color: color-mix(in srgb, var(--color-linen) 30%, #ffffff);
+  gap: 40px;
+  padding: 12px 8px 32px;
+  border-radius: 16px;
+  background-color: color-mix(in srgb, var(--color-linen) 20%, #ffffff);
+
+  @include desktop-up {
+    gap: 48px;
+    padding: 40px 48px;
+    border-radius: 20px;
+    background-color: color-mix(in srgb, var(--color-linen) 30%, #ffffff);
+  }
 }
 
+// Figma "First information" (mobile): column, 48px gap, same 24px padding
+// and 20px radius at both breakpoints. desktop-up restores the side-by-side
+// row from "Name + nutritions" (161px gap, space-between).
 .recipe__head {
   display: flex;
-  gap: 161px;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 48px;
   padding: 24px;
   border-radius: 20px;
   background-color: var(--color-linen);
+
+  @include desktop-up {
+    flex-direction: row;
+    gap: 161px;
+    justify-content: space-between;
+  }
 }
 
+// Figma "Headline + additional details": 8px gap at every transition
+// (time→title, title→chefs) on both frames. The mobile frame's own extra
+// 8px before the chef badges (16px there vs. 8px on desktop) is left
+// unmatched — a single-digit px nuance around a badge row, not worth a
+// bespoke per-child override.
 .recipe__name {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   max-width: 619px;
 }
 
@@ -74,18 +109,28 @@
   align-items: center;
   gap: 4px;
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
-  line-height: 24px;
+  line-height: 23px;
   color: var(--color-green);
+
+  @include desktop-up {
+    font-size: 20px;
+    line-height: 20px;
+  }
 }
 
 .recipe__title {
   margin: 0;
-  font-size: 54px;
+  font-size: 24px;
   font-weight: 600;
-  line-height: 65px;
+  line-height: 30px;
   color: var(--color-heading-green);
+
+  @include desktop-up {
+    font-size: 54px;
+    line-height: 65px;
+  }
 }
 
 .recipe__chefs {
@@ -96,8 +141,18 @@
   margin: 0;
   font-size: 20px;
   font-weight: 500;
-  line-height: 24px;
+  line-height: 20px;
   color: var(--color-green);
+}
+
+// The mobile frame has no "Cooking X person(s)" text at all next to the chef
+// badges — only the badges themselves; desktop-up restores the label.
+.recipe__chefs-label {
+  display: none;
+
+  @include desktop-up {
+    display: inline;
+  }
 }
 
 // The badges ship as complete SVGs (pill, icon and label baked in), so they
@@ -108,6 +163,10 @@
   height: 27px;
 }
 
+// Figma "Nutritions"/"Nutrition facts + Tags": same 24px gap at both
+// breakpoints, but the two children swap places — nutrition info first on
+// mobile, tags first on desktop — handled below via `order`, so the markup
+// (tags, then nutrition) doesn't have to change per breakpoint.
 .recipe__facts {
   display: flex;
   flex-direction: column;
@@ -116,12 +175,18 @@
 }
 
 .recipe__tags {
+  order: 2;
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
+
+  @include desktop-up {
+    order: 1;
+    gap: 16px;
+  }
 }
 
 .recipe__tag {
@@ -138,10 +203,14 @@
 }
 
 .recipe__nutrition {
+  order: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-left: 8px;
+
+  @include desktop-up {
+    order: 2;
+  }
 }
 
 .recipe__nutrition-title {
@@ -153,34 +222,51 @@
 
 .recipe__nutrition-grid {
   display: flex;
+  flex-wrap: wrap;
   gap: 24px;
   margin: 0;
 }
 
+// Figma "details" (mobile): label and value share the same 18px/SemiBold
+// style. desktop-up restores "Frame 783": a bolder 20px label over a 18px
+// value (both angeglichen from the export's 22px/20px — same design-system
+// role as the project's other 20px/18px Quicksand pairs, within tolerance).
 .recipe__nutrient {
   display: flex;
   flex-direction: column;
   gap: 8px;
 
-  dt {
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 28px;
+  dt,
+  dd {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 23px;
   }
 
   dd {
     margin: 0;
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 20px;
   }
 
-  // Minimal placeholder styling for the whole-recipe total (User Story 10) —
-  // just distinguished from the per-portion line for now, real styling is
-  // Phase 5 (designer).
+  @include desktop-up {
+    dt {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 28px;
+    }
+
+    dd {
+      font-weight: 500;
+      line-height: 20px;
+    }
+  }
+
+  // The whole-recipe total (User Story 10) has no Figma frame of its own —
+  // kept unobtrusive via the project's `.fine-print` values (>=14px, muted
+  // color) instead of a placeholder opacity hack.
   dd.recipe__nutrient-total {
-    font-size: 14px;
-    opacity: 0.75;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
   }
 }
 
@@ -188,6 +274,16 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+// Desktop: the ingredients and directions bands sit flush against each other
+// (Figma "Ingredients + Directions" wrapper: 0 gap) — the banner artwork's
+// own bleed (the bowl/jug above and below the band) provides the visual
+// separation, so the card's 48px gap is cancelled for this one boundary.
+.recipe__section + .recipe__section {
+  @include desktop-up {
+    margin-top: -48px;
+  }
 }
 
 // The banner artwork overflows its band (the bowl sticks out at the top, the
@@ -207,14 +303,50 @@
   color: var(--color-heading-green);
 }
 
+// Mobile artwork ("mob-ingredients") bakes the word "Ingredients" into the
+// image itself (unlike the desktop asset, which doesn't) — so, like the
+// "Directions" banner below, the heading text is for screen readers only
+// below the desktop breakpoint, and becomes the visible heading again once
+// the desktop artwork (without the baked word) takes over.
 .recipe__banner--ingredients {
-  aspect-ratio: 1152 / 148;
-  background-image: url('/icons/Ingredients.svg');
+  aspect-ratio: 320 / 87;
+  background-image: url('/images/results/ingredients-mob.svg');
+
+  @include desktop-up {
+    aspect-ratio: 1152 / 148;
+    background-image: url('/icons/Ingredients.svg');
+  }
+
+  .recipe__banner-text {
+    // Not `@extend .visually-hidden`: `@extend` relocates this declaration
+    // to that rule's place in the stylesheet, which put it after (and so
+    // losing to) the `desktop-up` override below.
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+
+    @include desktop-up {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+      white-space: normal;
+    }
+  }
 }
 
 .recipe__banner--directions {
-  aspect-ratio: 1152 / 134;
-  background-image: url('/icons/Directions.svg');
+  aspect-ratio: 320 / 90;
+  background-image: url('/images/results/directions-mob.svg');
+
+  @include desktop-up {
+    aspect-ratio: 1152 / 134;
+    background-image: url('/icons/Directions.svg');
+  }
 }
 
 // For headings whose word is already drawn into the banner artwork: keep the
@@ -228,10 +360,21 @@
   white-space: nowrap;
 }
 
+// Figma "ingredients" (mobile): column, 24px gap between the two groups, no
+// extra inset (the card's own padding already provides it). desktop-up
+// restores "Ingredients": a 730px-wide, 80px-gap row centered in the 1152px
+// section (not edge-padded — the export places it with equal space on both
+// sides).
 .recipe__ingredients {
   display: flex;
-  gap: 80px;
-  padding: 0 32px;
+  flex-direction: column;
+  gap: 24px;
+
+  @include desktop-up {
+    flex-direction: row;
+    justify-content: center;
+    gap: 80px;
+  }
 }
 
 .recipe__ingredient-group {
@@ -242,43 +385,74 @@
 
 .recipe__ingredient-heading {
   margin: 0;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
-  line-height: 30px;
+  line-height: 23px;
   color: var(--color-button-text);
+
+  @include desktop-up {
+    font-size: 24px;
+    line-height: 30px;
+  }
 }
 
 .recipe__ingredient-list {
   margin: 0;
   padding-left: 24px;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 30px;
+  line-height: 20px;
+
+  @include desktop-up {
+    font-size: 24px;
+    line-height: 30px;
+  }
 }
 
 // Fixed column for the amount so the names line up, the way the Figma text
-// block fakes it with padded spaces.
+// block fakes it with padded spaces. The export only gives the desktop
+// column as baked-in spaces (no measurable node), so the mobile value is a
+// proportional estimate (84px scaled to the 16px/24px font-size ratio),
+// not a literal export number.
 .recipe__amount {
   display: inline-block;
-  min-width: 84px;
+  min-width: 64px;
+
+  @include desktop-up {
+    min-width: 84px;
+  }
 }
 
-// Two columns regardless of the number of cooks, as in the frame: the steps
-// read left-to-right per pair, and every step carries its chef badge even
-// when one person does all of them.
+// Figma "Steps" (mobile): single column, 32px gap throughout, full width.
+// desktop-up restores the two-column grid (40px row / 64px column gap),
+// centered as a 864px block in the 1152px section (same centering pattern
+// as `.recipe__ingredients` above, not edge-padded).
 .recipe__steps {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 40px 64px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
   margin: 0;
-  padding: 0 32px;
+  padding: 0;
   list-style: none;
+
+  @include desktop-up {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 64px;
+    max-width: 864px;
+    margin: 0 auto;
+  }
 }
 
+// Figma "Step 01" (mobile): 16px gap between the headline row and the step
+// text. desktop-up restores "Frame 896"'s 32px gap.
 .step {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 16px;
+
+  @include desktop-up {
+    gap: 32px;
+  }
 }
 
 .step__head {
@@ -288,6 +462,9 @@
   gap: 16px;
 }
 
+// Figma "1." (mobile): SemiBold. desktop-up restores the Medium weight —
+// a genuine per-breakpoint weight change (never angeglichen), not rounding
+// noise.
 .step__number {
   box-sizing: border-box;
   display: flex;
@@ -298,8 +475,12 @@
   border-radius: 50%;
   background-color: var(--color-linen);
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 23px;
+
+  @include desktop-up {
+    font-weight: 500;
+  }
 }
 
 .step__chef {
@@ -314,79 +495,64 @@
   color: var(--color-green);
 }
 
-// Reuses `.recipe__ingredient-heading`'s values — same "heading inside the
-// card" role, just scoped to the step so the class name stays honest.
+// Figma "Cook the pasta" (mobile "Step name"): 18px SemiBold, text-dark —
+// a distinct role from `.recipe__ingredient-heading` (different color and,
+// at desktop, different weight), so it keeps its own rule instead of
+// reusing that class. desktop-up restores the 24px Medium desktop value.
 .step__title {
   margin: 0;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
-  line-height: 30px;
-  color: var(--color-button-text);
+  line-height: 23px;
+  color: var(--color-text-dark);
+
+  @include desktop-up {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 30px;
+  }
 }
 
 .step__text {
   margin: 0;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 30px;
+  line-height: 20px;
+
+  @include desktop-up {
+    font-size: 18px;
+    line-height: 23px;
+  }
 }
 
+// Figma "Cookbook CTA" (mobile): a row at every breakpoint (not a mobile
+// column stack) — 16px radius, tight 16px/14px padding, 16px gap. desktop-up
+// restores "CTA cookbook": 20px radius, 40px/0 padding, 32px gap.
 .cookbook-cta {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 32px;
-  padding: 40px 0;
-  border-radius: 20px;
+  gap: 16px;
+  padding: 16px 14px;
+  border-radius: 16px;
   background-color: color-mix(in srgb, var(--color-green) 10%, transparent);
+
+  @include desktop-up {
+    justify-content: center;
+    gap: 32px;
+    padding: 40px 0;
+    border-radius: 20px;
+  }
 }
 
 .cookbook-cta__text {
   margin: 0;
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 30px;
-}
+  line-height: 20px;
 
-@media (max-width: 1024px) {
-  .detail {
-    padding: 0 32px;
-  }
-
-  .recipe__head {
-    flex-direction: column;
-    gap: 32px;
-  }
-
-  .recipe__ingredients {
-    flex-direction: column;
-    gap: 32px;
-    padding: 0;
-  }
-
-  .recipe__steps {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 0;
-  }
-}
-
-@media (max-width: 640px) {
-  .recipe {
-    padding: 24px;
-  }
-
-  .recipe__title {
-    font-size: 36px;
-    line-height: 44px;
-  }
-
-  .recipe__nutrition-grid {
-    flex-wrap: wrap;
-  }
-
-  .cookbook-cta {
-    flex-direction: column;
-    padding: 32px 24px;
-    text-align: center;
+  @include desktop-up {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 30px;
   }
 }
