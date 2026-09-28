@@ -12,6 +12,14 @@ import { RecipeRequestService } from '../../core/recipe-request';
 const MAX_SUGGESTIONS = 3;
 
 /**
+ * Amount the "Serving size" field is prefilled with for a freshly picked
+ * unit: a gram/ml amount defaults to 100, a piece count to 1. Replaces the
+ * old "100" placeholder, which looked like a value but was not one — typing
+ * nothing and pressing "+" silently did nothing (docs/bugs.md #2/#3).
+ */
+const DEFAULT_AMOUNT: Record<Unit, number> = { gram: 100, ml: 100, piece: 1 };
+
+/**
  * Generator page, step 1: collect the ingredients the user has on hand.
  * Owns all interaction state for the ingredient form (typed value, unit,
  * autocomplete open/highlight, inline edit) and delegates the actual
@@ -34,10 +42,16 @@ export class Generator {
 
   /** Text currently typed into the ingredient name field. */
   protected readonly nameValue = signal('');
-  /** Amount currently typed into the serving size field. */
-  protected readonly amountValue = signal<number | null>(null);
+  /** Amount currently typed into the serving size field, prefilled with the current unit's default. */
+  protected readonly amountValue = signal<number | null>(DEFAULT_AMOUNT['gram']);
   /** Unit currently selected for the ingredient being added. */
   protected readonly unitValue = signal<Unit>('gram');
+  /**
+   * Whether the visitor typed their own amount since the field was last
+   * prefilled. While `false`, a unit change updates the prefill to match;
+   * once they type, their value is kept across unit changes.
+   */
+  protected readonly amountTouched = signal(false);
   /** Whether the autocomplete dropdown is open. */
   protected readonly autocompleteOpen = signal(false);
   /** Suggestion currently highlighted via arrow keys or mouse hover, if any. */
@@ -154,6 +168,28 @@ export class Generator {
   }
 
   /**
+   * Records a typed amount and marks the field as "touched" — from here on,
+   * a unit change no longer overwrites it with the new unit's default.
+   */
+  protected onAmountInput(value: number | null): void {
+    this.amountValue.set(value);
+    this.amountTouched.set(true);
+  }
+
+  /**
+   * Picks the unit for the ingredient being added. If the amount field still
+   * holds the previous unit's default (the visitor has not typed their own
+   * value yet), it is updated to the new unit's default; a typed value is
+   * left as-is.
+   */
+  protected onUnitChange(unit: Unit): void {
+    this.unitValue.set(unit);
+    if (!this.amountTouched()) {
+      this.amountValue.set(DEFAULT_AMOUNT[unit]);
+    }
+  }
+
+  /**
    * Adds the typed ingredient (button click or Enter without a highlighted
    * suggestion). Native `required`/`min`/`max`/`step` on the form fields
    * already block invalid submissions; this re-checks defensively and does
@@ -169,7 +205,8 @@ export class Generator {
     this.recipeRequest.addIngredient(name, amount, this.unitValue());
 
     this.nameValue.set('');
-    this.amountValue.set(null);
+    this.amountValue.set(DEFAULT_AMOUNT[this.unitValue()]);
+    this.amountTouched.set(false);
     this.closeAutocomplete();
     this.unitOpen.set(false);
     this.ingredientInput().focusName();

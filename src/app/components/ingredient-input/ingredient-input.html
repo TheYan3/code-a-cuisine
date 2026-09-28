@@ -63,7 +63,7 @@
             id="ingredient-amount"
             type="number"
             class="ingredient-input__amount-input"
-            placeholder="100"
+            [placeholder]="unit() === 'piece' ? '1' : '100'"
             required
             min="1"
             max="9999"
