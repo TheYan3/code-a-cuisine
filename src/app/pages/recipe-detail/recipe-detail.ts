@@ -164,12 +164,47 @@ export class RecipeDetail implements OnInit {
 
   /**
    * Whole-recipe amount for a per-portion nutrition value (User Story 10:
-   * nutrition must be shown per portion and for the whole recipe), rounded
-   * to a whole gram/kcal since the source value is itself only an estimate.
+   * nutrition must be shown for the whole recipe), rounded to a whole
+   * gram/kcal since the source value is itself only an estimate.
    */
   protected nutritionTotal(perPortion: number): number {
     const recipe = this.recipe();
     return recipe ? Math.round(perPortion * recipe.portions) : 0;
+  }
+
+  /**
+   * Whether `recipe` has a stored `portionWeightG`, so nutrition can be
+   * shown per 100g of the finished dish (decided 2026-09-28) instead of per
+   * portion. Recipes generated before this field existed have none stored
+   * in Firebase and fall back to the per-portion display.
+   */
+  protected hasPortionWeight(recipe: Recipe): boolean {
+    return (
+      typeof recipe.nutrition.portionWeightG === 'number' && recipe.nutrition.portionWeightG > 0
+    );
+  }
+
+  /**
+   * Calories per 100g of the finished dish, derived from the per-portion
+   * value and `portionWeightG`. Only call once `hasPortionWeight` is true.
+   * Rounded to a whole kcal since the source value is itself only an
+   * estimate.
+   */
+  protected caloriesPer100(recipe: Recipe): number {
+    return Math.round(
+      (recipe.nutrition.caloriesPerPortion / recipe.nutrition.portionWeightG!) * 100,
+    );
+  }
+
+  /**
+   * A per-100g gram value (protein/carbs/fat), formatted the way the design
+   * writes small amounts: whole grams, or one decimal place once the value
+   * drops below 10g so it does not round away to "0g". Only call once
+   * `hasPortionWeight` is true.
+   */
+  protected gramsPer100(perPortionG: number, recipe: Recipe): string {
+    const value = (perPortionG / recipe.nutrition.portionWeightG!) * 100;
+    return value < 10 ? value.toFixed(1) : String(Math.round(value));
   }
 
   /** Renders an amount the way the design writes it: "80g", "30ml", "1 piece". */

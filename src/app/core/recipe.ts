@@ -39,9 +39,11 @@ export interface RecipeStep {
 
 /**
  * Nutrition values for one portion. Estimated by the language model, not
- * measured — the UI says so next to the chart (User Story 10). Only grams
- * per portion are stored; the whole-recipe totals (grams × `portions`) are
- * derived in the frontend, see `RecipeDetail.nutritionTotal`.
+ * measured — the UI says so next to the chart (User Story 10). Grams and
+ * calories are stored per portion; the detail page shows them per 100g of
+ * the finished dish using `portionWeightG` (decided 2026-09-28), and the
+ * whole-recipe totals (per-portion value × `portions`) are derived in the
+ * frontend, see `RecipeDetail.nutritionTotal`.
  */
 export interface RecipeNutrition {
   /** Calories per portion, in kcal. */
@@ -52,6 +54,13 @@ export interface RecipeNutrition {
   carbsG: number;
   /** Fat per portion, in grams. */
   fatG: number;
+  /**
+   * Estimated weight of one cooked portion, in grams — the basis for the
+   * per-100g nutrition display. Optional because recipes generated before
+   * this field existed have none stored in Firebase; the detail page falls
+   * back to the per-portion display for those.
+   */
+  portionWeightG?: number;
 }
 
 /**

@@ -50,28 +50,44 @@
                 <dl class="recipe__nutrition-grid">
                   <div class="recipe__nutrient">
                     <dt>Energy</dt>
-                    <dd>{{ recipe.nutrition.caloriesPerPortion }} kcal / portion</dd>
+                    @if (hasPortionWeight(recipe)) {
+                      <dd>{{ caloriesPer100(recipe) }} kcal / 100 g</dd>
+                    } @else {
+                      <dd>{{ recipe.nutrition.caloriesPerPortion }} kcal / portion</dd>
+                    }
                     <dd class="recipe__nutrient-total">
                       {{ nutritionTotal(recipe.nutrition.caloriesPerPortion) }} kcal total
                     </dd>
                   </div>
                   <div class="recipe__nutrient">
                     <dt>Protein</dt>
-                    <dd>{{ recipe.nutrition.proteinG }}g / portion</dd>
+                    @if (hasPortionWeight(recipe)) {
+                      <dd>{{ gramsPer100(recipe.nutrition.proteinG, recipe) }}g / 100 g</dd>
+                    } @else {
+                      <dd>{{ recipe.nutrition.proteinG }}g / portion</dd>
+                    }
                     <dd class="recipe__nutrient-total">
                       {{ nutritionTotal(recipe.nutrition.proteinG) }}g total
                     </dd>
                   </div>
                   <div class="recipe__nutrient">
                     <dt>Fat</dt>
-                    <dd>{{ recipe.nutrition.fatG }}g / portion</dd>
+                    @if (hasPortionWeight(recipe)) {
+                      <dd>{{ gramsPer100(recipe.nutrition.fatG, recipe) }}g / 100 g</dd>
+                    } @else {
+                      <dd>{{ recipe.nutrition.fatG }}g / portion</dd>
+                    }
                     <dd class="recipe__nutrient-total">
                       {{ nutritionTotal(recipe.nutrition.fatG) }}g total
                     </dd>
                   </div>
                   <div class="recipe__nutrient">
                     <dt>Carbs</dt>
-                    <dd>{{ recipe.nutrition.carbsG }}g / portion</dd>
+                    @if (hasPortionWeight(recipe)) {
+                      <dd>{{ gramsPer100(recipe.nutrition.carbsG, recipe) }}g / 100 g</dd>
+                    } @else {
+                      <dd>{{ recipe.nutrition.carbsG }}g / portion</dd>
+                    }
                     <dd class="recipe__nutrient-total">
                       {{ nutritionTotal(recipe.nutrition.carbsG) }}g total
                     </dd>
