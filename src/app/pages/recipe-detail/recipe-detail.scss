@@ -6,6 +6,21 @@
 // "ingredients"/"nutrition-facts-tags"/"hero-for-silgle-recipe-view"). No
 // tablet frame exists in the export, so mobile values hold until 1024px.
 
+// Shared by `.recipe__ingredient-heading` and `.step__title` below: both are
+// an 18px/23px heading on mobile that grows to 24px/30px on desktop, just
+// with different colors (and, for `.step__title`, a different desktop
+// weight) — kept as one declaration instead of two near-identical ones.
+%recipe-subheading {
+  margin: 0;
+  font-size: 18px;
+  line-height: 23px;
+
+  @include desktop-up {
+    font-size: 24px;
+    line-height: 30px;
+  }
+}
+
 .recipe-page {
   display: flex;
   flex-direction: column;
@@ -93,10 +108,9 @@
 }
 
 // Figma "Headline + additional details": 8px gap at every transition
-// (time→title, title→chefs) on both frames. The mobile frame's own extra
-// 8px before the chef badges (16px there vs. 8px on desktop) is left
-// unmatched — a single-digit px nuance around a badge row, not worth a
-// bespoke per-child override.
+// (time→title, title→chefs) on desktop; mobile adds another 8px before the
+// chef badges (16px total there), handled as `.recipe__chefs`'s own
+// margin-top below instead of a second gap value here.
 .recipe__name {
   display: flex;
   flex-direction: column;
@@ -138,11 +152,19 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 16px;
-  margin: 0;
+  // Figma mobile: 16px above the badges (vs. 8px everywhere else in
+  // `.recipe__name`) — added on top of that 8px gap instead of a one-off
+  // gap value on the parent. desktop-up: no extra space, back to the
+  // uniform 8px.
+  margin: 8px 0 0;
   font-size: 20px;
   font-weight: 500;
   line-height: 20px;
   color: var(--color-green);
+
+  @include desktop-up {
+    margin-top: 0;
+  }
 }
 
 // The mobile frame has no "Cooking X person(s)" text at all next to the chef
@@ -200,6 +222,18 @@
   font-size: 18px;
   font-weight: 500;
   line-height: 18px;
+}
+
+// Figma "Frame 935": the like count as a third pill, distinct from the
+// diet/time tags above it — a stronger 30% tint, smaller 16px text, and the
+// heart icon and count colored `--color-green` instead of inheriting
+// `.detail`'s text-dark.
+.recipe__tag--like {
+  gap: 0;
+  background-color: color-mix(in srgb, var(--color-green) 30%, transparent);
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-green);
 }
 
 .recipe__nutrition {
@@ -360,6 +394,103 @@
   white-space: nowrap;
 }
 
+// Figma "Mob ingredients"/"Mob Directions": the accordion content and its
+// toggle sit in a 24px-gapped column, toggle last. The content is a sibling
+// of the `<details>`, not its child (`order: 2` below places the details
+// visually last despite coming first in the DOM) — a `<details>` hides its
+// own children natively when closed in a way plain `display` can't
+// override (confirmed against the actual Chromium build this project
+// tests against: closing it left the content laid out but unpainted), so
+// keeping the content outside it and driving its visibility off `details
+// :not([open])` with the general sibling combinator sidesteps that
+// entirely. desktop-up has no toggle at all (both frames are permanently
+// open there): hiding `<details>` removes its only way to close the
+// section, and the sibling rules below force the content visible again
+// regardless of `open`, in case a viewport resize follows a mobile-closed
+// state.
+.recipe__accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.recipe__accordion-details {
+  order: 2;
+  align-self: center;
+
+  @include desktop-up {
+    display: none;
+  }
+}
+
+.recipe__accordion-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 16px;
+  list-style: none;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-green);
+  cursor: pointer;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 2px;
+  }
+}
+
+.recipe__accordion-label--closed {
+  display: none;
+}
+
+.recipe__accordion-details:not([open]) {
+  .recipe__accordion-label--open {
+    display: none;
+  }
+
+  .recipe__accordion-label--closed {
+    display: inline;
+  }
+
+  .recipe__accordion-icon {
+    transform: none;
+  }
+}
+
+// Figma's icon points down when closed ("Show ...") and up when open
+// ("Hide ..."), so the un-rotated (closed-state) icon is the base and the
+// open state rotates it — matching the `:not([open])` override above,
+// which resets that rotation back to none.
+.recipe__accordion-icon {
+  width: 14px;
+  height: 8px;
+  color: var(--color-heading-green);
+  transform: rotate(180deg);
+}
+
+.recipe__accordion-details:not([open]) ~ .recipe__ingredients {
+  display: none;
+
+  @include desktop-up {
+    display: flex;
+  }
+}
+
+.recipe__accordion-details:not([open]) ~ .recipe__steps {
+  display: none;
+
+  @include desktop-up {
+    display: grid;
+  }
+}
+
 // Figma "ingredients" (mobile): column, 24px gap between the two groups, no
 // extra inset (the card's own padding already provides it). desktop-up
 // restores "Ingredients": a 730px-wide, 80px-gap row centered in the 1152px
@@ -384,16 +515,9 @@
 }
 
 .recipe__ingredient-heading {
-  margin: 0;
-  font-size: 18px;
+  @extend %recipe-subheading;
   font-weight: 600;
-  line-height: 23px;
   color: var(--color-button-text);
-
-  @include desktop-up {
-    font-size: 24px;
-    line-height: 30px;
-  }
 }
 
 .recipe__ingredient-list {
@@ -410,17 +534,12 @@
 }
 
 // Fixed column for the amount so the names line up, the way the Figma text
-// block fakes it with padded spaces. The export only gives the desktop
-// column as baked-in spaces (no measurable node), so the mobile value is a
-// proportional estimate (84px scaled to the 16px/24px font-size ratio),
-// not a literal export number.
+// block fakes it with padded spaces — no measurable node for it in the
+// export (just padded spaces in a text blob), so one estimate serves both
+// breakpoints rather than a guessed-at second value.
 .recipe__amount {
   display: inline-block;
-  min-width: 64px;
-
-  @include desktop-up {
-    min-width: 84px;
-  }
+  min-width: 84px;
 }
 
 // Figma "Steps" (mobile): single column, 32px gap throughout, full width.
@@ -500,16 +619,12 @@
 // at desktop, different weight), so it keeps its own rule instead of
 // reusing that class. desktop-up restores the 24px Medium desktop value.
 .step__title {
-  margin: 0;
-  font-size: 18px;
+  @extend %recipe-subheading;
   font-weight: 600;
-  line-height: 23px;
   color: var(--color-text-dark);
 
   @include desktop-up {
-    font-size: 24px;
     font-weight: 500;
-    line-height: 30px;
   }
 }
 

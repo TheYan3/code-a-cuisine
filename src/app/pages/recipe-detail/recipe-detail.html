@@ -39,6 +39,10 @@
                 @for (tag of tags(); track tag) {
                   <li class="recipe__tag">{{ tag }}</li>
                 }
+                <li class="recipe__tag recipe__tag--like">
+                  <img src="/icons/heart_tag.svg" alt="" width="20" height="18" />
+                  {{ likeCount() }}
+                </li>
               </ul>
 
               <div class="recipe__nutrition">
@@ -82,24 +86,32 @@
               <span class="recipe__banner-text">Ingredients</span>
             </h2>
 
-            <div class="recipe__ingredients">
-              <div class="recipe__ingredient-group">
-                <h3 class="recipe__ingredient-heading">Your ingredients</h3>
-                <ul class="recipe__ingredient-list">
-                  @for (item of recipe.ingredientsUsed; track item.name) {
-                    <li>
-                      <span class="recipe__amount">{{ amount(item) }}</span>
-                      {{ item.name }}
-                    </li>
-                  }
-                </ul>
-              </div>
+            <div class="recipe__accordion">
+              <details class="recipe__accordion-details" open>
+                <summary class="recipe__accordion-toggle">
+                  <span class="recipe__accordion-label recipe__accordion-label--open"
+                    >Hide ingredients</span
+                  >
+                  <span class="recipe__accordion-label recipe__accordion-label--closed"
+                    >Show ingredients</span
+                  >
+                  <svg
+                    class="recipe__accordion-icon"
+                    viewBox="0 0 14 8"
+                    fill="none"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="1.5" />
+                  </svg>
+                </summary>
+              </details>
 
-              @if (recipe.ingredientsMissing.length) {
+              <div class="recipe__ingredients">
                 <div class="recipe__ingredient-group">
-                  <h3 class="recipe__ingredient-heading">Extra ingredients</h3>
+                  <h3 class="recipe__ingredient-heading">Your ingredients</h3>
                   <ul class="recipe__ingredient-list">
-                    @for (item of recipe.ingredientsMissing; track item.name) {
+                    @for (item of recipe.ingredientsUsed; track item.name) {
                       <li>
                         <span class="recipe__amount">{{ amount(item) }}</span>
                         {{ item.name }}
@@ -107,7 +119,21 @@
                     }
                   </ul>
                 </div>
-              }
+
+                @if (recipe.ingredientsMissing.length) {
+                  <div class="recipe__ingredient-group">
+                    <h3 class="recipe__ingredient-heading">Extra ingredients</h3>
+                    <ul class="recipe__ingredient-list">
+                      @for (item of recipe.ingredientsMissing; track item.name) {
+                        <li>
+                          <span class="recipe__amount">{{ amount(item) }}</span>
+                          {{ item.name }}
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
             </div>
           </section>
 
@@ -118,28 +144,50 @@
               <span class="visually-hidden">Directions</span>
             </h2>
 
-            <ol class="recipe__steps">
-              @for (step of recipe.steps; track step.number) {
-                <li class="step">
-                  <div class="step__head">
-                    <span class="step__number">{{ step.number }}.</span>
-                    <img
-                      class="step__chef"
-                      [src]="chefBadge(step.assignedTo)"
-                      [alt]="'Chef ' + step.assignedTo"
-                      height="27"
-                    />
-                    @if (step.parallel) {
-                      <span class="step__parallel">runs alongside the previous step</span>
+            <div class="recipe__accordion">
+              <details class="recipe__accordion-details" open>
+                <summary class="recipe__accordion-toggle">
+                  <span class="recipe__accordion-label recipe__accordion-label--open"
+                    >Hide directions</span
+                  >
+                  <span class="recipe__accordion-label recipe__accordion-label--closed"
+                    >Show directions</span
+                  >
+                  <svg
+                    class="recipe__accordion-icon"
+                    viewBox="0 0 14 8"
+                    fill="none"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="1.5" />
+                  </svg>
+                </summary>
+              </details>
+
+              <ol class="recipe__steps">
+                @for (step of recipe.steps; track step.number) {
+                  <li class="step">
+                    <div class="step__head">
+                      <span class="step__number">{{ step.number }}.</span>
+                      <img
+                        class="step__chef"
+                        [src]="chefBadge(step.assignedTo)"
+                        [alt]="'Chef ' + step.assignedTo"
+                        height="27"
+                      />
+                      @if (step.parallel) {
+                        <span class="step__parallel">runs alongside the previous step</span>
+                      }
+                    </div>
+                    @if (step.title) {
+                      <h3 class="step__title">{{ step.title }}</h3>
                     }
-                  </div>
-                  @if (step.title) {
-                    <h3 class="step__title">{{ step.title }}</h3>
-                  }
-                  <p class="step__text">{{ step.text }}</p>
-                </li>
-              }
-            </ol>
+                    <p class="step__text">{{ step.text }}</p>
+                  </li>
+                }
+              </ol>
+            </div>
           </section>
 
           <app-like-button [count]="likeCount()" [isLiked]="isLiked()" (liked)="onLiked()" />
