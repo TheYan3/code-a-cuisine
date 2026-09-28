@@ -42,23 +42,47 @@
               </ul>
 
               <div class="recipe__nutrition">
-                <p class="recipe__nutrition-title">Nutritional information (per portion)</p>
+                <p class="recipe__nutrition-title">Nutritional information</p>
                 <dl class="recipe__nutrition-grid">
                   <div class="recipe__nutrient">
                     <dt>Energy</dt>
-                    <dd>{{ recipe.nutrition.caloriesPerPortion }} kcal</dd>
+                    <dd>{{ recipe.nutrition.caloriesPerPortion }} kcal / portion</dd>
+                    <dd class="recipe__nutrient-total">
+                      {{ nutritionTotal(recipe.nutrition.caloriesPerPortion) }} kcal total
+                    </dd>
                   </div>
                   <div class="recipe__nutrient">
                     <dt>Protein</dt>
-                    <dd>{{ recipe.nutrition.proteinG }}g</dd>
+                    <dd>
+                      {{ recipe.nutrition.proteinG }}g / portion ({{
+                        macroPercent(recipe.nutrition.proteinG)
+                      }}%)
+                    </dd>
+                    <dd class="recipe__nutrient-total">
+                      {{ nutritionTotal(recipe.nutrition.proteinG) }}g total
+                    </dd>
                   </div>
                   <div class="recipe__nutrient">
                     <dt>Fat</dt>
-                    <dd>{{ recipe.nutrition.fatG }}g</dd>
+                    <dd>
+                      {{ recipe.nutrition.fatG }}g / portion ({{
+                        macroPercent(recipe.nutrition.fatG)
+                      }}%)
+                    </dd>
+                    <dd class="recipe__nutrient-total">
+                      {{ nutritionTotal(recipe.nutrition.fatG) }}g total
+                    </dd>
                   </div>
                   <div class="recipe__nutrient">
                     <dt>Carbs</dt>
-                    <dd>{{ recipe.nutrition.carbsG }}g</dd>
+                    <dd>
+                      {{ recipe.nutrition.carbsG }}g / portion ({{
+                        macroPercent(recipe.nutrition.carbsG)
+                      }}%)
+                    </dd>
+                    <dd class="recipe__nutrient-total">
+                      {{ nutritionTotal(recipe.nutrition.carbsG) }}g total
+                    </dd>
                   </div>
                 </dl>
               </div>
