@@ -23,6 +23,12 @@ export interface RecipeIngredient {
 export interface RecipeStep {
   /** Position in the instructions, starting at 1. */
   number: number;
+  /**
+   * Short heading for the step, e.g. "Chop the onions". Optional because
+   * recipes generated before this field existed have none stored in
+   * Firebase — the detail page simply omits the heading for those.
+   */
+  title?: string;
   /** What to do, understandable for a beginner. */
   text: string;
   /** Whether this step runs alongside the previous one instead of after it. */

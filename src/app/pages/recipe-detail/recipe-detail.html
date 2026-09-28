@@ -121,6 +121,9 @@
                       <span class="step__parallel">runs alongside the previous step</span>
                     }
                   </div>
+                  @if (step.title) {
+                    <h3 class="step__title">{{ step.title }}</h3>
+                  }
                   <p class="step__text">{{ step.text }}</p>
                 </li>
               }
