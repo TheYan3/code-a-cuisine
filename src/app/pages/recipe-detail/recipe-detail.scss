@@ -99,6 +99,9 @@
   padding: 24px;
   border-radius: 20px;
   background-color: var(--color-linen);
+  // Scopes the container query on `.recipe__facts` below to this row's own
+  // content width, not the viewport.
+  container-type: inline-size;
 
   @include desktop-up {
     flex-direction: row;
@@ -193,7 +196,24 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  flex-shrink: 0;
+
+  @include desktop-up {
+    flex-shrink: 0;
+  }
+}
+
+// `.recipe__head`'s own content box (not the viewport — its fixed side
+// padding scales with it) drops under ~800px right around the 1024px
+// desktop-up threshold, where `flex-shrink: 0` above made this overflow the
+// card: the name column plus this one's unshrunk natural width (~551px,
+// four nutrients in a row) no longer fit side by side. Dropping the shrink
+// guard there lets `.recipe__nutrition-grid`'s own `flex-wrap: wrap` fold
+// the nutrients onto a second line instead — nothing changes at 1440px
+// (the frame this was built against), which always had room for one row.
+@container (max-width: 850px) {
+  .recipe__facts {
+    flex-shrink: 1;
+  }
 }
 
 .recipe__tags {

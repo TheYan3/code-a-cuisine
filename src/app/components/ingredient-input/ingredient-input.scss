@@ -9,8 +9,14 @@
   border-radius: 20px;
   background-color: rgba(57, 96, 57, 0.3);
 
+  // A plain `width: 577px` (the Figma 1440px frame's value) overflowed
+  // `.generator__row` right at the 1024px desktop-up threshold, where the
+  // row has less room than 577px + the 478px `.ingredient-list` next to it.
+  // `flex` lets it shrink proportionally to `.ingredient-list` below that
+  // point instead, capped at the exact Figma width once there's room again.
   @include desktop-up {
-    width: 577px;
+    flex: 1 1 577px;
+    max-width: 577px;
   }
 }
 

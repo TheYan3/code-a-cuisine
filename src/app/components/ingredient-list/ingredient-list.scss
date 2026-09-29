@@ -13,9 +13,15 @@
   border-radius: 20px;
   background-color: rgba(57, 96, 57, 0.3);
 
+  // A plain `width: 478px` (the Figma 1440px frame's value) overflowed
+  // `.generator__row` right at the 1024px desktop-up threshold, where the
+  // row has less room than 478px + the 577px `.ingredient-input` next to
+  // it. `flex` lets it shrink proportionally to `.ingredient-input` below
+  // that point instead, capped at the exact Figma width once there's room.
   @include desktop-up {
     min-height: 209px;
-    width: 478px;
+    flex: 1 1 478px;
+    max-width: 478px;
     padding: 24px;
   }
 }
@@ -97,6 +103,11 @@
 }
 
 // Figma "Frame 859": fixed 212px (mobile) / 347px (default, desktop-up).
+// Desktop-up uses `max-width`, not a hard `width`: right at the 1024px
+// desktop-up threshold, a real ingredient's fixed-width row no longer fits
+// next to `.ingredient-input` — see the phase 6 report — and a hard width
+// here would stop the shrink from reaching this deep. `max-width` still
+// lands on exactly 347px the moment there is room for it, same as before.
 .ingredient-list__info {
   display: flex;
   align-items: flex-start;
@@ -104,7 +115,8 @@
   width: 212px;
 
   @include desktop-up {
-    width: 347px;
+    width: auto;
+    max-width: 347px;
   }
 }
 
@@ -112,7 +124,8 @@
 // row instead of beside it, fixed 212px wide — `order` flips the name
 // (after the amount group in the DOM, for a11y/tab order) to the top
 // without reordering the markup. Desktop-up restores the flex-start row,
-// fixed 357px wide.
+// `max-width` 357px (see `.ingredient-list__info` above for why not a hard
+// `width`).
 .ingredient-list__edit-fields {
   display: flex;
   flex-direction: column;
@@ -127,7 +140,8 @@
     flex-direction: row;
     align-items: flex-start;
     gap: 16px;
-    width: 357px;
+    width: auto;
+    max-width: 357px;
 
     .ingredient-list__name {
       order: 0;
@@ -203,7 +217,8 @@
   width: 130px;
 
   @include desktop-up {
-    width: 209px;
+    width: auto;
+    max-width: 209px;
   }
 }
 
