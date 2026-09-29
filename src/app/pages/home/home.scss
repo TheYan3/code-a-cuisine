@@ -6,10 +6,9 @@
 // monitor whose browser chrome leaves less than 1440px of viewport (e.g.
 // 3440x1310). `min-height: 100dvh` instead means the hero is exactly
 // 1440px tall only when the viewport happens to be exactly that tall;
-// shorter viewports get a hero that exactly fills them (the widescreen
-// visuals/plates, positioned from the top and already clipped by
-// `overflow: hidden`, just lose a bit more of their bottom dishes — same
-// trade-off the mobile/desktop plates above already make), and taller ones
+// shorter viewports get a hero that exactly fills them (the plate chain,
+// positioned from the top and clipped by `overflow: hidden`, just loses a
+// bit more of its bottom dishes), and taller ones
 // (e.g. 3440x1600) get a hero that still fills the viewport instead of
 // leaving a gap of the page background below a hard-capped 1440px hero.
 .hero {
@@ -67,10 +66,12 @@
   left: 164px;
 }
 
-// Figma "hero" (1440px frame): the three plate photos, positioned/sized
-// exactly as exported. Hidden again past `widescreen-up`, where the wider
-// "widescreen-design" frame's five-dish cascade (`.hero__widescreen-visuals`
-// below) takes over instead.
+// Figma "Visuals": the five-dish chain, positioned in "hero" frame
+// coordinates (Visuals at x 911 of the 1440px column). Every left/top/size
+// is where the asset lands when matched pixel-for-pixel against the hero
+// and widescreen-design reference PNGs (both frames share the same chain,
+// only shifted horizontally). The chain spills past the viewport bottom on
+// purpose — `.hero{overflow:hidden}` crops it, exactly like both frames do.
 .hero__plates {
   display: none;
 
@@ -80,8 +81,10 @@
     inset: 0;
   }
 
+  // "widescreen-design" puts the chain at x 841 of the centered column
+  // (Visuals x 1821 minus the frame's 980px inset) instead of 911.
   @include widescreen-up {
-    display: none;
+    translate: -70px 0;
   }
 }
 
@@ -90,84 +93,44 @@
 }
 
 .hero__plate--chicken {
-  top: -42px;
+  top: -50px;
   left: 916px;
 }
 
 .hero__plate--salmon {
-  top: 273px;
+  top: 266px;
   left: 903px;
 }
 
 .hero__plate--steak {
-  // Calibrated against the reference PNG: the exported asset is already
-  // clipped to the hero frame's bottom edge (like the chicken plate is at
-  // the top), so its bottom has to sit exactly on the frame's bottom edge.
-  top: 570px;
-  left: 908px;
+  top: 571px;
+  left: 902px;
 }
 
-// Figma "widescreen-design" > "Visuals": five dishes cascading top to
-// bottom, only shown past `widescreen-up` — a *different* layout from
-// `.hero__plates` above (own frame, own five-dish "Visuals" component), not
-// a scaled-up version of it. Positions are relative to `.hero__inner`
-// (offset by the "Visuals" instance's own relativeX/Y within the 3400px-wide
-// widescreen frame, minus the frame's 980px inset to the centered 1440px
-// column). The stack is taller than the frame (1734px vs. 1440px) and
-// spills past both edges on purpose — `.hero`'s `overflow: hidden` clips it,
-// same as the mobile ellipses above.
-.hero__widescreen-visuals {
+// Dishes 4 and 5 only once at least a third of the dish fits into the
+// viewport: dish 4's plate starts at y 907 (474px across), dish 5's at
+// y 1221 (468px across). Both thresholds lie above the bottom edge of the
+// dish before (1069 / 1381), so there's never a strip of empty green between
+// the last shown dish and the hero's bottom edge; 1024 (hero frame) stays at
+// three dishes, 1440 (widescreen frame) gets all five.
+.hero__plate--chicken-bowl {
   display: none;
+  top: 867px;
+  left: 880px;
 
-  @include widescreen-up {
+  @include height-up($breakpoint-hero-dish-4-height) {
     display: block;
-    position: absolute;
-    inset: 0;
   }
 }
 
-.hero__wide-plate {
-  position: absolute;
-  // The Figma box and the exported asset's own crop don't always share the
-  // same aspect ratio exactly (ellipse-31 is a 866x870 image inside a
-  // 618x633 box, ~2% off) — `cover` scales it uniformly and crops the
-  // overhang instead of stretching it into an oval. A no-op for the assets
-  // whose crop already matches (round trip through this rule either way, so
-  // one rule serves both instead of a `--steak`-only override).
-  object-fit: cover;
-}
+.hero__plate--salmon-potatoes {
+  display: none;
+  top: 1210px;
+  left: 908px;
 
-.hero__wide-plate--chicken {
-  top: -42px;
-  left: 846px;
-}
-
-.hero__wide-plate--salmon {
-  top: 273px;
-  left: 833px;
-}
-
-// Positions below taken from each ellipse's own absolute x/y in the export,
-// minus the "widescreen-design" frame's absolute origin plus its 980px
-// inset to the centered column — *not* the Ellipse node's own reported
-// `relativeX/Y` added to the "Visuals" instance's offset. For a rotated
-// child (ellipse-31/32's source art is rotated a few degrees) those two
-// don't agree: Figma's `relativeX/Y` is measured against the instance's own
-// unrotated local origin, not the absolute canvas, and going through it
-// placed both dishes further right than the reference PNG shows.
-.hero__wide-plate--steak {
-  top: 512px;
-  left: 772px;
-}
-
-.hero__wide-plate--chicken-bowl {
-  top: 874px;
-  left: 810px;
-}
-
-.hero__wide-plate--salmon-potatoes {
-  top: 1217px;
-  left: 838px;
+  @include height-up($breakpoint-hero-dish-5-height) {
+    display: block;
+  }
 }
 
 // Figma "Main CTA" mobile: top-left under the header, hugging its own

@@ -14,12 +14,21 @@
   }
 }
 
-/// Applies the given content only once both the width and the height are
-/// wide/tall enough for the Figma "widescreen-design" frame (a plain
-/// `desktop-up` would also fire on a wide-but-short window, cropping that
-/// frame's fixed 1440px height instead of showing it).
+/// Applies the given content only from the widescreen width upwards, where
+/// the Figma "widescreen-design" frame (3400px wide) takes over from the
+/// 1440px "hero" frame. Width only: how much of the hero's plate chain is
+/// shown depends on the height, see `height-up`.
 @mixin widescreen-up {
-  @media (min-width: $breakpoint-widescreen-width) and (min-height: $breakpoint-widescreen-height) {
+  @media (min-width: $breakpoint-widescreen-width) {
+    @content;
+  }
+}
+
+/// Applies the given content only from the given viewport height upwards.
+/// Takes the height as a parameter because height thresholds are tied to a
+/// single layout (e.g. `$breakpoint-hero-dish-4-height`), not page-wide.
+@mixin height-up($min-height) {
+  @media (min-height: $min-height) {
     @content;
   }
 }

@@ -26,91 +26,68 @@
       />
     </div>
 
+    <!--
+      Figma "Visuals" component (instance in "widescreen-design", detached
+      copy in "hero"): one chain of five dishes for every desktop size. The
+      hero frame (1024px tall) crops it after the third dish, the widescreen
+      frame (1440px tall) after the fifth; here the viewport height does the
+      cropping, and the fourth/fifth dish only switch on once a sensible part
+      of them fits (see `height-up` in home.scss). Sizes are the drawn size of
+      each asset as measured against both reference PNGs, not the Figma node
+      boxes (ellipse-31/32 are rotated, their boxes are rotation bounds).
+      ellipse-29/30/31 are the same files as the mobile visuals above, so no
+      extra request. ellipse-32/33 go through `<picture>` so they're only
+      downloaded when shown (a plain `<img>` downloads despite
+      `display: none`); each `media` must match the SCSS gate of its dish
+      (desktop-up + $breakpoint-hero-dish-4/5-height), the empty-SVG fallback
+      never triggers a request.
+    -->
     <div class="hero__plates" aria-hidden="true">
       <img
         class="hero__plate hero__plate--chicken"
-        src="/images/hero/plate-chicken.webp"
+        src="/images/hero/ellipse-29.webp"
         alt=""
         width="480"
-        height="430"
+        height="482"
       />
       <img
         class="hero__plate hero__plate--salmon"
-        src="/images/hero/plate-salmon.webp"
+        src="/images/hero/ellipse-30.webp"
         alt=""
         width="494"
-        height="492"
+        height="494"
       />
       <img
         class="hero__plate hero__plate--steak"
-        src="/images/hero/plate-steak.webp"
-        alt=""
-        width="493"
-        height="453"
-      />
-    </div>
-
-    <!--
-      Figma "widescreen-design" > "Visuals": five dishes, only shown once
-      there's room for the wider cascade without crowding the text column
-      (see `widescreen-up` in _mixins.scss). Reuses ellipse-29/30/31 (already
-      loaded above for the mobile visuals, so no extra request) but adds two
-      dishes — ellipse-32/33 — that exist nowhere else on the page. Those two
-      go through `<picture>` with a matching `media` on the `<source>`
-      instead of a plain `src`: a plain `<img>` downloads regardless of
-      `display: none`, and at 150+ KB each that's real weight for the very
-      few visitors below the widescreen threshold. The empty-SVG fallback
-      never triggers a request (`widescreen-up` is min-width AND min-height,
-      the same condition `<picture>` alone can't express, so the wrapper
-      below still carries the `display: none` gate; `<picture>` only stops
-      the download).
-    -->
-    <div class="hero__widescreen-visuals" aria-hidden="true">
-      <img
-        class="hero__wide-plate hero__wide-plate--chicken"
-        src="/images/hero/ellipse-29.webp"
-        alt=""
-        width="470"
-        height="470"
-      />
-      <img
-        class="hero__wide-plate hero__wide-plate--salmon"
-        src="/images/hero/ellipse-30.webp"
-        alt=""
-        width="484"
-        height="484"
-      />
-      <img
-        class="hero__wide-plate hero__wide-plate--steak"
         src="/images/hero/ellipse-31.webp"
         alt=""
-        width="618"
-        height="633"
+        width="509"
+        height="511"
       />
       <picture>
         <source
-          media="(min-width: 1920px) and (min-height: 1300px)"
+          media="(min-width: 1024px) and (min-height: 1064px)"
           srcset="/images/hero/ellipse-32.webp"
         />
         <img
-          class="hero__wide-plate hero__wide-plate--chicken-bowl"
+          class="hero__plate hero__plate--chicken-bowl"
           src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
           alt=""
-          width="543"
-          height="543"
+          width="553"
+          height="553"
         />
       </picture>
       <picture>
         <source
-          media="(min-width: 1920px) and (min-height: 1300px)"
+          media="(min-width: 1024px) and (min-height: 1376px)"
           srcset="/images/hero/ellipse-33.webp"
         />
         <img
-          class="hero__wide-plate hero__wide-plate--salmon-potatoes"
+          class="hero__plate hero__plate--salmon-potatoes"
           src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
           alt=""
-          width="480"
-          height="480"
+          width="490"
+          height="490"
         />
       </picture>
     </div>
