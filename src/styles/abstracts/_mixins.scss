@@ -14,6 +14,16 @@
   }
 }
 
+/// Applies the given content only once both the width and the height are
+/// wide/tall enough for the Figma "widescreen-design" frame (a plain
+/// `desktop-up` would also fire on a wide-but-short window, cropping that
+/// frame's fixed 1440px height instead of showing it).
+@mixin widescreen-up {
+  @media (min-width: $breakpoint-widescreen-width) and (min-height: $breakpoint-widescreen-height) {
+    @content;
+  }
+}
+
 /// Expands an element's tap target to at least 44x44px (touch-target
 /// guidance) without changing its own visual size: an invisible `::before`,
 /// sized to the larger of 44px or the element's own box and centered on it.

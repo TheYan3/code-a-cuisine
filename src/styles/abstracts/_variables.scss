@@ -43,3 +43,8 @@
 // Breakpoints as SCSS variables (used by mixins, not needed at runtime as CSS vars).
 $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1024px;
+// Gates the Figma "widescreen-design" frame (3400x1440): both a minimum
+// width and a minimum height, so a merely wide-but-short browser window
+// doesn't get a hero cropped down from its native 1440px height.
+$breakpoint-widescreen-width: 1920px;
+$breakpoint-widescreen-height: 1300px;

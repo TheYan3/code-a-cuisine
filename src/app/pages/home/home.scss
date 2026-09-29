@@ -5,6 +5,16 @@
   min-height: 100dvh;
   overflow: hidden;
   background-color: var(--color-green);
+
+  // Figma "widescreen-design": a fixed 1440px-tall frame, not a fluid one —
+  // `min-height: 100dvh` above would otherwise stretch it taller on a
+  // viewport past 1440px tall (the `widescreen-up` mixin only guarantees
+  // *at least* 1300px), which would pull `.hero__widescreen-visuals` and
+  // `.hero__secondary-cta` down with it instead of matching the frame.
+  @include widescreen-up {
+    height: 1440px;
+    min-height: 1440px;
+  }
 }
 
 .hero__inner {
@@ -55,6 +65,10 @@
   left: 164px;
 }
 
+// Figma "hero" (1440px frame): the three plate photos, positioned/sized
+// exactly as exported. Hidden again past `widescreen-up`, where the wider
+// "widescreen-design" frame's five-dish cascade (`.hero__widescreen-visuals`
+// below) takes over instead.
 .hero__plates {
   display: none;
 
@@ -63,39 +77,78 @@
     position: absolute;
     inset: 0;
   }
+
+  @include widescreen-up {
+    display: none;
+  }
 }
 
 .hero__plate {
   position: absolute;
 }
 
-// Figma "widescreen-design" > "Visuals": five dishes cascading top to bottom,
-// positions taken relative to `.hero__inner` (offset by the "Visuals" instance's
-// own relativeX/Y within the 3400px-wide widescreen frame, minus the frame's
-// 980px inset to the centered 1440px column). The stack is taller than the
-// hero itself (1734px) and spills past both edges on purpose — `.hero`'s
-// `overflow: hidden` clips it, same as the mobile ellipses above.
 .hero__plate--chicken {
   top: -42px;
-  left: 846px;
+  left: 916px;
 }
 
 .hero__plate--salmon {
   top: 273px;
-  left: 833px;
+  left: 903px;
 }
 
 .hero__plate--steak {
+  // Calibrated against the reference PNG: the exported asset is already
+  // clipped to the hero frame's bottom edge (like the chicken plate is at
+  // the top), so its bottom has to sit exactly on the frame's bottom edge.
+  top: 570px;
+  left: 908px;
+}
+
+// Figma "widescreen-design" > "Visuals": five dishes cascading top to
+// bottom, only shown past `widescreen-up` — a *different* layout from
+// `.hero__plates` above (own frame, own five-dish "Visuals" component), not
+// a scaled-up version of it. Positions are relative to `.hero__inner`
+// (offset by the "Visuals" instance's own relativeX/Y within the 3400px-wide
+// widescreen frame, minus the frame's 980px inset to the centered 1440px
+// column). The stack is taller than the frame (1734px vs. 1440px) and
+// spills past both edges on purpose — `.hero`'s `overflow: hidden` clips it,
+// same as the mobile ellipses above.
+.hero__widescreen-visuals {
+  display: none;
+
+  @include widescreen-up {
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.hero__wide-plate {
+  position: absolute;
+}
+
+.hero__wide-plate--chicken {
+  top: -42px;
+  left: 846px;
+}
+
+.hero__wide-plate--salmon {
+  top: 273px;
+  left: 833px;
+}
+
+.hero__wide-plate--steak {
   top: 512px;
   left: 936px;
 }
 
-.hero__plate--chicken-bowl {
+.hero__wide-plate--chicken-bowl {
   top: 874px;
   left: 877px;
 }
 
-.hero__plate--salmon-potatoes {
+.hero__wide-plate--salmon-potatoes {
   top: 1217px;
   left: 838px;
 }
