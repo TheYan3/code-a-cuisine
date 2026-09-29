@@ -1,20 +1,22 @@
 @use '../../../styles/abstracts' as *;
 
+// `min-height: 100dvh` (no `widescreen-up` override) is deliberate, not an
+// oversight: forcing a flat `height: 1440px` — the Figma "widescreen-design"
+// frame's own height — caused a vertical scrollbar on any real widescreen
+// monitor whose browser chrome leaves less than 1440px of viewport (e.g.
+// 3440x1310). `min-height: 100dvh` instead means the hero is exactly
+// 1440px tall only when the viewport happens to be exactly that tall;
+// shorter viewports get a hero that exactly fills them (the widescreen
+// visuals/plates, positioned from the top and already clipped by
+// `overflow: hidden`, just lose a bit more of their bottom dishes — same
+// trade-off the mobile/desktop plates above already make), and taller ones
+// (e.g. 3440x1600) get a hero that still fills the viewport instead of
+// leaving a gap of the page background below a hard-capped 1440px hero.
 .hero {
   position: relative;
   min-height: 100dvh;
   overflow: hidden;
   background-color: var(--color-green);
-
-  // Figma "widescreen-design": a fixed 1440px-tall frame, not a fluid one —
-  // `min-height: 100dvh` above would otherwise stretch it taller on a
-  // viewport past 1440px tall (the `widescreen-up` mixin only guarantees
-  // *at least* 1300px), which would pull `.hero__widescreen-visuals` and
-  // `.hero__secondary-cta` down with it instead of matching the frame.
-  @include widescreen-up {
-    height: 1440px;
-    min-height: 1440px;
-  }
 }
 
 .hero__inner {
@@ -126,6 +128,13 @@
 
 .hero__wide-plate {
   position: absolute;
+  // The Figma box and the exported asset's own crop don't always share the
+  // same aspect ratio exactly (ellipse-31 is a 866x870 image inside a
+  // 618x633 box, ~2% off) — `cover` scales it uniformly and crops the
+  // overhang instead of stretching it into an oval. A no-op for the assets
+  // whose crop already matches (round trip through this rule either way, so
+  // one rule serves both instead of a `--steak`-only override).
+  object-fit: cover;
 }
 
 .hero__wide-plate--chicken {
@@ -138,14 +147,22 @@
   left: 833px;
 }
 
+// Positions below taken from each ellipse's own absolute x/y in the export,
+// minus the "widescreen-design" frame's absolute origin plus its 980px
+// inset to the centered column — *not* the Ellipse node's own reported
+// `relativeX/Y` added to the "Visuals" instance's offset. For a rotated
+// child (ellipse-31/32's source art is rotated a few degrees) those two
+// don't agree: Figma's `relativeX/Y` is measured against the instance's own
+// unrotated local origin, not the absolute canvas, and going through it
+// placed both dishes further right than the reference PNG shows.
 .hero__wide-plate--steak {
   top: 512px;
-  left: 936px;
+  left: 772px;
 }
 
 .hero__wide-plate--chicken-bowl {
   top: 874px;
-  left: 877px;
+  left: 810px;
 }
 
 .hero__wide-plate--salmon-potatoes {
