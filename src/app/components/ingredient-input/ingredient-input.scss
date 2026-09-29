@@ -1,22 +1,34 @@
 @use '../../../styles/abstracts' as *;
 
+// The host, not `.ingredient-input`, is the flex item in `.generator__row`
+// — flex sizing on the inner div never took effect (the host fell back to
+// its content width, ~510px). Figma's fixed 577px is the basis and the cap;
+// right at the 1024px desktop-up threshold the row has less room than
+// 577px + the 478px ingredient list, so both shrink in proportion there.
+:host {
+  display: block;
+
+  @include desktop-up {
+    flex: 1 1 577px;
+    max-width: 577px;
+  }
+}
+
+// Mobile side padding: Figma has none, its 300px columns simply center in
+// the 340px card (20px either side). Stating that inset as padding keeps
+// the 375px frame unchanged and gives the columns a floor to shrink to on
+// narrower phones instead of overflowing the card.
 .ingredient-input {
   box-sizing: border-box;
   display: flex;
   justify-content: center;
   width: 100%;
-  padding: 25px 0;
+  padding: 25px 20px;
   border-radius: 20px;
   background-color: rgba(57, 96, 57, 0.3);
 
-  // A plain `width: 577px` (the Figma 1440px frame's value) overflowed
-  // `.generator__row` right at the 1024px desktop-up threshold, where the
-  // row has less room than 577px + the 478px `.ingredient-list` next to it.
-  // `flex` lets it shrink proportionally to `.ingredient-list` below that
-  // point instead, capped at the exact Figma width once there's room again.
   @include desktop-up {
-    flex: 1 1 577px;
-    max-width: 577px;
+    padding: 25px 0;
   }
 }
 
@@ -28,11 +40,15 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  // Full card width on mobile, so the 300px columns' `max-width: 100%`
+  // below has a definite width to shrink against.
+  width: 100%;
 
   @include desktop-up {
     flex-direction: row;
     align-items: flex-start;
     gap: 32px;
+    width: auto;
   }
 }
 
@@ -44,6 +60,7 @@
   flex-direction: column;
   gap: 4px;
   width: 300px;
+  max-width: 100%;
 }
 
 .ingredient-input__label-group {
@@ -137,6 +154,9 @@
 // spans the full row (it overflows the 16px-indented list, like in Figma).
 .ingredient-input__option {
   width: 300px;
+  // Shrinks with the name field below 300px, keeping Figma's 16px
+  // overhang past it (the list is indented 16px).
+  max-width: calc(100% + 16px);
   padding: 4px 8px;
   font-family: var(--font-quicksand);
   font-size: 16px;
@@ -168,6 +188,7 @@
   flex-direction: column;
   gap: 16px;
   width: 300px;
+  max-width: 100%;
 
   @include desktop-up {
     width: 178px;
