@@ -141,8 +141,10 @@
 
   // Radius only belongs to the hover variant (the default has none). The
   // arrow-key/mouse-highlighted option ("on hover" in the Figma "drop down
-  // options" component) reuses the same style — it's the same visual state.
+  // options" component) reuses the same style — it's the same visual state;
+  // `:active` gives touch its own press feedback (no hover there).
   &:hover,
+  &:active,
   &.is-highlighted {
     border-radius: 8px;
     background-color: rgba(250, 240, 230, 0.6);
@@ -240,6 +242,7 @@
 }
 
 .ingredient-input__add {
+  position: relative;
   flex-shrink: 0;
   width: 36px;
   height: 36px;
@@ -248,6 +251,10 @@
   border-radius: 5px;
   background: url('/icons/add_default.svg') center / 36px 36px no-repeat;
   cursor: pointer;
+
+  // 36px, under the 44px touch-target minimum — expand the tap area
+  // invisibly instead of growing the button past its exported icon size.
+  @include touch-target;
 
   &:hover {
     background-image: url('/icons/add_hover.svg');

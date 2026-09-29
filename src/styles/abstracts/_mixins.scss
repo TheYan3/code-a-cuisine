@@ -13,3 +13,20 @@
     @content;
   }
 }
+
+/// Expands an element's tap target to at least 44x44px (touch-target
+/// guidance) without changing its own visual size: an invisible `::before`,
+/// sized to the larger of 44px or the element's own box and centered on it.
+/// The element this is mixed into needs a non-static `position` so the
+/// pseudo-element anchors to it, not to an ancestor.
+@mixin touch-target($size: 44px) {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(#{$size}, 100%);
+    height: max(#{$size}, 100%);
+    transform: translate(-50%, -50%);
+  }
+}

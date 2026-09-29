@@ -281,9 +281,14 @@
   }
 }
 
+// 19px icons, well under the 44px touch-target minimum — expand the tap
+// area invisibly instead of growing them past their exported icon size.
+// Note: the two icons in a row sit only 16px apart, so their 44px hit areas
+// overlap each other by ~9px in the middle; see the phase 6 report.
 .ingredient-list__edit,
 .ingredient-list__check,
 .ingredient-list__delete {
+  position: relative;
   display: flex;
   width: 19px;
   height: 19px;
@@ -291,6 +296,8 @@
   border: none;
   background: none;
   cursor: pointer;
+
+  @include touch-target;
 
   &:focus-visible {
     outline: 2px solid var(--color-heading-green);

@@ -1,3 +1,5 @@
+@use '../../../styles/abstracts' as *;
+
 .counter {
   display: flex;
   align-items: center;
@@ -8,6 +10,7 @@
 // already contain that 4px inset (28px viewBox, icon drawn from 4 to 24), so
 // the image is shown at 28px without extra padding.
 .counter__btn {
+  position: relative;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -19,6 +22,11 @@
   border-radius: 4px;
   background: none;
   cursor: pointer;
+
+  // 28px is under the 44px touch-target minimum — expand the tap area
+  // invisibly instead of growing the button (would push the value chip
+  // between the two buttons off its exported spacing).
+  @include touch-target;
 
   &:focus-visible {
     outline: 2px solid var(--color-heading-green);

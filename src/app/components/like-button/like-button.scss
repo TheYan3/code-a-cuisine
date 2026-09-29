@@ -87,7 +87,8 @@
   background: url('/icons/heart_default.svg') no-repeat center / contain;
   cursor: pointer;
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled),
+  &:active:not(:disabled) {
     background-image: url('/icons/heart_hover.svg');
   }
 

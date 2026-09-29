@@ -163,6 +163,11 @@
     width: 370px;
     height: 124px;
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 2px;
+  }
 }
 
 .most-liked__top {
@@ -244,6 +249,11 @@
   flex-direction: column;
   gap: 8px;
   text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 2px;
+  }
 }
 
 .cuisine-tile__heading {
@@ -263,7 +273,10 @@
   transition: font-size 0.15s ease;
 }
 
-.cuisine-tile:hover .cuisine-tile__emoji {
+// `:active` mirrors `:hover` — touch has no hover, so the emoji still needs
+// to grow on press instead of only on a mouse-only hover.
+.cuisine-tile:hover .cuisine-tile__emoji,
+.cuisine-tile:active .cuisine-tile__emoji {
   font-size: 38px;
 }
 

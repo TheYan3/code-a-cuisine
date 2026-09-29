@@ -1,3 +1,5 @@
+@use '../../../styles/abstracts' as *;
+
 // Values from the Figma "pagination" component set (default/hover/active)
 // and the "Pagination" frame in the cuisine page (24px gap around the
 // number group, 10px gap between the numbers themselves).
@@ -18,7 +20,11 @@
   gap: 10px;
 }
 
+// 33x27px, under the 44px touch-target minimum — expanded invisibly below.
+// Numbers sit only 10px apart, so adjacent hit areas overlap by ~9px in the
+// middle; see the phase 6 report.
 .pagination__item {
+  position: relative;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -33,7 +39,10 @@
   color: var(--color-text-dark);
   text-decoration: none;
 
-  &:hover {
+  @include touch-target;
+
+  &:hover,
+  &:active {
     background-color: color-mix(in srgb, var(--color-loader-sage) 40%, transparent);
   }
 
@@ -51,7 +60,8 @@
 .pagination__item--disabled {
   color: color-mix(in srgb, var(--color-text-dark) 30%, transparent);
 
-  &:hover {
+  &:hover,
+  &:active {
     background-color: transparent;
   }
 }

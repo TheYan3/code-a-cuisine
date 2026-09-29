@@ -35,8 +35,13 @@
 }
 
 .site-header__logo-link {
+  position: relative;
   display: inline-flex;
   align-self: flex-start;
+
+  // Mobile logo is 32px tall, under the 44px touch-target minimum — expand
+  // the tap area invisibly instead of growing the logo itself.
+  @include touch-target;
 
   &:focus-visible {
     outline: 2px solid var(--color-linen);
@@ -55,11 +60,16 @@
 }
 
 .site-header__back {
+  position: relative;
   display: flex;
   align-self: flex-start;
   align-items: center;
   gap: 10px;
   text-decoration: none;
+
+  // Mobile shows only the 32x20px icon chip (the label is visually hidden,
+  // see `.site-header__back-label` below) — expand the tap area invisibly.
+  @include touch-target;
 
   &:focus-visible {
     outline: 2px solid var(--color-heading-green);

@@ -424,6 +424,7 @@
 }
 
 .recipe__accordion-toggle {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -435,6 +436,10 @@
   line-height: 20px;
   color: var(--color-green);
   cursor: pointer;
+
+  // ~36px tall, under the 44px touch-target minimum — expand the tap area
+  // invisibly instead of growing the pill.
+  @include touch-target;
 
   &::-webkit-details-marker {
     display: none;

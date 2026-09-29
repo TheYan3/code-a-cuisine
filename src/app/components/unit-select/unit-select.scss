@@ -1,9 +1,12 @@
+@use '../../../styles/abstracts' as *;
+
 .unit-select {
   position: relative;
   flex-shrink: 0;
 }
 
 .unit-select__trigger {
+  position: relative;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -22,6 +25,10 @@
   line-height: 20px;
   color: var(--color-text-dark);
   cursor: pointer;
+
+  // 36px tall, under the 44px touch-target minimum — expand the tap area
+  // invisibly instead of growing the pill.
+  @include touch-target;
 
   &:focus-visible {
     outline: 2px solid var(--color-heading-green);
@@ -63,8 +70,10 @@
   color: var(--color-text-dark);
   cursor: pointer;
 
-  // The arrow-key-highlighted option reuses the hover style — same visual state.
+  // The arrow-key-highlighted option reuses the hover style — same visual
+  // state; `:active` gives touch its own press feedback (no hover there).
   &:hover,
+  &:active,
   &.is-highlighted {
     background-color: rgba(250, 240, 230, 0.6);
   }

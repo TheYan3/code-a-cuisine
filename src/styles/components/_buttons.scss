@@ -74,7 +74,10 @@
   background-color: var(--color-linen);
   color: var(--color-button-text);
 
-  &:hover {
+  // `:active` mirrors `:hover` — touch has no hover, so press feedback
+  // needs its own rule instead of relying on hover to also cover it.
+  &:hover,
+  &:active {
     background-color: var(--color-hover-creme);
     font-weight: 700;
   }
@@ -83,7 +86,8 @@
 .btn--creme.btn--secondary {
   color: var(--color-linen);
 
-  &:hover {
+  &:hover,
+  &:active {
     background-color: rgba(250, 224, 198, 0.2);
     border-radius: 0;
   }
@@ -95,7 +99,8 @@
 .btn--green.btn--secondary {
   color: var(--color-green);
 
-  &:hover {
+  &:hover,
+  &:active {
     background-color: rgba(57, 96, 57, 0.1);
     border-radius: 0;
   }
@@ -108,7 +113,8 @@
   background-color: var(--color-green);
   color: var(--color-linen);
 
-  &:hover {
+  &:hover,
+  &:active {
     background-color: var(--color-hover-green);
     color: #ffffff;
     font-weight: 700;

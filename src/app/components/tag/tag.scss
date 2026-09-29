@@ -1,3 +1,5 @@
+@use '../../../styles/abstracts' as *;
+
 // Block host so the tag can fill a fixed-width parent column (cooking time)
 // and still hug its label inside a flex row (cuisine, diet).
 :host {
@@ -8,6 +10,7 @@
 // are 28px tall, overriding the 32px hug height the standalone component
 // would get from its 6px vertical padding + 20px line height.
 .tag {
+  position: relative;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -23,7 +26,12 @@
   color: var(--color-heading-green);
   cursor: pointer;
 
-  &:hover {
+  // 28px tall, under the 44px touch-target minimum — expand the tap area
+  // invisibly instead of growing the pill.
+  @include touch-target;
+
+  &:hover,
+  &:active {
     background-color: var(--color-hover-creme);
   }
 
