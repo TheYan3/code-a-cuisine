@@ -17,6 +17,12 @@
   gap: 10px;
   padding: 4px 16px;
   border: none;
+  // Every use so far has been an `<a>` (transparent by default) — added
+  // explicitly now that the "not quite enough" dialog uses a real
+  // `<button>`, which would otherwise keep its UA grey chrome under
+  // `.btn--creme.btn--secondary`/`.btn--green.btn--secondary` (only the
+  // `--primary` variants set their own `background-color`).
+  background: none;
   text-decoration: none;
   cursor: pointer;
 

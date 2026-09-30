@@ -1,8 +1,9 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Counter } from '../../components/counter/counter';
 import { Header } from '../../components/header/header';
+import { NotEnoughPopup } from '../../components/not-enough-popup/not-enough-popup';
 import { Tag } from '../../components/tag/tag';
 import { Cuisine, CookingTime, Diet, RecipeRequestService } from '../../core/recipe-request';
 
@@ -28,7 +29,7 @@ interface PreferenceOption<T extends string> {
  * does anything.
  */
 @Component({
-  imports: [Header, Counter, Tag],
+  imports: [Counter, Header, NotEnoughPopup, Tag],
   selector: 'app-preferences',
   styleUrl: './preferences.scss',
   templateUrl: './preferences.html',
@@ -36,6 +37,14 @@ interface PreferenceOption<T extends string> {
 export class Preferences {
   protected readonly recipeRequest = inject(RecipeRequestService);
   private readonly router = inject(Router);
+
+  /**
+   * Whether the "Ups! Not quite enough..." dialog (Figma frames "pop-up" /
+   * "mobile-pop-up") is shown. Plain signal for now — whichever change adds
+   * the actual "are the ingredient quantities enough for the selected
+   * servings" check sets it, this page does not run that check yet.
+   */
+  protected readonly showNotEnough = signal(false);
 
   /** Cooking time options; sublabels intentionally differ from the Figma text (typos fixed). */
   protected readonly cookingTimeOptions: CookingTimeOption[] = [
@@ -99,5 +108,16 @@ export class Preferences {
     if (!this.recipeRequest.isComplete()) return;
     this.recipeRequest.armGeneration();
     this.router.navigate(['/generator/loading']);
+  }
+
+  /** Closes the "not enough" dialog (X button, Escape, or a backdrop click). */
+  protected onNotEnoughClosed(): void {
+    this.showNotEnough.set(false);
+  }
+
+  /** "Go back to ingredients": closes the dialog and returns to the ingredient step. */
+  protected onNotEnoughAction(): void {
+    this.showNotEnough.set(false);
+    this.router.navigate(['/generator']);
   }
 }

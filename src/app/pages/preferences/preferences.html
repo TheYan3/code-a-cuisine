@@ -98,4 +98,10 @@
       Generate a recipe
     </button>
   </main>
+
+  <app-not-enough-popup
+    [open]="showNotEnough()"
+    (closed)="onNotEnoughClosed()"
+    (action)="onNotEnoughAction()"
+  />
 </div>

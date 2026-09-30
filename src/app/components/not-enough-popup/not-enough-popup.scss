@@ -1,0 +1,119 @@
+@use '../../../styles/abstracts' as *;
+
+// "Ups! Not quite enough..." dialog (Figma frames "pop-up" / "mobile-pop-up").
+// Sized and padded per the mobile frame by default, the desktop frame's
+// wider box and padding take over from the desktop breakpoint up — same
+// two-frame split the rest of the generator flow uses (no tablet frame
+// exists in the export). `width: min(...)` instead of a bare fixed width so
+// the card still fits viewports narrower than 340px + the page gutters.
+.not-enough-popup {
+  box-sizing: border-box;
+  width: min(340px, calc(100% - 2 * var(--page-gutter)));
+  margin: auto;
+  padding: 16px 24px 24px;
+  border: none;
+  border-radius: 30px;
+  background-color: var(--color-green);
+  color: var(--color-linen);
+  display: flex;
+  flex-direction: column;
+
+  @include desktop-up {
+    width: min(567px, calc(100% - 2 * var(--page-gutter)));
+    padding: 44px 64px 64px;
+  }
+
+  // Dimmed page behind the dialog, shown automatically by `showModal()`.
+  // Not in the Figma export (it sits outside the frame) — a plain
+  // half-opacity black, the usual default for this pattern.
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.not-enough-popup__top {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// 24px icon, well under the 44px touch-target minimum — expand the tap area
+// invisibly instead of growing the icon.
+.not-enough-popup__close {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-linen);
+  cursor: pointer;
+
+  @include touch-target;
+
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+// `align-items: flex-start` keeps the action button at its own (HUG) width
+// instead of the flex column stretching it to the card's full width.
+.not-enough-popup__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.not-enough-popup__headline {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.not-enough-popup__title {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 28px;
+  font-weight: 600;
+  // Figma line height is "auto"; 35px measured box / 28px font = 1.25.
+  line-height: 1.25;
+}
+
+// The mobile frame's headline text is "Ups! \nNot quite enough...", i.e. a
+// forced break after "Ups!"; the desktop frame's is a single line. Shown by
+// default (mobile), hidden from the desktop breakpoint up.
+.not-enough-popup__title-break {
+  display: inline;
+
+  @include desktop-up {
+    display: none;
+  }
+}
+
+.not-enough-popup__message {
+  margin: 0;
+  // Figma mobile body font is "Mulish" Regular — not self-hosted in this
+  // project yet (only Quicksand/Ubuntu are, see styles/base/_fonts.scss),
+  // so it falls back to Quicksand until the woff2 files are added.
+  font-family: 'Mulish', var(--font-quicksand);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: normal;
+
+  @include desktop-up {
+    font-family: var(--font-quicksand);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 26px;
+  }
+}
