@@ -161,6 +161,9 @@
   // that (aspect-ratio keeps the crop) so neither overflows at 1024px.
   @include desktop-up {
     flex: 0 1 574px;
+    // Without it the row's default stretch makes the frame as tall as the
+    // text column, past the image — the bottom corners end up in empty space.
+    align-self: flex-start;
     width: auto;
     height: auto;
     aspect-ratio: 574 / 222;
@@ -286,9 +289,11 @@
   line-height: 30px;
   color: var(--color-text-dark);
 
+  // Scales 24px → 32px (line-height 1.25) across 1024–1440px, so titles in
+  // the narrower columns don't stretch the cards over four lines.
   @include desktop-up {
-    font-size: 32px;
-    line-height: 40px;
+    font-size: clamp(24px, calc(1.923vw + 4.3px), 32px);
+    line-height: 1.25;
   }
 }
 
