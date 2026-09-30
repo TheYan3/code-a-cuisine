@@ -53,8 +53,10 @@
   font-family: var(--font-quicksand);
   color: var(--color-text-dark);
 
+  // 96px at 1440px, easing off 1:2 below that down to 40px so narrower
+  // desktops keep their width for the recipe card instead of the margin.
   @include desktop-up {
-    padding: 0 96px;
+    padding: 0 clamp(40px, calc(50vw - 624px), 96px);
   }
 }
 
@@ -103,9 +105,11 @@
   // content width, not the viewport.
   container-type: inline-size;
 
+  // Gap scales 48px → 161px across 1024–1440px, handing its width to the
+  // title column before the nutrition facts have to wrap.
   @include desktop-up {
     flex-direction: row;
-    gap: 161px;
+    gap: clamp(48px, calc(27.16vw - 230px), 161px);
     justify-content: space-between;
   }
 }
@@ -144,9 +148,11 @@
   line-height: 30px;
   color: var(--color-heading-green);
 
+  // Scales 32px → 54px across 1024–1440px so the title gives way instead of
+  // pushing the nutrition facts onto two rows.
   @include desktop-up {
-    font-size: 54px;
-    line-height: 65px;
+    font-size: clamp(32px, calc(5.288vw - 22.15px), 54px);
+    line-height: 1.2;
   }
 }
 
@@ -202,15 +208,11 @@
   }
 }
 
-// `.recipe__head`'s own content box (not the viewport — its fixed side
-// padding scales with it) drops under ~800px right around the 1024px
-// desktop-up threshold, where `flex-shrink: 0` above made this overflow the
-// card: the name column plus this one's unshrunk natural width (~551px,
-// four nutrients in a row) no longer fit side by side. Dropping the shrink
-// guard there lets `.recipe__nutrition-grid`'s own `flex-wrap: wrap` fold
-// the nutrients onto a second line instead — nothing changes at 1440px
-// (the frame this was built against), which always had room for one row.
-@container (max-width: 850px) {
+// Safety net below the 1024px desktop-up threshold's ~830px head width:
+// once the name column would get too narrow next to the unshrunk nutrients
+// (~551px in one row), let them fold onto a second line instead of
+// overflowing the card. Above it the shrinking title and gap make room.
+@container (max-width: 700px) {
   .recipe__facts {
     flex-shrink: 1;
   }
