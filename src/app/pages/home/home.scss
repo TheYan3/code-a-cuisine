@@ -35,39 +35,29 @@
   width: 100%;
 }
 
-// Figma "Visuals" (mobile-home): a 371x810 FRAME, not a group — frames clip
-// their children to their own bounds. That frame sits at x 238 of the
-// 375px-wide "Home" frame (flush with the title's right edge) and 609
-// (238+371), 234px past the right edge; the three dishes inside it are
-// individually positioned further left/up than that (down to x -74 of the
-// frame), so in Figma only the slice inside x 238–609 ever shows — the rest
-// is clipped away by the frame itself, not by `.hero{overflow:hidden}`.
-// A previous pass positioned the dishes with plain `left`/`top` and no such
-// clip, so they rendered uncropped on the left and sat under the title.
-// `.hero__mobile-visuals` now stands in for that frame: sized/positioned
-// like it (in `dvh`, see below) with its own `overflow: hidden`.
+// Figma "Visuals" (mobile-home): a 371x810 FRAME at x 238 / y 23 of the
+// 375x812 "Home" frame, flush with the title's right edge and reaching 234px
+// past the viewport's right edge; `.hero__mobile-visuals` stands in for it as
+// the dishes' coordinate origin. No `overflow: hidden` for the frame's clip:
+// with the dishes' real drawn geometry nothing visible reaches past its
+// edges (the assets are transparent there), and `.hero` crops the rest.
 //
-// mobile-home only exports this one 375x812 frame — there's no tablet frame
-// to take over between it and `desktop-up` (1024px), same gap the header
-// comment documents. Every value below is that frame's own px measurement
-// (frame and dishes alike) converted to `dvh` (`px ÷ 812 × 100`, `.hero`'s
-// height is exactly `100dvh`, see above) instead of `px`/`%` of width, so
-// the whole group — position, size and the clip together — scales in one
-// piece with the banner's actual height: on the 812px-tall reference frame
-// every `dvh` value resolves back to the exact exported px; on a taller
-// tablet-portrait banner the three dishes grow and spread out with it,
-// staying a continuous overlapping column instead of shrinking into an
-// isolated cluster with dead green space below (`right` on the frame itself
-// keeps it hugging the viewport's right edge at any width, same reasoning
-// as the desktop plate chain further down).
+// mobile-home only exports this one 375x812 frame, there's no tablet frame
+// between it and `desktop-up` (1024px). Every value below is a px value of
+// that frame multiplied by `--mobile-px` (1px of the 812px-tall frame,
+// `.hero` is exactly `100dvh` tall), so positions and sizes scale in
+// one piece with the banner's height: on an 812px-tall viewport it resolves
+// to the exported px, on a taller tablet-portrait banner the column grows
+// and the dishes keep overlapping instead of shrinking into an isolated
+// cluster. `right` keeps the column hugging the viewport's right edge.
 .hero__mobile-visuals {
+  --mobile-px: calc(100dvh / 812);
+
   display: block;
   position: absolute;
-  top: 2.83dvh;
-  right: -28.82dvh;
-  width: 45.69dvh;
-  height: 99.75dvh;
-  overflow: hidden;
+  top: calc(23 * var(--mobile-px));
+  right: calc(-234 * var(--mobile-px));
+  width: calc(371 * var(--mobile-px));
 
   @include desktop-up {
     display: none;
@@ -78,37 +68,36 @@
   position: absolute;
 }
 
-// Positions/sizes are each dish's own px (measured against the "Visuals"
-// frame from the comment above, not against "Home"), converted to `dvh` the
-// same way as the frame itself.
+// Positions are relative to the "Visuals" frame above. The export has no
+// image-fill transform, and for salmon and steak — rotated, flipped nodes —
+// its x/y/width/height are only the axis-aligned bounds of the rotated shape
+// (428x428 / 433x435), not the dish. So every left/top/size/rotation below
+// is the drawn size and orientation of the asset, fitted pixel-by-pixel
+// against the mobile-home reference PNG (rotation about the box center, the
+// element's default `transform-origin`). Chicken's image fill is drawn
+// slightly larger than its 295x296 node (the overhang is transparent).
+// The flip is real: every unflipped rotation matches the reference far worse.
 .hero__ellipse--chicken {
-  top: 0;
-  left: 0.74dvh;
-  width: 36.33dvh;
-  height: 36.45dvh;
+  top: calc(-5 * var(--mobile-px));
+  left: calc(6 * var(--mobile-px));
+  width: calc(302 * var(--mobile-px));
+  height: calc(303 * var(--mobile-px));
 }
 
-// Figma mirrors this dish horizontally (its exported `relativeX`, unlike
-// the other two dishes', doesn't match `x`-minus-frame-`x` at all — the
-// signature of a flip baked into the node transform, not exported as a
-// separate field); the downloaded `ellipse-30.webp` itself is the plain,
-// unmirrored photo, so the flip has to happen here. Confirmed by sight
-// against the mobile-home reference PNG: unflipped, the clipped sliver
-// showed mostly salad with the salmon clipped away; flipped, the salmon
-// lands in view exactly like the reference.
 .hero__ellipse--salmon {
-  top: 25.03dvh;
-  left: -7.11dvh;
-  width: 52.77dvh;
-  height: 52.77dvh;
-  transform: scaleX(-1);
+  top: calc(264 * var(--mobile-px));
+  left: calc(-1 * var(--mobile-px));
+  width: calc(310 * var(--mobile-px));
+  height: calc(310 * var(--mobile-px));
+  transform: rotate(-45deg) scaleX(-1);
 }
 
 .hero__ellipse--steak {
-  top: 56.85dvh;
-  left: -9.17dvh;
-  width: 53.35dvh;
-  height: 53.62dvh;
+  top: calc(522 * var(--mobile-px));
+  left: calc(-17 * var(--mobile-px));
+  width: calc(319 * var(--mobile-px));
+  height: calc(320 * var(--mobile-px));
+  transform: rotate(-122deg) scaleX(-1);
 }
 
 // Figma "Visuals": the five-dish chain, positioned in "hero" frame
