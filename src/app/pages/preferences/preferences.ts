@@ -40,9 +40,8 @@ export class Preferences {
 
   /**
    * Whether the "Ups! Not quite enough..." dialog (Figma frames "pop-up" /
-   * "mobile-pop-up") is shown. Plain signal for now — whichever change adds
-   * the actual "are the ingredient quantities enough for the selected
-   * servings" check sets it, this page does not run that check yet.
+   * "mobile-pop-up") is shown. Set by `onGenerate` when the chosen
+   * ingredients don't add up to enough food for the chosen portions.
    */
   protected readonly showNotEnough = signal(false);
 
@@ -98,7 +97,9 @@ export class Preferences {
   /**
    * Hands over to the loading page, which runs the generation. Does nothing
    * while the request is incomplete — at least one ingredient and all three
-   * preference groups have to be chosen.
+   * preference groups have to be chosen. Also does nothing, and shows the
+   * "not quite enough" dialog instead, when the chosen ingredients don't add
+   * up to enough food for the chosen number of portions.
    *
    * Arms the generation first: the loading page's guard only lets a run
    * through once per press, so a reload or a back navigation cannot spend a
@@ -106,6 +107,10 @@ export class Preferences {
    */
   protected onGenerate(): void {
     if (!this.recipeRequest.isComplete()) return;
+    if (!this.recipeRequest.hasEnoughFood()) {
+      this.showNotEnough.set(true);
+      return;
+    }
     this.recipeRequest.armGeneration();
     this.router.navigate(['/generator/loading']);
   }

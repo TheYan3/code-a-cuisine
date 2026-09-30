@@ -35,6 +35,11 @@ const HELPERS_MAX = 3;
 const AMOUNT_MAX = 9999;
 const MAX_INGREDIENTS = 20;
 
+/** Weight, in grams, one "piece" is assumed to equal for the enough-food check. */
+const PIECE_WEIGHT_GRAMS = 100;
+/** Minimum weight, in grams, one portion needs for `hasEnoughPerPortion` to pass. */
+const MIN_GRAMS_PER_PORTION = 150;
+
 const DEFAULT_REQUEST: RecipeRequest = {
   ingredients: [],
   portions: 2,
@@ -62,6 +67,24 @@ function loadStoredRequest(): RecipeRequest {
 /** Clamps a number between `min` and `max` (inclusive). */
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
+}
+
+/**
+ * Converts an ingredient amount to grams for the enough-food check: `gram`
+ * and `ml` count 1:1, `piece` counts as `PIECE_WEIGHT_GRAMS` each.
+ */
+function toGrams(ingredient: RequestIngredient): number {
+  return ingredient.unit === 'piece' ? ingredient.amount * PIECE_WEIGHT_GRAMS : ingredient.amount;
+}
+
+/**
+ * Whether the given ingredients add up to at least `MIN_GRAMS_PER_PORTION`
+ * grams per portion. `portions` must be at least 1; the caller (portions is
+ * clamped to `PORTIONS_MIN`) guarantees that, so this never divides by zero.
+ */
+function hasEnoughPerPortion(ingredients: RequestIngredient[], portions: number): boolean {
+  const totalGrams = ingredients.reduce((sum, i) => sum + toGrams(i), 0);
+  return totalGrams / portions >= MIN_GRAMS_PER_PORTION;
 }
 
 /**
@@ -228,5 +251,13 @@ export class RecipeRequestService {
       this.cuisine() !== null &&
       this.diet() !== null
     );
+  }
+
+  /**
+   * Whether the current ingredients add up to enough food for the chosen
+   * number of portions (see `hasEnoughPerPortion`).
+   */
+  hasEnoughFood(): boolean {
+    return hasEnoughPerPortion(this.ingredients(), this.portions());
   }
 }
