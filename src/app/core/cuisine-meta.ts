@@ -12,6 +12,8 @@ export interface CuisineMeta {
   image: string;
   /** Cuisine-page banner illustration in `public/images/cookbook/`. */
   banner: string;
+  /** Mobile crop of the banner (below the desktop breakpoint), same folder. */
+  bannerMobile: string;
   /** Real `alt` text for the tile photo. */
   alt: string;
 }
@@ -29,6 +31,7 @@ export const CUISINES: CuisineMeta[] = [
     emoji: '🤌',
     image: '/images/cookbook/italian.webp',
     banner: '/images/cookbook/banner-italian.webp',
+    bannerMobile: '/images/cookbook/banner-italian-mobile.webp',
     alt: 'A wood-fired pizza and a plate of seafood linguine',
   },
   {
@@ -38,6 +41,7 @@ export const CUISINES: CuisineMeta[] = [
     emoji: '🥨',
     image: '/images/cookbook/german.webp',
     banner: '/images/cookbook/banner-german.webp',
+    bannerMobile: '/images/cookbook/banner-german-mobile.webp',
     alt: 'Pretzels and plates of schnitzel with sauerkraut',
   },
   {
@@ -47,6 +51,7 @@ export const CUISINES: CuisineMeta[] = [
     emoji: '🥢',
     image: '/images/cookbook/japanese.webp',
     banner: '/images/cookbook/banner-japanese.webp',
+    bannerMobile: '/images/cookbook/banner-japanese-mobile.webp',
     alt: 'Salmon nigiri and maki rolls on a wooden board',
   },
   {
@@ -56,6 +61,7 @@ export const CUISINES: CuisineMeta[] = [
     emoji: '✨',
     image: '/images/cookbook/gourmet.webp',
     banner: '/images/cookbook/banner-gourmet.webp',
+    bannerMobile: '/images/cookbook/banner-gourmet-mobile.webp',
     alt: 'A fine-dining plate of seared meat with vegetable garnish',
   },
   {
@@ -65,6 +71,7 @@ export const CUISINES: CuisineMeta[] = [
     emoji: '🍛',
     image: '/images/cookbook/indian.webp',
     banner: '/images/cookbook/banner-indian.webp',
+    bannerMobile: '/images/cookbook/banner-indian-mobile.webp',
     alt: 'A thali platter with curries, rice, naan and papadum',
   },
   {
@@ -74,6 +81,7 @@ export const CUISINES: CuisineMeta[] = [
     emoji: '🍢',
     image: '/images/cookbook/fusion.webp',
     banner: '/images/cookbook/banner-fusion.webp',
+    bannerMobile: '/images/cookbook/banner-fusion-mobile.webp',
     alt: 'A composed plate mixing salmon sashimi with fusion garnishes',
   },
 ];

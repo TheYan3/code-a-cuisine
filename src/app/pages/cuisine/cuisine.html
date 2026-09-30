@@ -10,7 +10,10 @@
       <div class="cuisine__column">
         <div class="cuisine__banner">
           @if (meta(); as cuisineMeta) {
-            <img [src]="cuisineMeta.banner" alt="" class="cuisine__banner-image" />
+            <picture>
+              <source media="(max-width: 1023.98px)" [srcset]="cuisineMeta.bannerMobile" />
+              <img [src]="cuisineMeta.banner" alt="" class="cuisine__banner-image" />
+            </picture>
           }
           <h1 class="cuisine__banner-title">{{ meta()?.label }}</h1>
         </div>

@@ -62,21 +62,18 @@
   position: relative;
 }
 
-// ponytail: no mobile crop exists yet for the banner images (source is
-// 2286x288px, Figma's mobile frame wants roughly 340x92px) — interim fix
-// crops the existing desktop image with `object-fit: cover` into the
-// mobile aspect ratio. Replace with a real mobile export once Yannic has
-// cut one per cuisine.
+// Mobile uses its own 340px-wide Figma crop (served at 2x, 680px), shown
+// at up to that native width and centered so it never upscales; the
+// desktop banner keeps its intrinsic size.
 .cuisine__banner-image {
   display: block;
   width: 100%;
+  max-width: 680px;
   height: auto;
-  aspect-ratio: 340 / 92;
-  object-fit: cover;
-  border-radius: 20px;
+  margin: 0 auto;
 
   @include desktop-up {
-    aspect-ratio: auto;
+    max-width: none;
   }
 }
 
@@ -91,10 +88,11 @@
   font-size: 18px;
   font-weight: 600;
   line-height: 23px;
-  color: var(--color-text-dark);
+  color: var(--color-heading-green);
   text-align: center;
 
   @include desktop-up {
+    color: var(--color-text-dark);
     font-size: 40px;
     font-weight: 700;
     line-height: 1.04;
