@@ -175,20 +175,18 @@
   }
 }
 
-// Figma "Resipes" mobile: cards stack with a 16px gap; desktop-up restores
-// the side-by-side row with its 24px gap. `flex-wrap` is not in the export
-// (the 1440px frame always fits all three side by side) — added because
-// three cards, each with a fixed 363px text column, need ~1281px and no
-// longer fit in one row right at the 1024px desktop-up threshold; wrapping
-// keeps every card at its exact Figma width instead of squeezing it.
+// Figma "Resipes" mobile: cards stack with a 16px gap; desktop-up puts all
+// three side by side with its 24px gap. Equal fluid columns instead of the
+// export's fixed card width, so the row still fits right at 1024px — at
+// 1440px each column lands on the Figma 363px text width anyway.
 .results__cards {
   display: flex;
   flex-direction: column;
   gap: 16px;
 
   @include desktop-up {
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
   }
 }
@@ -200,6 +198,7 @@
 // `.results__cards` would otherwise leave it hugging its own content width.
 // The 40/64 padding pair matches this file's own `.page` gap rhythm.
 .results__empty {
+  grid-column: 1 / -1;
   width: 100%;
   margin: 0;
   padding: 40px 0;
@@ -268,10 +267,6 @@
   flex-direction: column;
   gap: 16px;
   width: 100%;
-
-  @include desktop-up {
-    width: 363px;
-  }
 }
 
 // Figma "headline" mobile: 24px; desktop-up restores 32px.
