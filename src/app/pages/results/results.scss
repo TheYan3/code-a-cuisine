@@ -78,7 +78,8 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
-    width: 610px;
+    flex: 0 1 610px;
+    min-width: 0;
   }
 }
 
@@ -156,9 +157,13 @@
   border-radius: 20px;
   flex-shrink: 0;
 
+  // Desktop-up: 574×222 at 1440px, shrinking with the text column below
+  // that (aspect-ratio keeps the crop) so neither overflows at 1024px.
   @include desktop-up {
-    width: 574px;
-    height: 222px;
+    flex: 0 1 574px;
+    width: auto;
+    height: auto;
+    aspect-ratio: 574 / 222;
   }
 }
 
@@ -168,10 +173,13 @@
   height: 229px;
   margin-top: -40px;
 
+  // Percentages keep the Figma 574×383 / -65px crop at any frame width
+  // (vertical margin % resolves against the frame's width: 65 / 574).
   @include desktop-up {
-    width: 574px;
-    height: 383px;
-    margin-top: -65px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 574 / 383;
+    margin-top: -11.32%;
   }
 }
 
