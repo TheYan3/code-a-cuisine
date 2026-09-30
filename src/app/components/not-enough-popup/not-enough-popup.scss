@@ -15,8 +15,13 @@
   border-radius: 30px;
   background-color: var(--color-green);
   color: var(--color-linen);
-  display: flex;
-  flex-direction: column;
+
+  // Only while open — a bare `display: flex` would override the UA's
+  // `dialog:not([open]) { display: none }` and render it in the page flow.
+  &[open] {
+    display: flex;
+    flex-direction: column;
+  }
 
   @include desktop-up {
     width: min(567px, calc(100% - 2 * var(--page-gutter)));
