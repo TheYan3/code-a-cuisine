@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { Pagination } from '../../components/pagination/pagination';
 import { cuisineMeta } from '../../core/cuisine-meta';
@@ -19,7 +20,7 @@ const PAGE_SIZE = 20;
  * redirects to `/library` before it is created.
  */
 @Component({
-  imports: [Header, Pagination, RouterLink],
+  imports: [Footer, Header, Pagination, RouterLink],
   selector: 'app-cuisine',
   styleUrl: './cuisine.scss',
   templateUrl: './cuisine.html',

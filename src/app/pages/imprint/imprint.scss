@@ -1,16 +1,18 @@
 @use '../../../styles/abstracts' as *;
 
-// No Figma frame exists for this page (see the responsive plan's export
+// Shared by both legal pages (imprint and privacy policy, which points its
+// `styleUrl` here): same text layout, so one stylesheet instead of a copy.
+// No Figma frame exists for either page (see the responsive plan's export
 // gap list). Layout reuses the page/container rhythm every other page
 // shares (`.page` max-width + `--page-gutter`, `desktop-up` for the wider
-// inset); `.imprint__title` reuses `.results__card-headline`'s "content
-// heading" role (not the larger hero-style titles), `.imprint__heading`
+// inset); `.legal__title` reuses `.results__card-headline`'s "content
+// heading" role (not the larger hero-style titles), `.legal__heading`
 // reuses the smaller `%recipe-subheading` scale from recipe-detail.scss for
 // the per-section headings, and body copy falls back to the global defaults
 // from `src/styles/base/_typography.scss`, which already give paragraph
 // text Quicksand at 16px.
 
-.imprint-page {
+.legal-page {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
@@ -19,6 +21,8 @@
 
 .page {
   display: flex;
+  // Fills `.legal-page` so the footer after it sits at the viewport bottom.
+  flex: 1;
   flex-direction: column;
   gap: 40px;
   width: 100%;
@@ -30,7 +34,7 @@
   }
 }
 
-.imprint {
+.legal {
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -43,7 +47,7 @@
   }
 }
 
-.imprint__title {
+.legal__title {
   margin: 0;
   font-family: var(--font-quicksand);
   font-size: 24px;
@@ -57,7 +61,7 @@
   }
 }
 
-.imprint__section {
+.legal__section {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -65,8 +69,8 @@
 
 // Same scale as `%recipe-subheading` in recipe-detail.scss (18px/23px →
 // 24px/30px) — the established "section heading inside page content" size
-// one step below `.imprint__title`.
-.imprint__heading {
+// one step below `.legal__title`.
+.legal__heading {
   margin: 0;
   font-family: var(--font-quicksand);
   font-size: 18px;
@@ -80,7 +84,7 @@
   }
 }
 
-.imprint__address {
+.legal__address {
   // `<address>` is italic by default in browser UA styles — this page's
   // content isn't, so reset it back to normal.
   font-style: normal;
@@ -88,7 +92,12 @@
   line-height: 1.5;
 }
 
-.imprint__link {
+.legal__list {
+  margin: 0;
+  padding-left: var(--spacing-lg);
+}
+
+.legal__link {
   color: var(--color-heading-green);
 
   &:focus-visible {

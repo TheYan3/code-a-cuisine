@@ -1,0 +1,120 @@
+<div class="legal-page">
+  <div class="page">
+    <app-header variant="green" backLink="/" backLabel="Home" />
+
+    <main class="legal">
+      <h1 class="legal__title">Privacy policy</h1>
+
+      <section class="legal__section">
+        <h2 class="legal__heading">Controller</h2>
+        <address class="legal__address">
+          {{ contact.name }}<br />
+          {{ contact.street }}<br />
+          {{ contact.city }}<br />
+          <a class="legal__link" href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+        </address>
+      </section>
+
+      <section class="legal__section">
+        <h2 class="legal__heading">In short</h2>
+        <p>
+          Code à Cuisine sets no cookies and uses no analytics, tracking or advertising tools. You
+          don't need an account. Fonts and images are served from this website's own server.
+          Personal data is only processed where it is technically necessary, as described below.
+        </p>
+      </section>
+
+      <section class="legal__section">
+        <h2 class="legal__heading">Hosting and server logs</h2>
+        <p>
+          This website runs on a server in Germany operated by the controller (nginx behind a
+          Traefik reverse proxy). When you open a page, your browser sends technical data such as
+          your IP address, date and time of the request, the requested address and your browser
+          identification. This data is processed only to deliver the website and to keep it secure
+          and running; it is not used to identify you or combined with other data. Legal basis: Art.
+          6(1)(f) GDPR (legitimate interest in a working, secure website).
+        </p>
+      </section>
+
+      <section class="legal__section">
+        <h2 class="legal__heading">Generating recipes</h2>
+        <p>
+          When you press "Generate a recipe", your entries — ingredients with amounts and units,
+          portions, number of cooks, cooking time, cuisine and diet — are sent to an automation
+          server (n8n) operated by the controller at flow.uniquehomebase.de. It turns them into a
+          text prompt and sends that prompt to the Gemini API of Google, which writes the recipes.
+          The prompt contains only these entries, not your IP address or any other identifier.
+        </p>
+        <p>
+          To limit each visitor to three generations per day, the n8n server reads your IP address
+          from the request and stores it in the Firebase database described below, as part of a
+          daily counter: the IP address in plain text (with dots and colons replaced by underscores)
+          together with the number of generations you made that day. These counters are currently
+          not deleted automatically. They are not visible to other visitors. Legal basis: Art.
+          6(1)(f) GDPR (legitimate interest in protecting the recipe generation from abuse).
+        </p>
+      </section>
+
+      <section class="legal__section">
+        <h2 class="legal__heading">Public recipe library (Firebase)</h2>
+        <p>
+          Every generated recipe is stored in Google Firebase Realtime Database (data center region
+          europe-west1) and can be viewed by anyone in the public library. A stored recipe contains
+          its title, cuisine, diet, cooking time, portions, number of cooks, ingredients, steps,
+          nutrition estimates, creation time and number of likes — no name, no IP address and no
+          other information about who generated it. The ingredient names you enter can appear in the
+          published recipe, so please don't enter personal information there.
+        </p>
+        <p>
+          When you open the library or a recipe, your browser loads the recipes directly from
+          Firebase, so Google receives your IP address as part of that connection. Legal basis: Art.
+          6(1)(f) GDPR (legitimate interest in providing the library).
+        </p>
+      </section>
+
+      <section class="legal__section">
+        <h2 class="legal__heading">Likes</h2>
+        <p>
+          Liking a recipe raises its like counter in Firebase by one, directly from your browser;
+          nothing identifying you is stored with it. So that the same browser can't like a recipe
+          twice, the ids of the recipes you liked are kept in your browser's local storage
+          ("code-a-cuisine.liked-recipes"). They never leave your device, and you can remove them at
+          any time by clearing this website's data in your browser.
+        </p>
+      </section>
+
+      <section class="legal__section">
+        <h2 class="legal__heading">Browser storage while generating</h2>
+        <p>
+          While you go through the generator, your entries are kept in your browser's session
+          storage ("code-a-cuisine.recipe-request") so a reload doesn't lose them. They stay on your
+          device and are deleted when you close the tab. Neither this nor the local storage above is
+          used for tracking; both are strictly necessary for the functions you use.
+        </p>
+      </section>
+
+      <section class="legal__section">
+        <h2 class="legal__heading">Your rights</h2>
+        <p>Regarding your personal data, you have the right to</p>
+        <ul class="legal__list">
+          <li>access (Art. 15 GDPR),</li>
+          <li>rectification (Art. 16 GDPR),</li>
+          <li>erasure (Art. 17 GDPR),</li>
+          <li>restriction of processing (Art. 18 GDPR),</li>
+          <li>data portability (Art. 20 GDPR),</li>
+          <li>object to processing based on legitimate interest (Art. 21 GDPR).</li>
+        </ul>
+        <p>
+          To use these rights, write to
+          <a class="legal__link" href="mailto:{{ contact.email }}">{{ contact.email }}</a
+          >. You also have the right to lodge a complaint with a data protection supervisory
+          authority (Art. 77 GDPR), e.g. the one responsible for the controller: the State
+          Commissioner for Data Protection and Freedom of Information Baden-Württemberg (LfDI
+          Baden-Württemberg).
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <app-footer />
+</div>

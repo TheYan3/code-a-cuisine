@@ -1,17 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { Footer } from './components/footer/footer';
-
 /**
- * Application shell. Each page brings its own header, so this only routes
- * to the page content; the footer (just the imprint link so far) is mounted
- * once here, outside `<router-outlet>`, so it's reachable from every route
- * without each page wiring it up itself.
+ * Application shell. Each page brings its own header and footer (so both
+ * sit on the page's own background), so this only routes to the page
+ * content.
  */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Footer],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

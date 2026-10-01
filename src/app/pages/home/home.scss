@@ -18,13 +18,14 @@
 }
 
 .hero__inner {
-  // The two CTAs sit in a flex column instead of being absolutely
-  // positioned: the main CTA's top margin and the secondary CTA's bottom
-  // margin are the Figma offsets, `margin-top: auto` on the secondary CTA
-  // takes up the free space in between, and `row-gap` keeps a minimum
-  // distance once there is none left. On viewports too short for both, the
-  // hero grows past `100dvh` (the page scrolls) instead of the secondary CTA
-  // sliding up over "Get started". Header and dishes stay absolute.
+  // The two CTAs and the legal links (`.hero__legal`) sit in a flex column
+  // instead of being absolutely positioned: the main CTA's top margin and
+  // the space below the secondary CTA are the Figma offsets, `margin-top:
+  // auto` on the secondary CTA takes up the free space in between, and
+  // `row-gap` keeps a minimum distance once there is none left. On viewports
+  // too short for all three, the hero grows past `100dvh` (the page scrolls)
+  // instead of the secondary CTA sliding up over "Get started" or the links
+  // over the secondary CTA. Header and dishes stay absolute.
   position: relative;
   display: flex;
   flex-direction: column;
@@ -33,6 +34,17 @@
   min-height: 100dvh;
   max-width: 1440px;
   margin: 0 auto;
+
+  // Landscape phones: a smaller minimum gap is what lets the legal links
+  // fit below the compacted CTAs on 360px-tall screens (60 + 186 main CTA
+  // + 8 + 52 secondary CTA + 8 + 44 links = 358px).
+  @include landscape-height-down($breakpoint-hero-landscape-height) {
+    row-gap: var(--spacing-sm);
+  }
+
+  @include desktop-up {
+    row-gap: var(--spacing-lg);
+  }
 }
 
 .hero__header {
@@ -324,11 +336,15 @@
 
 // Figma "Secoond CTA" mobile: text stacked above the button, both centered;
 // desktop-up restores the original side-by-side row, bottom-anchored to the
-// hero either way (126px desktop, 38px mobile — both match the export's
-// gap to the 812px mobile frame's / 1440px desktop frame's bottom edge).
+// hero either way. The export's gap to the frame's bottom edge is 126px
+// desktop, 38px mobile; the legal links below now take up part of it.
+// Desktop keeps the Figma position exactly (the links fit into the 126px).
+// Mobile can't: 24px row gap + the links' 44px touch target need 68px, so
+// the CTA sits 30px higher than in the 812px frame — the smallest shift
+// that keeps the links' tap area clear of the button.
 .hero__secondary-cta {
   position: relative;
-  margin: auto 0 38px 16px;
+  margin: auto 0 0 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -340,13 +356,14 @@
   // enough to clear it. Reuses the `align-items: center` set above, which
   // centers vertically once the direction flips to row.
   @include landscape-height-down($breakpoint-hero-landscape-height) {
-    margin-bottom: 16px;
     flex-direction: row;
     gap: 12px;
   }
 
   @include desktop-up {
-    margin: auto 0 126px 65px;
+    // Figma's 126px minus what now sits below: row gap, 44px links and the
+    // footer's own bottom padding (see `.hero__legal`).
+    margin: auto 0 calc(126px - var(--spacing-lg) - 44px - var(--spacing-md)) 65px;
     flex-direction: row;
   }
 }
@@ -371,5 +388,19 @@
     width: auto;
     font-size: 32px;
     line-height: 104%;
+  }
+}
+
+// Legal links (`app-footer`) at the bottom left of the hero, in the flex
+// flow below the secondary CTA. Their 44px row is the touch target, so no
+// extra vertical padding on mobile; desktop keeps the footer's default
+// bottom padding inside the Figma 126px (see `.hero__secondary-cta`).
+.hero__legal {
+  // Painted above the absolutely positioned dishes, like the CTAs.
+  position: relative;
+  padding-block: 0;
+
+  @include desktop-up {
+    padding-bottom: var(--spacing-md);
   }
 }

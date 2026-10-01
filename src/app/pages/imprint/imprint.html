@@ -1,27 +1,27 @@
-<div class="imprint-page">
+<div class="legal-page">
   <div class="page">
     <app-header variant="green" backLink="/" backLabel="Home" />
 
-    <main class="imprint">
-      <h1 class="imprint__title">Imprint</h1>
+    <main class="legal">
+      <h1 class="legal__title">Imprint</h1>
 
-      <section class="imprint__section">
-        <h2 class="imprint__heading">Legal notice according to § 5 DDG</h2>
-        <address class="imprint__address">
+      <section class="legal__section">
+        <h2 class="legal__heading">Legal notice according to § 5 DDG</h2>
+        <address class="legal__address">
           {{ contact.name }}<br />
           {{ contact.street }}<br />
           {{ contact.city }}<br />
-          <a class="imprint__link" href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+          <a class="legal__link" href="mailto:{{ contact.email }}">{{ contact.email }}</a>
         </address>
       </section>
 
-      <section class="imprint__section">
-        <h2 class="imprint__heading">Responsible for the content</h2>
+      <section class="legal__section">
+        <h2 class="legal__heading">Responsible for the content</h2>
         <p>{{ contact.name }} (address as above), § 18 Abs. 2 MStV.</p>
       </section>
 
-      <section class="imprint__section">
-        <h2 class="imprint__heading">About this project</h2>
+      <section class="legal__section">
+        <h2 class="legal__heading">About this project</h2>
         <p class="fine-print">
           Code à Cuisine is a private, non-commercial project built as the final submission of a web
           development training course. It is not a commercial service. Recipes are generated
@@ -32,4 +32,6 @@
       </section>
     </main>
   </div>
+
+  <app-footer />
 </div>

@@ -11,11 +11,12 @@ import { Imprint } from './pages/imprint/imprint';
 import { Library } from './pages/library/library';
 import { Loading } from './pages/loading/loading';
 import { Preferences } from './pages/preferences/preferences';
+import { Privacy } from './pages/privacy/privacy';
 import { RecipeDetail } from './pages/recipe-detail/recipe-detail';
 import { Results } from './pages/results/results';
 
 /**
- * Application routes. Only nine pages exist, so lazy loading would add
+ * Application routes. Only ten pages exist, so lazy loading would add
  * complexity without a real benefit here — all pages are loaded eagerly.
  *
  * The three generator steps guard each other so none of them can be opened
@@ -34,5 +35,6 @@ export const routes: Routes = [
   { path: 'library/:cuisine', component: CuisinePage, canActivate: [knownCuisineGuard] },
   { path: 'recipe/:id', component: RecipeDetail },
   { path: 'imprint', component: Imprint },
+  { path: 'privacy', component: Privacy },
   { path: '**', redirectTo: '' },
 ];

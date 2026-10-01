@@ -1,6 +1,7 @@
 import { Component, ElementRef, inject, computed, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { IngredientInput } from '../../components/ingredient-input/ingredient-input';
 import { IngredientList } from '../../components/ingredient-list/ingredient-list';
@@ -27,7 +28,7 @@ const DEFAULT_AMOUNT: Record<Unit, number> = { gram: 100, ml: 100, piece: 1 };
  * `/generator/preferences` (and later n8n) reads from.
  */
 @Component({
-  imports: [Header, RouterLink, IngredientInput, IngredientList],
+  imports: [Footer, Header, RouterLink, IngredientInput, IngredientList],
   selector: 'app-generator',
   styleUrl: './generator.scss',
   templateUrl: './generator.html',

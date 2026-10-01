@@ -1,22 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 /**
- * Minimal site-wide footer: fulfils the "a real navigation/footer will
- * follow" note that used to sit on `App`. Mounted once in `app.html`
- * outside `<router-outlet>`, so the imprint link it carries is reachable
- * from every route without each page wiring it up itself.
+ * Site footer with the two legal links (imprint, privacy policy). Like
+ * `app-header`, every page places it itself — as the last element of its
+ * full-bleed background wrapper — so the links sit at the bottom left on
+ * the page's own background instead of in a separate strip below it; the
+ * home page puts it inside the green hero.
  *
  * No Figma frame covers this — every exported frame crops above the fold —
  * so it follows existing conventions instead of a design it doesn't have:
- * the `.fine-print` 14px floor from `src/styles/base/_typography.scss` and
- * the `touch-target` mixin other link-only controls (e.g. the header's
- * back link) already use.
+ * the `.fine-print` 14px floor from `src/styles/base/_typography.scss`, a
+ * 44px touch target and the header's left inset.
  */
 @Component({
-  selector: 'app-footer',
   imports: [RouterLink],
+  selector: 'app-footer',
   styleUrl: './footer.scss',
   templateUrl: './footer.html',
 })
-export class Footer {}
+export class Footer {
+  /** `creme` for the green pages, `muted` (grey) for light backgrounds. */
+  readonly variant = input<'creme' | 'muted'>('muted');
+}

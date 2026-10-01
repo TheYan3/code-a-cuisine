@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { RecipeApi, RecipeApiError } from '../../core/recipe-api';
 import { RecipeRequestService } from '../../core/recipe-request';
@@ -15,7 +16,7 @@ import { RecipeRequestService } from '../../core/recipe-request';
  * spinner runs exactly as long as the work takes.
  */
 @Component({
-  imports: [Header],
+  imports: [Footer, Header],
   selector: 'app-loading',
   styleUrl: './loading.scss',
   templateUrl: './loading.html',

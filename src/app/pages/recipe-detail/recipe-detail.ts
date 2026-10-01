@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { LikeButton } from '../../components/like-button/like-button';
 import { cuisineMeta } from '../../core/cuisine-meta';
@@ -22,7 +23,7 @@ const CHEF_BADGES = [
  * as a shared link without any state from the generator.
  */
 @Component({
-  imports: [Header, RouterLink, LikeButton],
+  imports: [Footer, Header, RouterLink, LikeButton],
   selector: 'app-recipe-detail',
   styleUrl: './recipe-detail.scss',
   templateUrl: './recipe-detail.html',

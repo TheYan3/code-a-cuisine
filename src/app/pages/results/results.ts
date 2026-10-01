@@ -2,6 +2,7 @@ import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 
+import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { Recipe } from '../../core/recipe';
 import { RecipeApi } from '../../core/recipe-api';
@@ -15,7 +16,7 @@ import { RecipeApi } from '../../core/recipe-api';
  * page use.
  */
 @Component({
-  imports: [Header, RouterLink],
+  imports: [Footer, Header, RouterLink],
   selector: 'app-results',
   styleUrl: './results.scss',
   templateUrl: './results.html',

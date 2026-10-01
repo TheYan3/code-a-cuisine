@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 
 /**
@@ -27,7 +28,7 @@ export const IMPRINT_CONTACT = {
  * recipes are AI-generated without warranty.
  */
 @Component({
-  imports: [Header],
+  imports: [Footer, Header],
   selector: 'app-imprint',
   styleUrl: './imprint.scss',
   templateUrl: './imprint.html',

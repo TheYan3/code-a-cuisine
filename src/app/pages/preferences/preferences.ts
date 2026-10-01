@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Counter } from '../../components/counter/counter';
+import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { NotEnoughPopup } from '../../components/not-enough-popup/not-enough-popup';
 import { Tag } from '../../components/tag/tag';
@@ -29,7 +30,7 @@ interface PreferenceOption<T extends string> {
  * does anything.
  */
 @Component({
-  imports: [Counter, Header, NotEnoughPopup, Tag],
+  imports: [Counter, Footer, Header, NotEnoughPopup, Tag],
   selector: 'app-preferences',
   styleUrl: './preferences.scss',
   templateUrl: './preferences.html',

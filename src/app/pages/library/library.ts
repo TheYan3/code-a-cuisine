@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { CUISINES } from '../../core/cuisine-meta';
 import { Recipe } from '../../core/recipe';
@@ -15,7 +16,7 @@ const MAX_MOST_LIKED = 10;
  * `/library/:cuisine`.
  */
 @Component({
-  imports: [Header, RouterLink],
+  imports: [Footer, Header, RouterLink],
   selector: 'app-library',
   styleUrl: './library.scss',
   templateUrl: './library.html',

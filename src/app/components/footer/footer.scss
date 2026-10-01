@@ -1,30 +1,44 @@
 @use '../../../styles/abstracts' as *;
 
 // No Figma frame exists for this (see the JSDoc on `Footer`) — kept
-// deliberately small: one centered link, sized off the shared
-// `.fine-print` 14px floor and `--page-gutter` instead of inventing new
-// values for a component the design never specified.
+// deliberately small: two left-aligned links on the page's own background,
+// sized off the shared `.fine-print` 14px floor and `--page-gutter` instead
+// of inventing new values for a component the design never specified.
+//
+// The host carries the outer box (1440px column like every page's `.page`,
+// vertical padding) so a page can adjust it from its own stylesheet, e.g.
+// the home hero tucking it into its bottom margin.
 :host {
   display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--page-gutter);
+
+  // Same left inset as the header's logo on desktop (header.scss), so the
+  // links line up with it on every page.
+  @include desktop-up {
+    padding-left: 68px;
+  }
 }
 
 .site-footer {
   display: flex;
-  justify-content: center;
-  padding: 24px var(--page-gutter);
-  background-color: var(--color-background);
+  flex-wrap: wrap;
+  column-gap: var(--spacing-lg);
 }
 
 .site-footer__link {
-  position: relative;
+  // A real 44px row instead of the `touch-target` pseudo-element: the
+  // footer sits right below other controls (e.g. the hero's secondary CTA),
+  // and a box that is the tap area keeps its layout distance measurable.
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-size: 0.875rem; // matches `.fine-print`'s 14px floor
   color: var(--color-text-muted);
   text-decoration: underline;
-
-  // Visual link is a single word, well under the 44px minimum — expand the
-  // tap area invisibly instead of growing the link itself (same pattern as
-  // `.site-header__back` in app-header).
-  @include touch-target;
 
   &:hover,
   &:active {
@@ -34,5 +48,20 @@
   &:focus-visible {
     outline: 2px solid var(--color-heading-green);
     outline-offset: 4px;
+  }
+}
+
+// On the green pages (home hero, loading, results): the same linen as the
+// hero text, hover/focus like the creme buttons and the header logo link.
+.site-footer--creme .site-footer__link {
+  color: var(--color-linen);
+
+  &:hover,
+  &:active {
+    color: var(--color-hover-creme);
+  }
+
+  &:focus-visible {
+    outline-color: var(--color-linen);
   }
 }
