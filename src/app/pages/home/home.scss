@@ -59,6 +59,20 @@
   right: calc(-234 * var(--mobile-px));
   width: calc(371 * var(--mobile-px));
 
+  // Tablet (no Figma frame): scaled from the height alone the column only
+  // shows a narrow strip at the right edge and leaves most of the width
+  // next to the text empty green. From tablet-up the dishes grow with the
+  // width too (100vw / 480: 2x at 960px), capped so the chain still shows
+  // the top of the third dish (100dvh / 640: y 640 of the 812px frame).
+  // Like on mobile the first dish runs past the right edge, but only by
+  // ~10% of it (30 units past its 308px right edge, the frame being 371
+  // wide), so it moves close to the text instead of off screen.
+  @include tablet-up {
+    --mobile-px: max(100dvh / 812, min(100vw / 480, 100dvh / 640));
+
+    right: calc(-93 * var(--mobile-px));
+  }
+
   @include desktop-up {
     display: none;
   }
