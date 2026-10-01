@@ -33,12 +33,13 @@
   }
 }
 
-/// Applies the given content only below the given viewport height — the
-/// counterpart to `height-up`, for layouts that need to compact themselves
-/// on short viewports (e.g. phones in landscape) rather than expand on tall
-/// ones.
-@mixin height-down($max-height) {
-  @media (max-height: $max-height) {
+/// Applies the given content only on landscape viewports below the given
+/// height (e.g. phones turned sideways) — the counterpart to `height-up`,
+/// for layouts that need to compact themselves there rather than expand on
+/// tall viewports. Landscape only: equally short portrait viewports are
+/// also narrow, so they keep the regular layout and scroll instead.
+@mixin landscape-height-down($max-height) {
+  @media (max-height: $max-height) and (orientation: landscape) {
     @content;
   }
 }

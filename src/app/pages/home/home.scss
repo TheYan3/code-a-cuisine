@@ -58,7 +58,19 @@
 // and the dishes keep overlapping instead of shrinking into an isolated
 // cluster. `right` keeps the column hugging the viewport's right edge.
 .hero__mobile-visuals {
-  --mobile-px: calc(100dvh / 812);
+  // Floored at the hero's own minimum height: on short portrait phones
+  // (e.g. 375x500) the hero grows past `100dvh` to fit both CTAs, and a
+  // column scaled from `100dvh` alone would end above the hero's bottom
+  // edge, leaving a strip of empty green under the dishes.
+  --mobile-px: calc(max(100dvh, #{$hero-mobile-min-height}) / 812);
+
+  // Landscape phones keep the hero at `100dvh` (compacted CTAs, see
+  // `.hero__main-cta`), so the column scales from the viewport alone. Before
+  // `tablet-up` on purpose: wide landscape phones (e.g. 844x390) take the
+  // tablet value below, as before.
+  @include landscape-height-down($breakpoint-hero-landscape-height) {
+    --mobile-px: calc(100dvh / 812);
+  }
 
   display: block;
   position: absolute;
@@ -236,7 +248,7 @@
   // 8px spacious padding) and a smaller gap to the button, combined with
   // the single-line text below, keep both CTAs within one landscape phone
   // screen (390/360/430px).
-  @include height-down($breakpoint-hero-landscape-height) {
+  @include landscape-height-down($breakpoint-hero-landscape-height) {
     margin-top: 60px;
     gap: 24px;
   }
@@ -275,7 +287,7 @@
   // viewport edge, which a single line at this size stays well inside of),
   // and one line is what actually fits the available height (see
   // `.hero__main-cta` above).
-  @include height-down($breakpoint-hero-landscape-height) {
+  @include landscape-height-down($breakpoint-hero-landscape-height) {
     width: max-content;
   }
 
@@ -299,7 +311,7 @@
   color: var(--color-linen);
 
   // Same single-line fix as `.hero__eyebrow` above.
-  @include height-down($breakpoint-hero-landscape-height) {
+  @include landscape-height-down($breakpoint-hero-landscape-height) {
     width: max-content;
   }
 
@@ -327,7 +339,7 @@
   // button instead of stacked above it) both shrink the block's height
   // enough to clear it. Reuses the `align-items: center` set above, which
   // centers vertically once the direction flips to row.
-  @include height-down($breakpoint-hero-landscape-height) {
+  @include landscape-height-down($breakpoint-hero-landscape-height) {
     margin-bottom: 16px;
     flex-direction: row;
     gap: 12px;
@@ -351,7 +363,7 @@
   color: var(--color-linen);
 
   // Same single-line fix as `.hero__eyebrow`/`.hero__title` above.
-  @include height-down($breakpoint-hero-landscape-height) {
+  @include landscape-height-down($breakpoint-hero-landscape-height) {
     width: max-content;
   }
 

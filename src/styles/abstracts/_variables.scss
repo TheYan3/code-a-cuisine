@@ -53,11 +53,18 @@ $breakpoint-hero-dish-4-height: 1064px;
 $breakpoint-hero-dish-5-height: 1376px;
 // Viewport height below which the home hero's mobile main/secondary CTA
 // layout (fixed px offsets, not scaled by `--mobile-px` like the dishes)
-// gets compacted: phones in landscape (e.g. 844x390) are shorter than the
-// two CTAs' combined fixed height, so without this the hero outgrows the
-// viewport and the page scrolls (see home.scss). Not tied to a Figma
+// gets compacted, in landscape only: phones in landscape (e.g. 844x390) are
+// shorter than the two CTAs' combined fixed height, so without this the hero
+// outgrows the viewport and the page scrolls (see home.scss). Short portrait
+// phones (e.g. 375x500) are too narrow for the compact single-line text and
+// scroll instead. Not tied to a Figma
 // frame — mobile-home only exports portrait; 600px is a round value safely
 // below the shortest "must stay unchanged" viewport (812px), above the
 // tallest reported landscape one (430px) and just above the 588px both
 // uncompacted CTAs need.
 $breakpoint-hero-landscape-height: 600px;
+// Height the home hero's uncompacted mobile CTAs need (measured: main CTA
+// bottom 400 + 24 row gap + 126 secondary CTA + 38 bottom margin). Portrait
+// viewports shorter than this let the hero grow to it and scroll; the dish
+// column's `--mobile-px` scales against it instead of `100dvh` there.
+$hero-mobile-min-height: 588px;
