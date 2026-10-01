@@ -219,6 +219,19 @@
   gap: 40px;
   width: 240px;
 
+  // Phones in landscape (e.g. 844x390): the fixed 96px top offset plus the
+  // wrapped 2-line eyebrow/title (unlike the dishes, these aren't scaled by
+  // `--mobile-px`) is taller than the viewport and overlaps
+  // `.hero__secondary-cta` below. A smaller top offset (still clearing the
+  // ~52px header: 12 + 32px logo + 8px spacious padding) and a smaller gap
+  // to the button, combined with the single-line text below, bring the
+  // block's bottom edge comfortably above the secondary CTA at every
+  // reported overlapping height (390/360/430px).
+  @include height-down($breakpoint-hero-landscape-height) {
+    top: 60px;
+    gap: 24px;
+  }
+
   @include desktop-up {
     top: 240px;
     left: 65px;
@@ -249,6 +262,15 @@
   line-height: 30px;
   color: var(--color-beige);
 
+  // Landscape phones: single line instead of the fixed 203px wrap — the
+  // extra width costs nothing (`.hero{overflow:hidden}` only clips at the
+  // viewport edge, which a single line at this size stays well inside of),
+  // and one line is what actually fits the available height (see
+  // `.hero__main-cta` above).
+  @include height-down($breakpoint-hero-landscape-height) {
+    width: max-content;
+  }
+
   @include desktop-up {
     width: auto;
     font-size: 48px;
@@ -267,6 +289,11 @@
   font-weight: 700;
   line-height: 72px;
   color: var(--color-linen);
+
+  // Same single-line fix as `.hero__eyebrow` above.
+  @include height-down($breakpoint-hero-landscape-height) {
+    width: max-content;
+  }
 
   @include desktop-up {
     width: auto;
@@ -288,6 +315,17 @@
   align-items: center;
   gap: 16px;
 
+  // Landscape phones: same overlap problem as the main CTA above — a
+  // smaller bottom offset and the desktop row layout (text beside the
+  // button instead of stacked above it) both shrink the block's height
+  // enough to clear it. Reuses the `align-items: center` set above, which
+  // centers vertically once the direction flips to row.
+  @include height-down($breakpoint-hero-landscape-height) {
+    bottom: 16px;
+    flex-direction: row;
+    gap: 12px;
+  }
+
   @include desktop-up {
     bottom: 126px;
     left: 65px;
@@ -305,6 +343,11 @@
   font-weight: 500;
   line-height: 120%;
   color: var(--color-linen);
+
+  // Same single-line fix as `.hero__eyebrow`/`.hero__title` above.
+  @include height-down($breakpoint-hero-landscape-height) {
+    width: max-content;
+  }
 
   @include desktop-up {
     width: auto;

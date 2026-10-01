@@ -33,6 +33,16 @@
   }
 }
 
+/// Applies the given content only below the given viewport height — the
+/// counterpart to `height-up`, for layouts that need to compact themselves
+/// on short viewports (e.g. phones in landscape) rather than expand on tall
+/// ones.
+@mixin height-down($max-height) {
+  @media (max-height: $max-height) {
+    @content;
+  }
+}
+
 /// Expands an element's tap target to at least 44x44px (touch-target
 /// guidance) without changing its own visual size: an invisible `::before`,
 /// sized to the larger of 44px or the element's own box and centered on it.

@@ -51,3 +51,12 @@ $breakpoint-widescreen-width: 1920px;
 // of the dish before it (reasoning in home.scss).
 $breakpoint-hero-dish-4-height: 1064px;
 $breakpoint-hero-dish-5-height: 1376px;
+// Viewport height below which the home hero's mobile main/secondary CTA
+// layout (fixed px offsets, not scaled by `--mobile-px` like the dishes)
+// gets compacted: phones in landscape (e.g. 844x390) are shorter than the
+// two CTAs' combined fixed height, so without this they overlap (see
+// home.scss). Not tied to a Figma frame — mobile-home only exports
+// portrait; 600px is a round value safely below both the shortest
+// "must stay unchanged" viewport (812px) and the tallest reported
+// overlapping one (430px).
+$breakpoint-hero-landscape-height: 600px;
