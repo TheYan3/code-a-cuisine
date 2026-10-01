@@ -210,7 +210,7 @@
 
 // Safety net below the 1024px desktop-up threshold's ~830px head width:
 // once the name column would get too narrow next to the unshrunk nutrients
-// (~551px in one row), let them fold onto a second line instead of
+// (~455px in one row), let them fold onto a second line instead of
 // overflowing the card. Above it the shrinking title and gap make room.
 @container (max-width: 700px) {
   .recipe__facts {
@@ -316,13 +316,28 @@
     }
   }
 
-  // The whole-recipe total (User Story 10) has no Figma frame of its own —
-  // kept unobtrusive via the project's `.fine-print` values (>=14px, muted
-  // color) instead of a placeholder opacity hack.
-  dd.recipe__nutrient-total {
+  // The "(per portion)" qualifier and the whole-recipe total (User Story 10)
+  // have no Figma frame of their own — kept unobtrusive via the project's
+  // `.fine-print` values (>=14px, muted color) instead of a placeholder
+  // opacity hack. The qualifier gets its own line under the label: inline
+  // at the label's 20px it would widen the four columns to ~825px, as its
+  // own 14px line the ~97px total line stays the widest part of a column.
+  dd.recipe__nutrient-total,
+  .recipe__nutrient-portion {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--color-text-muted);
+  }
+
+  // Sits inside the `dt`, so it takes the `dd` line-height (23px → 20px)
+  // explicitly to line up with the total line instead of the label's 28px.
+  .recipe__nutrient-portion {
+    display: block;
+    line-height: 23px;
+
+    @include desktop-up {
+      line-height: 20px;
+    }
   }
 }
 

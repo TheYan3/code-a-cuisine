@@ -177,7 +177,8 @@ export class RecipeDetail implements OnInit {
   /**
    * Whole-recipe amount for a per-portion nutrition value (User Story 10:
    * nutrition must be shown for the whole recipe), rounded to a whole
-   * gram/kcal since the source value is itself only an estimate.
+   * gram/kcal since the source value is itself only an estimate. Shown in
+   * the small line under each per-portion value ("44g total", "960 kcal total").
    */
   protected nutritionTotal(perPortion: number): number {
     const recipe = this.recipe();
@@ -192,7 +193,8 @@ export class RecipeDetail implements OnInit {
    * macros relative to each other, e.g. "40% protein" means 40% of the
    * protein+carbs+fat grams, not 40% of a recommended daily amount.
    * Identical for the per-portion and the whole-recipe number, since scaling
-   * every macro by `portions` does not change their ratio.
+   * every macro by `portions` does not change their ratio — so the template
+   * shows it only once, on the total line ("44g total · 23%").
    */
   protected macroPercent(grams: number): number {
     const recipe = this.recipe();
