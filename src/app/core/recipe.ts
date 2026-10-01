@@ -94,6 +94,15 @@ export interface Recipe {
   ingredientsMissing: RecipeIngredient[];
   /** Chronological instructions. */
   steps: RecipeStep[];
+  /**
+   * One short label per cook (index 0 = cook 1) naming the fixed area of the
+   * dish they own from start to finish, e.g. `["pasta", "sauce"]` (User
+   * Story 9: cooks get distinct, non-overlapping tasks rather than steps
+   * split mid-task). Optional because recipes generated before this field
+   * existed have none stored in Firebase — the detail page simply omits the
+   * summary line for those.
+   */
+  responsibilities?: string[];
   /** Estimated nutrition per portion. */
   nutrition: RecipeNutrition;
   /**

@@ -136,6 +136,18 @@ export class RecipeDetail implements OnInit {
   }
 
   /**
+   * One-line summary of each cook's fixed area, e.g. "Chef 1: pasta · Chef
+   * 2: sauce" (User Story 9). Empty with one cook — there is nothing to
+   * divide — or when `responsibilities` is missing or the wrong length,
+   * which happens for recipes generated before this field existed.
+   */
+  protected responsibilitySummary(recipe: Recipe): string {
+    const { helpers, responsibilities } = recipe;
+    if (helpers < 2 || !responsibilities || responsibilities.length !== helpers) return '';
+    return responsibilities.map((task, i) => `Chef ${i + 1}: ${task}`).join(' · ');
+  }
+
+  /**
    * Fired once by `app-like-button` when a visitor gives this recipe a
    * heart. Shows the +1 and the liked state immediately (the button is
    * already disabled at that point), then persists it through `RecipeApi`.

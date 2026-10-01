@@ -332,6 +332,17 @@
   gap: 24px;
 }
 
+// No Figma frame for this (User Story 9, added after the design export) —
+// kept close to the design's other small inline labels: same size/weight as
+// `.step__parallel`, same green as the other cook-related text in this view.
+.recipe__responsibilities {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-green);
+}
+
 // Desktop: the ingredients and directions bands sit flush against each other
 // (Figma "Ingredients + Directions" wrapper: 0 gap) — the banner artwork's
 // own bleed (the bowl/jug above and below the band) provides the visual

@@ -18,7 +18,8 @@ asks for the shape and the `Parse and verify recipes` node is what enforces it:
 exactly three recipes, each using at least 70 percent of the listed ingredients
 (capped at eight), at most three extra ingredients, cuisine, diet and time
 bracket matching the request, steps renumbered without gaps, no step assigned
-to a cook who is not there, nutrition present and positive.
+to a cook who is not there, one non-empty responsibility label per cook,
+nutrition present and positive.
 
 A violation throws. That reaches the error workflow and sends mail, instead of
 putting a broken recipe into the public library.

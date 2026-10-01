@@ -156,6 +156,10 @@
               <span class="visually-hidden">Directions</span>
             </h2>
 
+            @if (responsibilitySummary(recipe); as summary) {
+              <p class="recipe__responsibilities">{{ summary }}</p>
+            }
+
             <div class="recipe__accordion">
               <details class="recipe__accordion-details" open>
                 <summary class="recipe__accordion-toggle">
