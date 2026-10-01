@@ -1,0 +1,38 @@
+@use '../../../styles/abstracts' as *;
+
+// No Figma frame exists for this (see the JSDoc on `Footer`) — kept
+// deliberately small: one centered link, sized off the shared
+// `.fine-print` 14px floor and `--page-gutter` instead of inventing new
+// values for a component the design never specified.
+:host {
+  display: block;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: center;
+  padding: 24px var(--page-gutter);
+  background-color: var(--color-background);
+}
+
+.site-footer__link {
+  position: relative;
+  font-size: 0.875rem; // matches `.fine-print`'s 14px floor
+  color: var(--color-text-muted);
+  text-decoration: underline;
+
+  // Visual link is a single word, well under the 44px minimum — expand the
+  // tap area invisibly instead of growing the link itself (same pattern as
+  // `.site-header__back` in app-header).
+  @include touch-target;
+
+  &:hover,
+  &:active {
+    color: var(--color-heading-green);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 4px;
+  }
+}

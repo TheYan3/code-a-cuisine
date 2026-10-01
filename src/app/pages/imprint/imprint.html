@@ -4,7 +4,32 @@
 
     <main class="imprint">
       <h1 class="imprint__title">Imprint</h1>
-      <p>Here the legally required imprint text will be shown.</p>
+
+      <section class="imprint__section">
+        <h2 class="imprint__heading">Legal notice according to § 5 DDG</h2>
+        <address class="imprint__address">
+          {{ contact.name }}<br />
+          {{ contact.street }}<br />
+          {{ contact.city }}<br />
+          <a class="imprint__link" href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+        </address>
+      </section>
+
+      <section class="imprint__section">
+        <h2 class="imprint__heading">Responsible for the content</h2>
+        <p>{{ contact.name }} (address as above), § 18 Abs. 2 MStV.</p>
+      </section>
+
+      <section class="imprint__section">
+        <h2 class="imprint__heading">About this project</h2>
+        <p class="fine-print">
+          Code à Cuisine is a private, non-commercial project built as the final submission of a web
+          development training course. It is not a commercial service. Recipes are generated
+          automatically by an AI model from the ingredients you enter; they are provided without any
+          warranty of accuracy, nutritional correctness, allergen information, or food safety —
+          please use your own judgement and check ingredients yourself before cooking.
+        </p>
+      </section>
     </main>
   </div>
 </div>

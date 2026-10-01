@@ -3,10 +3,12 @@
 // No Figma frame exists for this page (see the responsive plan's export
 // gap list). Layout reuses the page/container rhythm every other page
 // shares (`.page` max-width + `--page-gutter`, `desktop-up` for the wider
-// inset); typography reuses `.results__card-headline`'s "content heading"
-// role (not the larger hero-style titles) and the global body defaults from
-// `src/styles/base/_typography.scss`, which already give paragraph text
-// Quicksand at 16px.
+// inset); `.imprint__title` reuses `.results__card-headline`'s "content
+// heading" role (not the larger hero-style titles), `.imprint__heading`
+// reuses the smaller `%recipe-subheading` scale from recipe-detail.scss for
+// the per-section headings, and body copy falls back to the global defaults
+// from `src/styles/base/_typography.scss`, which already give paragraph
+// text Quicksand at 16px.
 
 .imprint-page {
   display: flex;
@@ -31,7 +33,7 @@
 .imprint {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 32px;
   max-width: 720px;
   padding: 0 var(--page-gutter) 40px;
   color: var(--color-text);
@@ -52,5 +54,45 @@
   @include desktop-up {
     font-size: 32px;
     line-height: 40px;
+  }
+}
+
+.imprint__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+// Same scale as `%recipe-subheading` in recipe-detail.scss (18px/23px →
+// 24px/30px) — the established "section heading inside page content" size
+// one step below `.imprint__title`.
+.imprint__heading {
+  margin: 0;
+  font-family: var(--font-quicksand);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 23px;
+  color: var(--color-heading-green);
+
+  @include desktop-up {
+    font-size: 24px;
+    line-height: 30px;
+  }
+}
+
+.imprint__address {
+  // `<address>` is italic by default in browser UA styles — this page's
+  // content isn't, so reset it back to normal.
+  font-style: normal;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.imprint__link {
+  color: var(--color-heading-green);
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 4px;
   }
 }
