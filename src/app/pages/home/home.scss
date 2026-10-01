@@ -1,29 +1,36 @@
 @use '../../../styles/abstracts' as *;
 
-// `min-height: 100dvh` (no `widescreen-up` override) is deliberate, not an
-// oversight: forcing a flat `height: 1440px` — the Figma "widescreen-design"
-// frame's own height — caused a vertical scrollbar on any real widescreen
-// monitor whose browser chrome leaves less than 1440px of viewport (e.g.
-// 3440x1310). `min-height: 100dvh` instead means the hero is exactly
-// 1440px tall only when the viewport happens to be exactly that tall;
-// shorter viewports get a hero that exactly fills them (the plate chain,
-// positioned from the top and clipped by `overflow: hidden`, just loses a
-// bit more of its bottom dishes), and taller ones
-// (e.g. 3440x1600) get a hero that still fills the viewport instead of
-// leaving a gap of the page background below a hard-capped 1440px hero.
+// `min-height: 100dvh` (on `.hero__inner`, no `widescreen-up` override) is
+// deliberate, not an oversight: forcing a flat `height: 1440px` — the Figma
+// "widescreen-design" frame's own height — caused a vertical scrollbar on any
+// real widescreen monitor whose browser chrome leaves less than 1440px of
+// viewport (e.g. 3440x1310). `min-height: 100dvh` instead means the hero is
+// exactly 1440px tall only when the viewport happens to be exactly that tall;
+// shorter viewports get a hero that exactly fills them, down to the height
+// both CTAs need (see `.hero__inner`; the plate chain, positioned from the
+// top and clipped by `overflow: hidden`, just loses a bit more of its bottom
+// dishes), and taller ones (e.g. 3440x1600) get a hero that still fills the
+// viewport instead of leaving a gap of the page background below a
+// hard-capped 1440px hero.
 .hero {
-  position: relative;
-  min-height: 100dvh;
   overflow: hidden;
   background-color: var(--color-green);
 }
 
 .hero__inner {
-  // `position: absolute; inset: 0;` (rather than `height: 100%`) so this
-  // still gets a definite height even though `.hero` only has a
-  // `min-height` — percentage heights don't resolve against a min-height.
-  position: absolute;
-  inset: 0;
+  // The two CTAs sit in a flex column instead of being absolutely
+  // positioned: the main CTA's top margin and the secondary CTA's bottom
+  // margin are the Figma offsets, `margin-top: auto` on the secondary CTA
+  // takes up the free space in between, and `row-gap` keeps a minimum
+  // distance once there is none left. On viewports too short for both, the
+  // hero grows past `100dvh` (the page scrolls) instead of the secondary CTA
+  // sliding up over "Get started". Header and dishes stay absolute.
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: var(--spacing-lg);
+  min-height: 100dvh;
   max-width: 1440px;
   margin: 0 auto;
 }
@@ -45,7 +52,7 @@
 // mobile-home only exports this one 375x812 frame, there's no tablet frame
 // between it and `desktop-up` (1024px). Every value below is a px value of
 // that frame multiplied by `--mobile-px` (1px of the 812px-tall frame,
-// `.hero` is exactly `100dvh` tall), so positions and sizes scale in
+// `.hero` fills the viewport), so positions and sizes scale in
 // one piece with the banner's height: on an 812px-tall viewport it resolves
 // to the exported px, on a taller tablet-portrait banner the column grows
 // and the dishes keep overlapping instead of shrinking into an isolated
@@ -210,9 +217,10 @@
 // Figma "Main CTA" mobile: top-left under the header, hugging its own
 // 240px column; desktop-up restores the original centered-column position.
 .hero__main-cta {
-  position: absolute;
-  top: 96px;
-  left: 16px;
+  // `position: relative` (no offsets) only keeps both CTAs painted above the
+  // absolutely positioned dishes, as they were when absolute themselves.
+  position: relative;
+  margin: 96px 0 0 16px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -221,20 +229,20 @@
 
   // Phones in landscape (e.g. 844x390): the fixed 96px top offset plus the
   // wrapped 2-line eyebrow/title (unlike the dishes, these aren't scaled by
-  // `--mobile-px`) is taller than the viewport and overlaps
-  // `.hero__secondary-cta` below. A smaller top offset (still clearing the
-  // ~52px header: 12 + 32px logo + 8px spacious padding) and a smaller gap
-  // to the button, combined with the single-line text below, bring the
-  // block's bottom edge comfortably above the secondary CTA at every
-  // reported overlapping height (390/360/430px).
+  // `--mobile-px`) plus `.hero__secondary-cta` below need 588px, so the
+  // hero would outgrow the viewport and the page scroll, with the
+  // viewport-scaled dish column ending well above the hero's bottom edge.
+  // A smaller top offset (still clearing the ~52px header: 12 + 32px logo +
+  // 8px spacious padding) and a smaller gap to the button, combined with
+  // the single-line text below, keep both CTAs within one landscape phone
+  // screen (390/360/430px).
   @include height-down($breakpoint-hero-landscape-height) {
-    top: 60px;
+    margin-top: 60px;
     gap: 24px;
   }
 
   @include desktop-up {
-    top: 240px;
-    left: 65px;
+    margin: 240px 0 0 65px;
     gap: 64px;
     width: 755px;
   }
@@ -304,31 +312,29 @@
 
 // Figma "Secoond CTA" mobile: text stacked above the button, both centered;
 // desktop-up restores the original side-by-side row, bottom-anchored to the
-// viewport either way (126px desktop, 38px mobile — both match the export's
+// hero either way (126px desktop, 38px mobile — both match the export's
 // gap to the 812px mobile frame's / 1440px desktop frame's bottom edge).
 .hero__secondary-cta {
-  position: absolute;
-  bottom: 38px;
-  left: 16px;
+  position: relative;
+  margin: auto 0 38px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
 
-  // Landscape phones: same overlap problem as the main CTA above — a
+  // Landscape phones: same height problem as the main CTA above — a
   // smaller bottom offset and the desktop row layout (text beside the
   // button instead of stacked above it) both shrink the block's height
   // enough to clear it. Reuses the `align-items: center` set above, which
   // centers vertically once the direction flips to row.
   @include height-down($breakpoint-hero-landscape-height) {
-    bottom: 16px;
+    margin-bottom: 16px;
     flex-direction: row;
     gap: 12px;
   }
 
   @include desktop-up {
-    bottom: 126px;
-    left: 65px;
+    margin: auto 0 126px 65px;
     flex-direction: row;
   }
 }
