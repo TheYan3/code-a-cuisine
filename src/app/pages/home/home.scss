@@ -66,6 +66,12 @@
 
 .hero__ellipse {
   position: absolute;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 // Positions are relative to the "Visuals" frame above. The export has no
@@ -84,12 +90,29 @@
   height: calc(303 * var(--mobile-px));
 }
 
+// Figma "Ellipse 29/30/31" (mobile-home): DROP_SHADOW x -6, y 2, blur 4,
+// black 25%, falling left/down in page space. The webp assets already carry
+// the desktop shadow (x 6, y -2) baked in, in their own unrotated
+// orientation: salmon's rotation/flip turns it into roughly x -6, y 3, so
+// salmon already matches the reference and gets no filter (a second shadow
+// doubles its darkness). Chicken and steak get the filter on their
+// untransformed wrapper (see home.html). Blur 2px, not Figma's 4: Chrome
+// draws `drop-shadow()` about twice as soft as `box-shadow` for the same
+// value, and 2px is what matches the reference PNG's falloff.
+.hero__ellipse--chicken,
+.hero__ellipse--steak {
+  filter: drop-shadow(-6px 2px 2px rgb(0 0 0 / 25%));
+}
+
 .hero__ellipse--salmon {
   top: calc(264 * var(--mobile-px));
   left: calc(-1 * var(--mobile-px));
   width: calc(310 * var(--mobile-px));
   height: calc(310 * var(--mobile-px));
-  transform: rotate(-45deg) scaleX(-1);
+
+  img {
+    transform: rotate(-45deg) scaleX(-1);
+  }
 }
 
 .hero__ellipse--steak {
@@ -97,7 +120,10 @@
   left: calc(-17 * var(--mobile-px));
   width: calc(319 * var(--mobile-px));
   height: calc(320 * var(--mobile-px));
-  transform: rotate(-122deg) scaleX(-1);
+
+  img {
+    transform: rotate(-122deg) scaleX(-1);
+  }
 }
 
 // Figma "Visuals": the five-dish chain, positioned in "hero" frame
