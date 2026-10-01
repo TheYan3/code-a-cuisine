@@ -21,7 +21,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Reads the visitor IP that Traefik forwarded and builds today's quota path.\n// N8N_PROXY_HOPS=1 is set, so x-forwarded-for carries the real client address.\n// A private or missing address means IP detection is broken - the quota must then\n// fall back to the system-wide cap instead of silently becoming unlimited.\nconst headers = $input.first().json.headers || {};\nconst raw = (headers['x-forwarded-for'] || '').split(',')[0].trim();\n\nconst isPrivate = (ip) =>\n  !ip ||\n  ip.startsWith('10.') ||\n  ip.startsWith('192.168.') ||\n  ip === '::1' ||\n  ip === '127.0.0.1' ||\n  /^172\\.(1[6-9]|2[0-9]|3[01])\\./.test(ip) ||\n  /^f[cd]/i.test(ip);\n\nconst usable = !isPrivate(raw);\n// Firebase keys must not contain . # $ / [ ] - dots and colons are escaped.\nconst key = usable ? raw.replace(/[.:]/g, '_') : 'unknown';\nconst date = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Berlin' });\n\nreturn [{ json: { ip: raw, ipUsable: usable, ipKey: key, date } }];\n"
+        "jsCode": "// Reads the visitor IP that Traefik forwarded and builds today's quota path.\n// N8N_PROXY_HOPS=1 is set, so x-forwarded-for carries the real client address.\n// A private or missing address means IP detection is broken - the quota must then\n// fall back to the system-wide cap instead of silently becoming unlimited.\n// The private-range check runs here, before the next node hashes the address.\nconst headers = $input.first().json.headers || {};\nconst raw = (headers['x-forwarded-for'] || '').split(',')[0].trim();\n\nconst isPrivate = (ip) =>\n  !ip ||\n  ip.startsWith('10.') ||\n  ip.startsWith('192.168.') ||\n  ip === '::1' ||\n  ip === '127.0.0.1' ||\n  /^172\\.(1[6-9]|2[0-9]|3[01])\\./.test(ip) ||\n  /^f[cd]/i.test(ip);\n\nconst usable = !isPrivate(raw);\nconst date = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Berlin' });\n\nreturn [{ json: { ip: raw, ipUsable: usable, date } }];\n"
       },
       "id": "ccccccc2-0000-4000-8000-000000000002",
       "name": "Resolve client IP and date",
@@ -31,7 +31,31 @@
         220,
         0
       ],
-      "notes": "Extracts the real visitor IP from x-forwarded-for and escapes it into a Firebase-safe key. A private or missing address is treated as broken detection."
+      "notes": "Extracts the real visitor IP from x-forwarded-for. A private or missing address is treated as broken detection; this check runs before the address is hashed."
+    },
+    {
+      "parameters": {
+        "action": "hmac",
+        "type": "SHA256",
+        "value": "={{ $json.ip }}",
+        "dataPropertyName": "ipHash",
+        "encoding": "hex"
+      },
+      "id": "ccccccc6-0000-4000-8000-000000000006",
+      "name": "Hash client IP",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        330,
+        -160
+      ],
+      "credentials": {
+        "crypto": {
+          "id": "5S6Tr8TXESDLQZjf",
+          "name": "Quota IP hash salt"
+        }
+      },
+      "notes": "HMAC-SHA256 of the IP with the secret from the 'Quota IP hash salt' credential. Only this hash is used as the Firebase key, so stored quota data cannot be turned back into an address without the secret."
     },
     {
       "parameters": {
@@ -66,7 +90,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Turns the raw counters into the QuotaStatus shape the frontend expects\n// (see src/app/core/recipe.ts). Per-IP limit 3, system-wide 12 per day.\nconst PER_IP = 3;\nconst SYSTEM = 12;\n\nconst counters = $input.first().json.body || {};\nconst meta = $('Resolve client IP and date').first().json;\n\nconst total = Number(counters._total || 0);\nconst used = meta.ipUsable ? Number(counters[meta.ipKey] || 0) : total;\n\nconst systemLimitReached = total >= SYSTEM;\nconst remaining = Math.max(0, Math.min(PER_IP - used, SYSTEM - total));\n\nreturn [{ json: { remaining, limit: PER_IP, systemLimitReached } }];\n"
+        "jsCode": "// Turns the raw counters into the QuotaStatus shape the frontend expects\n// (see src/app/core/recipe.ts). Per-IP limit 3, system-wide 12 per day.\nconst PER_IP = 3;\nconst SYSTEM = 12;\n\nconst counters = $input.first().json.body || {};\nconst meta = $('Hash client IP').first().json;\n\nconst total = Number(counters._total || 0);\nconst used = meta.ipUsable ? Number(counters[meta.ipHash] || 0) : total;\n\nconst systemLimitReached = total >= SYSTEM;\nconst remaining = Math.max(0, Math.min(PER_IP - used, SYSTEM - total));\n\nreturn [{ json: { remaining, limit: PER_IP, systemLimitReached } }];\n"
       },
       "id": "ccccccc4-0000-4000-8000-000000000004",
       "name": "Build quota status",
@@ -110,7 +134,7 @@
       "main": [
         [
           {
-            "node": "Read today's counters",
+            "node": "Hash client IP",
             "type": "main",
             "index": 0
           }
@@ -138,9 +162,23 @@
           }
         ]
       ]
+    },
+    "Hash client IP": {
+      "main": [
+        [
+          {
+            "node": "Read today's counters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "errorWorkflow": "bq4jguv5xe3kvFWB"
-  }
+  },
+  "active": true,
+  "versionId": "ab40f159-ab6d-445b-b016-91909c862bce",
+  "id": "mXucg9ClUjSoFVSZ"
 }

@@ -47,11 +47,14 @@
         </p>
         <p>
           To limit each visitor to three generations per day, the n8n server reads your IP address
-          from the request and stores it in the Firebase database described below, as part of a
-          daily counter: the IP address in plain text (with dots and colons replaced by underscores)
-          together with the number of generations you made that day. These counters are currently
-          not deleted automatically. They are not visible to other visitors. Legal basis: Art.
-          6(1)(f) GDPR (legitimate interest in protecting the recipe generation from abuse).
+          from the request, also when the generator shows how many generations you have left. Before
+          anything is stored, the address is turned into a keyed hash (HMAC-SHA256 with a secret key
+          that exists only on the n8n server). Only this hash, together with the number of
+          generations made from it that day, is stored in the Firebase database described below —
+          your IP address itself is not. All counters of a day are deleted automatically a few
+          minutes after midnight (German time) at the end of that day. They are not visible to other
+          visitors. Legal basis: Art. 6(1)(f) GDPR (legitimate interest in protecting the recipe
+          generation from abuse).
         </p>
       </section>
 

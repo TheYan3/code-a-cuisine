@@ -1,0 +1,145 @@
+{
+  "name": "Quota cleanup — delete past days",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "5 0 * * *"
+            }
+          ]
+        }
+      },
+      "id": "ddddddd1-0000-4000-8000-000000000001",
+      "name": "Every night at 00:05",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "Runs shortly after midnight Europe/Berlin, when the previous day's counters stop being needed."
+    },
+    {
+      "parameters": {
+        "url": "https://code-a-cuisine-4b8a6-default-rtdb.europe-west1.firebasedatabase.app/quota.json?shallow=true",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "ddddddd2-0000-4000-8000-000000000002",
+      "name": "List quota days",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "5dYcVHm8XkQrIRAQ",
+          "name": "Google Service Account account"
+        }
+      },
+      "notes": "shallow=true returns only the date keys, not the counters below them."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Quota counters only matter for the current day. Every older day is removed,\n// so the hashed per-IP counters are kept for one day at most. Dates are\n// yyyy-mm-dd strings, which compare like dates. Nothing to delete ends the run.\nconst today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Berlin' });\nconst past = Object.keys($input.first().json.body || {}).filter((day) => day < today);\nif (past.length === 0) return [];\nreturn [{ json: { past, deletions: Object.fromEntries(past.map((day) => [day, null])) } }];\n"
+      },
+      "id": "ddddddd3-0000-4000-8000-000000000003",
+      "name": "Pick past days",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "notes": "Every date before today. A missed night is caught up by the next run."
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://code-a-cuisine-4b8a6-default-rtdb.europe-west1.firebasedatabase.app/quota.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.deletions) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "ddddddd4-0000-4000-8000-000000000004",
+      "name": "Delete past days",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "5dYcVHm8XkQrIRAQ",
+          "name": "Google Service Account account"
+        }
+      },
+      "notes": "A PATCH with null values deletes those children, so all past days go in one atomic call."
+    }
+  ],
+  "connections": {
+    "Every night at 00:05": {
+      "main": [
+        [
+          {
+            "node": "List quota days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List quota days": {
+      "main": [
+        [
+          {
+            "node": "Pick past days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick past days": {
+      "main": [
+        [
+          {
+            "node": "Delete past days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "errorWorkflow": "bq4jguv5xe3kvFWB",
+    "executionOrder": "v1",
+    "timezone": "Europe/Berlin"
+  },
+  "active": true,
+  "versionId": "22c1f3a8-a052-48e4-bda7-b0d227925d0e",
+  "id": "UhqBs2L32dft5dpY"
+}

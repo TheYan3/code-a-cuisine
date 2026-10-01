@@ -7,6 +7,7 @@ generation.
 | --- | --- | --- |
 | `recipe-generation.json` | `POST /webhook/generate-recipe` | Validates the request, checks the daily quota, asks Gemini, verifies the reply, stores three recipes and answers with their ids |
 | `quota-lookup.json` | `GET /webhook/quota` | How many generations the calling IP has left today |
+| `quota-cleanup.json` | — (daily at 00:05) | Deletes the quota counters of every past day |
 | `error-handler.json` | — | Mails workflow name, failing node, error message and execution link when any workflow fails |
 
 ## Why the generation workflow verifies so much
@@ -46,6 +47,20 @@ not consume quota.
 When the visitor IP cannot be determined, the request counts against the
 system-wide cap instead of a per-IP bucket. Otherwise a broken proxy setup
 would silently turn the per-IP limit into no limit at all.
+
+The IP address is never stored. Both workflows first decide whether the
+address is usable (missing or private ranges fall back to the system-wide cap,
+see above), then the `Hash client IP` node (Crypto, HMAC-SHA256) turns it into
+the key under `/quota/<date>`. The secret is the HMAC secret of the n8n
+credential **Quota IP hash salt** (type Crypto) — it lives only in n8n, never
+in an export. Generation and lookup must use the same credential, or they
+would count different keys. Losing or rotating the secret only resets the
+current day's per-IP counters.
+
+`quota-cleanup.json` runs every night at 00:05 Europe/Berlin, lists the date
+keys with a shallow read and deletes every day before today in one PATCH with
+`null` values. A missed night is caught up by the next run, so a day's
+counters are kept for roughly 24 hours at most.
 
 ## Error handling
 

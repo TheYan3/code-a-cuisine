@@ -87,7 +87,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Same IP logic as the quota lookup workflow. N8N_PROXY_HOPS=1 puts the real\n// visitor address into x-forwarded-for. A private or missing address means\n// detection is broken, so the request counts against the system-wide cap\n// instead of letting the per-IP limit become unlimited.\nconst headers = $('Webhook').first().json.headers || {};\nconst raw = (headers['x-forwarded-for'] || '').split(',')[0].trim();\nconst isPrivate = (ip) => !ip || ip.startsWith('10.') || ip.startsWith('192.168.') ||\n  ip === '::1' || ip === '127.0.0.1' ||\n  /^172\\.(1[6-9]|2[0-9]|3[01])\\./.test(ip) || /^f[cd]/i.test(ip);\nconst usable = !isPrivate(raw);\nconst key = usable ? raw.replace(/[.:]/g, '_') : 'unknown';\nconst date = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Berlin' });\nreturn [{ json: { ip: raw, ipUsable: usable, ipKey: key, date,\n                  request: $('Validate request').first().json.request } }];\n"
+        "jsCode": "// Same IP logic as the quota lookup workflow. N8N_PROXY_HOPS=1 puts the real\n// visitor address into x-forwarded-for. A private or missing address means\n// detection is broken, so the request counts against the system-wide cap\n// instead of letting the per-IP limit become unlimited. The address itself is\n// never stored: the next node turns it into a keyed hash (HMAC).\nconst headers = $('Webhook').first().json.headers || {};\nconst raw = (headers['x-forwarded-for'] || '').split(',')[0].trim();\nconst isPrivate = (ip) => !ip || ip.startsWith('10.') || ip.startsWith('192.168.') ||\n  ip === '::1' || ip === '127.0.0.1' ||\n  /^172\\.(1[6-9]|2[0-9]|3[01])\\./.test(ip) || /^f[cd]/i.test(ip);\nconst usable = !isPrivate(raw);\nconst date = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Berlin' });\nreturn [{ json: { ip: raw, ipUsable: usable, date,\n                  request: $('Validate request').first().json.request } }];\n"
       },
       "id": "12b079e9-d68e-4d17-9b5d-1e2aa4578074",
       "name": "Resolve client IP and date",
@@ -98,6 +98,30 @@
         240
       ],
       "notes": "Same logic as the quota lookup workflow. Broken IP detection falls back to the system-wide counter."
+    },
+    {
+      "parameters": {
+        "action": "hmac",
+        "type": "SHA256",
+        "value": "={{ $json.ip }}",
+        "dataPropertyName": "ipHash",
+        "encoding": "hex"
+      },
+      "id": "5c1e0a4b-2f6d-4b8e-9a31-7d0c2e6f4a10",
+      "name": "Hash client IP",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        720,
+        64
+      ],
+      "credentials": {
+        "crypto": {
+          "id": "5S6Tr8TXESDLQZjf",
+          "name": "Quota IP hash salt"
+        }
+      },
+      "notes": "HMAC-SHA256 of the IP with the secret from the 'Quota IP hash salt' credential. Only this hash is used as the Firebase key, so stored quota data cannot be turned back into an address without the secret."
     },
     {
       "parameters": {
@@ -131,7 +155,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Cost airbag: 3 generations per IP per day, 12 system-wide. Checked before the\n// model is called, because the paid call is what needs protecting.\nconst PER_IP = 3, SYSTEM = 12;\nconst counters = $input.first().json.body || {};\nconst meta = $('Resolve client IP and date').first().json;\nconst total = Number(counters._total || 0);\nconst used = meta.ipUsable ? Number(counters[meta.ipKey] || 0) : total;\nconst systemLimitReached = total >= SYSTEM;\nconst remaining = Math.max(0, Math.min(PER_IP - used, SYSTEM - total));\nreturn [{ json: { allowed: remaining > 0, remaining, limit: PER_IP,\n                  systemLimitReached, used, total, ...meta } }];\n"
+        "jsCode": "// Cost airbag: 3 generations per IP per day, 12 system-wide. Checked before the\n// model is called, because the paid call is what needs protecting.\nconst PER_IP = 3, SYSTEM = 12;\nconst counters = $input.first().json.body || {};\nconst meta = $('Hash client IP').first().json;\n// Per-IP counters are keyed by the HMAC of the address, never the address itself.\nconst ipKey = meta.ipUsable ? meta.ipHash : 'unknown';\nconst total = Number(counters._total || 0);\nconst used = meta.ipUsable ? Number(counters[ipKey] || 0) : total;\nconst systemLimitReached = total >= SYSTEM;\nconst remaining = Math.max(0, Math.min(PER_IP - used, SYSTEM - total));\nreturn [{ json: { allowed: remaining > 0, remaining, limit: PER_IP,\n                  systemLimitReached, used, total, ...meta, ipKey } }];\n"
       },
       "id": "32dfde6c-6a15-44e5-adff-b2639b226a02",
       "name": "Check quota",
@@ -412,7 +436,7 @@
       "main": [
         [
           {
-            "node": "Read today's counters",
+            "node": "Hash client IP",
             "type": "main",
             "index": 0
           }
@@ -535,6 +559,17 @@
           }
         ]
       ]
+    },
+    "Hash client IP": {
+      "main": [
+        [
+          {
+            "node": "Read today's counters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -543,7 +578,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "14392714-f86d-4f88-80a7-64c6f8988cac",
+  "versionId": "2c47ddb5-f7e9-40ad-8a3d-719968058c65",
   "meta": {
     "instanceId": "bac6d6b4551ad7378a76726246e1bf0d049ba303359eb5443ff82ca8d3250ed3"
   },
