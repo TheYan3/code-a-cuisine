@@ -1,3 +1,4 @@
+@use 'sass:math';
 @use '../../../styles/abstracts' as *;
 
 // Detail view of one recipe. Mobile-first from the Figma frame "mobile-recipe"
@@ -371,10 +372,32 @@
 // The banner artwork overflows its band (the bowl sticks out at the top, the
 // jug at the bottom), which is why the SVG is taller than the visible strip
 // and is placed as a background rather than an <img> behind the heading.
+//
+// Below desktop-up the mobile artwork (word baked in at 24px per 320px of
+// width) would otherwise stretch to the full card — ~800px wide and twice
+// the desktop banner's height on tablets. Its width is instead interpolated
+// linearly between the two Figma frames: the full 327px card at 375px, and
+// at 1440px the width where the baked word reaches the desktop's 32px
+// (320 * 32 / 24 = 427px). Centered, so it reads as the mobile pill; on
+// phones up to 375px `100%` wins, desktop-up returns to the full band.
+$banner-mobile-viewport: 375px;
+$banner-mobile-width: 327px;
+$banner-desktop-viewport: 1440px;
+$banner-desktop-width: 427px;
+$banner-slope: math.div(
+  $banner-desktop-width - $banner-mobile-width,
+  $banner-desktop-viewport - $banner-mobile-viewport
+);
+
 .recipe__banner {
   display: flex;
+  align-self: center;
   align-items: center;
   justify-content: center;
+  width: min(
+    100%,
+    calc(#{$banner-mobile-width} + (100vw - #{$banner-mobile-viewport}) * #{$banner-slope})
+  );
   margin: 0;
   background-repeat: no-repeat;
   background-position: center;
@@ -383,6 +406,10 @@
   font-weight: 600;
   line-height: 40px;
   color: var(--color-heading-green);
+
+  @include desktop-up {
+    width: 100%;
+  }
 }
 
 // Mobile artwork ("mob-ingredients") bakes the word "Ingredients" into the
@@ -460,6 +487,8 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  // Sizes the `.recipe__ingredients` row/column switch below.
+  container-type: inline-size;
 }
 
 .recipe__accordion-details {
@@ -545,16 +574,21 @@
 }
 
 // Figma "ingredients" (mobile): column, 24px gap between the two groups, no
-// extra inset (the card's own padding already provides it). desktop-up
-// restores "Ingredients": a 730px-wide, 80px-gap row centered in the 1152px
+// extra inset (the card's own padding already provides it). Desktop
+// "Ingredients" is a 730px-wide, 80px-gap row centered in the 1152px
 // section (not edge-padded — the export places it with equal space on both
-// sides).
+// sides). That row already fits tablets: at the mobile font sizes the
+// widest stored recipe (5 + 3 items) needs 546px including the gap, so the
+// row takes over from a 550px-wide accordion (~600px viewport) instead of
+// at desktop-up; narrower ones keep the mobile column.
 .recipe__ingredients {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
 
-  @include desktop-up {
+@container (min-width: 550px) {
+  .recipe__ingredients {
     flex-direction: row;
     justify-content: center;
     gap: 80px;
