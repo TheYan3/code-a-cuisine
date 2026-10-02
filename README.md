@@ -23,9 +23,9 @@ Built as the submission project for the "Code à Cuisine" coding bootcamp.
 | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | ![Recipe detail with nutrition and likes](screenshots/recipe-detail-desktop.webp) | ![Cuisine library with most-liked strip](screenshots/library-desktop.webp) |
 
-| Cuisine page                                                     |
-| ---------------------------------------------------------------- |
-| ![Italian cuisine recipe list](screenshots/cuisine-desktop.webp) |
+| Cuisine page                                                    |
+| --------------------------------------------------------------- |
+| ![German cuisine recipe list](screenshots/cuisine-desktop.webp) |
 
 Mobile (375×812):
 
@@ -45,16 +45,21 @@ the daily quota for no reason.
   (quick / medium / complex), cuisine (German, Italian, Indian, Japanese,
   Gourmet, Fusion) and diet (vegetarian, vegan, keto, no preference).
 - **Three recipe suggestions** per generation, each with chronological
-  instructions, steps marked as running in parallel, and steps assigned to
-  individual cooks when more than one person is cooking.
-- **Estimated nutrition** (calories, protein, carbs, fat) per portion and
-  per 100 g of the finished dish, clearly labelled as an estimate.
+  instructions, steps marked as running in parallel, and — when more than
+  one person is cooking — steps assigned to individual cooks, each with a
+  fixed area of the dish they own from start to finish (e.g. "Chef 1: pasta
+  · Chef 2: sauce").
+- **Estimated nutrition** (calories, protein, carbs, fat) per portion, the
+  whole recipe's total, and each macronutrient's share of the total
+  protein+carbs+fat weight, clearly labelled as an estimate.
 - **Public library** of every generated recipe, grouped by cuisine, with a
   "most liked" strip and a like button per recipe (one like per browser,
   remembered locally).
 - **Daily quota**: 3 generations per visitor (by IP) per day, capped at 12
   generations system-wide, both enforced server-side before the paid model
-  call runs.
+  call runs. The IP itself is never stored — only an HMAC-SHA256 hash of it
+  keyed under the day, deleted every night for days that have passed.
+- **Imprint and privacy policy**, reachable from every page's own footer.
 
 ## Architecture
 
@@ -102,17 +107,18 @@ No test scripts — this project deliberately ships without a test setup.
 
 ```
 src/app/pages/          home, generator, preferences, loading, results,
-                         recipe-detail, library, cuisine, imprint
-src/app/components/     counter, header, ingredient-input, ingredient-list,
-                         like-button, not-enough-popup, pagination, tag,
-                         unit-select
+                         recipe-detail, library, cuisine, imprint, privacy
+src/app/components/     counter, footer, header, ingredient-input,
+                         ingredient-list, like-button, not-enough-popup,
+                         pagination, tag, unit-select
 src/app/core/           RecipeRequestService, RecipeApi, route guards,
                          Recipe/CuisineMeta models, ingredient suggestions
 src/app/app.routes.ts   routing, incl. the generator-step guards
 src/styles/             7-1 structure, design tokens as CSS custom
                          properties in src/styles/abstracts/_variables.scss
 src/environments/       Firebase + n8n URLs (see below)
-n8n/                    exported n8n workflow JSONs that generate recipes
+n8n/                    exported n8n workflow JSONs: recipe generation,
+                         quota lookup, nightly quota cleanup, error handler
 ```
 
 `src/app/pages/cuisine` implements the `/library/:cuisine` route — named
