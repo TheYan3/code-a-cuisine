@@ -54,19 +54,24 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   min-width: 72px;
   margin: 0;
-  padding: 0;
+  // Own surface so the options stay readable over whatever lies below
+  // (ingredient list, buttons) — the open list used to be transparent.
+  padding: 6px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 15%);
   list-style: none;
 }
 
 .unit-select__option {
-  padding: 4px 8px;
+  padding: 8px 10px;
   border-radius: 8px;
   font-family: var(--font-quicksand);
   font-size: 14px;
-  line-height: 10px;
+  line-height: 20px;
   color: var(--color-text-dark);
   cursor: pointer;
 
@@ -75,6 +80,6 @@
   &:hover,
   &:active,
   &.is-highlighted {
-    background-color: rgba(250, 240, 230, 0.6);
+    background-color: var(--color-linen);
   }
 }
