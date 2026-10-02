@@ -19,6 +19,38 @@
       <div class="hero__ellipse hero__ellipse--steak">
         <img src="/images/hero/ellipse-31.webp" alt="" width="319" height="320" />
       </div>
+      <!--
+        Dishes 4-6 only show on tall narrow phones (see home.scss). Like the
+        desktop chain's dishes 4/5 below, ellipse-32/33 go through
+        `<picture>` so they're only downloaded when shown; each `media`
+        matches the SCSS gate (`mobile-ratio-up`, 375 / the
+        $hero-mobile-dish-*-frame-height). ellipse-31 is already loaded.
+      -->
+      <div class="hero__ellipse hero__ellipse--chicken-bowl">
+        <picture>
+          <source media="(max-aspect-ratio: 375 / 855)" srcset="/images/hero/ellipse-32.webp" />
+          <img
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
+            alt=""
+            width="348"
+            height="348"
+          />
+        </picture>
+      </div>
+      <div class="hero__ellipse hero__ellipse--salmon-potatoes">
+        <picture>
+          <source media="(max-aspect-ratio: 375 / 1115)" srcset="/images/hero/ellipse-33.webp" />
+          <img
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
+            alt=""
+            width="308"
+            height="308"
+          />
+        </picture>
+      </div>
+      <div class="hero__ellipse hero__ellipse--steak-repeat">
+        <img src="/images/hero/ellipse-31.webp" alt="" width="319" height="320" />
+      </div>
     </div>
 
     <!--

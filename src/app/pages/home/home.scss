@@ -74,7 +74,14 @@
   // (e.g. 375x500) the hero grows past `100dvh` to fit both CTAs, and a
   // column scaled from `100dvh` alone would end above the hero's bottom
   // edge, leaving a strip of empty green under the dishes.
-  --mobile-px: calc(max(100dvh, #{$hero-mobile-min-height}) / 812);
+  //
+  // Capped at 1px of the 375px-wide frame: on viewports taller than the
+  // frame's 375:812 ratio (e.g. 322x1190) the height alone would blow the
+  // dishes up past the text column, so there they scale with the width
+  // instead and further dishes fill the remaining height (see
+  // `.hero__ellipse--chicken-bowl` and after). Frame-ratio and wider
+  // viewports resolve to the height value, as before.
+  --mobile-px: min(calc(max(100dvh, #{$hero-mobile-min-height}) / 812), calc(100vw / 375));
 
   // Landscape phones keep the hero at `100dvh` (compacted CTAs, see
   // `.hero__main-cta`), so the column scales from the viewport alone. Before
@@ -87,7 +94,12 @@
   display: block;
   position: absolute;
   top: calc(23 * var(--mobile-px));
-  right: calc(-234 * var(--mobile-px));
+  // Never left of x 238, where the frame puts the column flush with the
+  // title's right edge: the text isn't scaled by `--mobile-px`, so on
+  // phones narrower than 375px a column that only shrank would slide under
+  // the eyebrow and title. There it moves further off the right edge
+  // instead; 375px and wider resolve to the frame's -234 as before.
+  right: min(calc(-234 * var(--mobile-px)), calc(100% - 238px - 371 * var(--mobile-px)));
   width: calc(371 * var(--mobile-px));
 
   // Tablet (no Figma frame): scaled from the height alone the column only
@@ -168,6 +180,67 @@
 
   img {
     transform: rotate(-122deg) scaleX(-1);
+  }
+}
+
+// Tall narrow viewports only (no Figma frame): once `--mobile-px` follows
+// the width, the hero is more than 812 frame px tall, and the chain goes on
+// below the steak at the mobile rhythm (263px between dish centers, plate
+// edges around x 0): the desktop chain's fourth and fifth dish, then the
+// steak asset once more to keep the blue/black/white plate order. Sizes
+// are the desktop size times 0.629, the factor between the first three
+// dishes' desktop and mobile sizes. Rotations are chosen so the shadow baked
+// into each asset (x 6, y -2) lands exactly on the mobile x -6, y 2 —
+// rotate(180deg), or scaleX(-1) with rotate(-37deg) — so none of them needs
+// the extra filter. Each dish switches on at the frame height where the
+// dish above it ends (`mobile-ratio-up`, thresholds in _variables.scss), so
+// no strip of empty green ever shows below the chain; with the mobile
+// rhythm's small overlap, a third of the new dish visible at that point
+// isn't possible, it starts as a sliver at the bottom edge.
+.hero__ellipse--chicken-bowl,
+.hero__ellipse--salmon-potatoes,
+.hero__ellipse--steak-repeat {
+  display: none;
+
+  img {
+    transform: rotate(180deg);
+  }
+}
+
+.hero__ellipse--chicken-bowl {
+  top: calc(771 * var(--mobile-px));
+  left: calc(-28 * var(--mobile-px));
+  width: calc(348 * var(--mobile-px));
+  height: calc(348 * var(--mobile-px));
+
+  @include mobile-ratio-up($hero-mobile-dish-4-frame-height) {
+    display: block;
+  }
+}
+
+.hero__ellipse--salmon-potatoes {
+  top: calc(1054 * var(--mobile-px));
+  left: calc(-3 * var(--mobile-px));
+  width: calc(308 * var(--mobile-px));
+  height: calc(308 * var(--mobile-px));
+
+  @include mobile-ratio-up($hero-mobile-dish-5-frame-height) {
+    display: block;
+  }
+
+  img {
+    transform: rotate(-37deg) scaleX(-1);
+  }
+}
+
+.hero__ellipse--steak-repeat {
+  top: calc(1311 * var(--mobile-px));
+  left: calc(-15 * var(--mobile-px));
+  width: calc(319 * var(--mobile-px));
+  height: calc(320 * var(--mobile-px));
+
+  @include mobile-ratio-up($hero-mobile-dish-6-frame-height) {
+    display: block;
   }
 }
 

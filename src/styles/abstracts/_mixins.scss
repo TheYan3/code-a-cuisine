@@ -33,6 +33,18 @@
   }
 }
 
+/// Applies the given content only on viewports at least as tall, relative
+/// to their width, as a 375px-wide mobile frame that is `$frame-height` px
+/// tall, i.e. where a column scaled by `100vw / 375` reaches that frame
+/// height. Ratio, not width/height thresholds: on tall narrow phones the
+/// home hero's dish column scales with the width (see `--mobile-px`), so
+/// how much of the chain fits depends on the aspect ratio alone.
+@mixin mobile-ratio-up($frame-height) {
+  @media (max-aspect-ratio: 375 / #{$frame-height}) {
+    @content;
+  }
+}
+
 /// Applies the given content only on landscape viewports below the given
 /// height (e.g. phones turned sideways) — the counterpart to `height-up`,
 /// for layouts that need to compact themselves there rather than expand on

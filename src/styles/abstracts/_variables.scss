@@ -69,3 +69,10 @@ $breakpoint-hero-landscape-height: 620px;
 // it and scroll; the dish column's `--mobile-px` scales against it instead
 // of `100dvh` there.
 $hero-mobile-min-height: 618px;
+// Hero heights, in px of the 375px-wide mobile frame, from which the dish
+// column (scaled by the width on tall narrow phones) shows its fourth / fifth
+// / sixth dish: where the plate of the dish before it ends, so no empty
+// green shows below the chain (reasoning in home.scss).
+$hero-mobile-dish-4-frame-height: 855;
+$hero-mobile-dish-5-frame-height: 1115;
+$hero-mobile-dish-6-frame-height: 1374;
