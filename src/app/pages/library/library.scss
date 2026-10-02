@@ -34,7 +34,10 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 16px 24px;
+  // Mobile frame: 24px padding, but its 320px children are centered in the
+  // 340px box, so they sit 10px in — that inset is what the PNG shows and
+  // what gives the carousel room for the next card to peek.
+  padding: 16px 10px;
   border-radius: 20px;
   background-color: color-mix(in srgb, var(--color-green) 4%, transparent);
 
@@ -130,9 +133,20 @@
 
 // Horizontal, touch-scrollable strip — the Figma frame clips card 4/5 to
 // hint that more follow.
+// Card widths from Figma (mobile 285px, desktop 370px), shrunk where needed
+// so the next card always peeks in by at least the 23px of the mobile frame
+// (320px strip - 285px card - 12px gap). Once two full cards would fit, the
+// cut could land in a gap, so the strip switches to two cards + peek, capped
+// at the desktop card (three cards never fit below the 1134px that needs).
+$liked-gap: 12px;
+$liked-peek: 23px;
+$liked-card-mobile: 285px;
+$liked-card-desktop: 370px;
+
 .most-liked {
+  container: most-liked / inline-size;
   display: flex;
-  gap: 12px;
+  gap: $liked-gap;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -141,8 +155,20 @@
 }
 
 .most-liked__item {
-  flex: 0 0 auto;
+  flex: 0 0 min(#{$liked-card-mobile}, 100% - #{$liked-gap + $liked-peek});
   scroll-snap-align: start;
+
+  @container most-liked (min-width: #{2 * $liked-card-mobile + $liked-gap}) {
+    flex-basis: min(#{$liked-card-desktop}, (100% - #{2 * $liked-gap + $liked-peek}) / 2);
+  }
+
+  @include desktop-up {
+    flex-basis: min(#{$liked-card-desktop}, 100% - #{$liked-gap + $liked-peek});
+
+    @container most-liked (min-width: #{2 * $liked-card-desktop + $liked-gap}) {
+      flex-basis: min(#{$liked-card-desktop}, (100% - #{2 * $liked-gap + $liked-peek}) / 2);
+    }
+  }
 }
 
 // Two rows as in Figma: time + likes on top, the title below spanning the
@@ -152,7 +178,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 285px;
+  width: 100%;
   height: 106px;
   padding: 16px 12px;
   border-radius: 16px;
@@ -160,7 +186,6 @@
   text-decoration: none;
 
   @include desktop-up {
-    width: 370px;
     height: 124px;
   }
 
