@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, map, of, switchMap, throwError } from 'rxjs';
+import { Observable, catchError, map, of, switchMap, throwError, timeout } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { GenerateRecipesResponse, QuotaStatus, Recipe } from './recipe';
@@ -13,6 +13,15 @@ import { RecipeRequest } from './recipe-request';
  * points at something else being wrong.
  */
 const LIKE_RETRY_LIMIT = 3;
+
+/**
+ * How long {@link RecipeApi.generate} waits for the webhook before giving up.
+ * A normal run takes 10–30 s; the workflow may ask the model a second time
+ * when the first reply fails verification, so this leaves room for two slow
+ * attempts. Without a limit a webhook that never answers would leave the
+ * loading spinner running forever.
+ */
+const GENERATE_TIMEOUT_MS = 90_000;
 
 /**
  * Error body the generation webhook returns when a request is refused. A 400
@@ -41,10 +50,13 @@ export class RecipeApi {
    * for a while — the loading page exists for exactly that wait.
    *
    * Fails with status 400 when the request is rejected and 429 when the daily
-   * quota is used up; both carry a `RecipeApiError` body.
+   * quota is used up; both carry a `RecipeApiError` body. Fails with an RxJS
+   * `TimeoutError` when no answer arrives within {@link GENERATE_TIMEOUT_MS}.
    */
   generate(request: RecipeRequest): Observable<GenerateRecipesResponse> {
-    return this.http.post<GenerateRecipesResponse>(environment.n8nWebhookUrl, request);
+    return this.http
+      .post<GenerateRecipesResponse>(environment.n8nWebhookUrl, request)
+      .pipe(timeout(GENERATE_TIMEOUT_MS));
   }
 
   /** How many generations the visitor has left today (User Story 11). */

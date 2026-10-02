@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { TimeoutError } from 'rxjs';
 
 import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
@@ -37,7 +38,7 @@ export class Loading {
         const ids = response.recipes.map((recipe) => recipe.id).join(',');
         this.router.navigate(['/generator/results'], { queryParams: { ids } });
       },
-      error: (error: HttpErrorResponse) => this.showFailure(error),
+      error: (error: HttpErrorResponse | TimeoutError) => this.showFailure(error),
     });
   }
 
@@ -50,9 +51,15 @@ export class Loading {
    * Turns a failed request into something readable. The webhook answers 429
    * when the daily quota is used up and 400 with concrete reasons when the
    * request does not pass revalidation; everything else is a network problem
-   * or a broken generation, which the error workflow reports by mail.
+   * or a broken generation, which the error workflow reports by mail. A
+   * `TimeoutError` means the webhook did not answer in time at all.
    */
-  private showFailure(error: HttpErrorResponse): void {
+  private showFailure(error: HttpErrorResponse | TimeoutError): void {
+    if (error instanceof TimeoutError) {
+      this.errorMessage.set('Cooking took too long this time. Please try again.');
+      return;
+    }
+
     const body = error.error as RecipeApiError | null;
 
     if (error.status === 429) {

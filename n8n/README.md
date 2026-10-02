@@ -12,18 +12,54 @@ generation.
 
 ## Why the generation workflow verifies so much
 
-The Gemini API only promises *syntactically* valid JSON. `minItems`, `maxItems`
-and `minimum` in a response schema are not guaranteed to be honoured, and this
-node does not pass schema options through to the API at all — so the prompt
-asks for the shape and the `Parse and verify recipes` node is what enforces it:
+The `Generate recipes` node has "Output Content as JSON" switched on, which sets
+`responseMimeType: application/json` on the API call. Before that was set the
+model did return broken JSON (a stray `]` near the end), so JSON mode is not
+optional. It only covers syntax, though: `minItems`, `maxItems` and `minimum`
+in a response schema are not guaranteed to be honoured, and this node has no
+response schema option at all — so the prompt asks for the shape and the
+`Parse and verify recipes` node is what enforces it:
 exactly three recipes, each using at least 70 percent of the listed ingredients
 (capped at eight), at most three extra ingredients, cuisine, diet and time
 bracket matching the request, steps renumbered without gaps, no step assigned
 to a cook who is not there, one non-empty responsibility label per cook,
 nutrition present and positive.
 
-A violation throws. That reaches the error workflow and sends mail, instead of
-putting a broken recipe into the public library.
+A violation throws instead of putting a broken recipe into the public library.
+What happens then is described under _When generation fails_ below.
+
+## When generation fails
+
+The webhook answers through `Respond to Webhook` nodes, so a run that simply
+stops never answers and the frontend would wait forever. Every node after the
+quota check that can realistically fail therefore has its error output wired
+up (`On Error: Continue (using error output)`):
+
+- `Generate recipes` and `Parse and verify recipes` go to `Try again?`, which
+  sends the request to the model **once more**. It lets exactly one retry
+  through because it checks its own `$runIndex`, so a request costs at most
+  two Gemini calls. The quota is only raised after the recipes are stored, so
+  a retry is never counted twice.
+- The second failure, and any failure of `Store recipes`,
+  `Collect ids and raise counters` or `Raise quota counters`, goes to
+  `Respond with error` (HTTP 500, `{"error": "..."}`) and then to
+  `Report failure`, a Stop and Error node. That fails the run on purpose, so
+  the error workflow still mails the original message.
+- `Build prompt` and `Build response` only rearrange data and have no error
+  output.
+- A store or counter failure is not retried: the three writes are not atomic,
+  and a second attempt could put duplicates into the library. If only
+  `Raise quota counters` fails, the recipes are already in the library and the
+  visitor still gets the 500.
+
+Code node error messages must not contain colons. The task runner splits a
+thrown message at `:` and keeps only the last part, which once turned the mail
+for a broken model reply into `150,"u [line 11]`. The full model reply is in
+the execution data of the failed run anyway.
+
+The frontend gives up after 90 seconds on its own (`GENERATE_TIMEOUT_MS` in
+`src/app/core/recipe-api.ts`) in case the webhook never answers for a reason
+this workflow cannot catch.
 
 ## Recipe language
 
@@ -40,8 +76,8 @@ the library.
 Three generations per IP per day, twelve across the whole system. Both counters
 live under `/quota/<date>` in Firebase, which the database rules hide from
 clients — only the service account reads and writes them. The check runs
-*before* Gemini is called, because the paid call is what needs protecting, and
-the counters are raised *after* the recipes are stored, so a failed write does
+_before_ Gemini is called, because the paid call is what needs protecting, and
+the counters are raised _after_ the recipes are stored, so a failed write does
 not consume quota.
 
 When the visitor IP cannot be determined, the request counts against the
@@ -80,7 +116,7 @@ down rather than rediscovered:
   from `JOIN_MAIL_USER` and its recipient from `ALERT_MAIL_TO`, so no address
   is committed here. Both must be set on the n8n container, and n8n must be
   allowed to read environment variables in expressions.
-- Handler runs show up in the execution list a moment *after* the failing run,
+- Handler runs show up in the execution list a moment _after_ the failing run,
   so checking immediately gives a false negative.
 
 ## Exporting

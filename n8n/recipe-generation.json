@@ -243,10 +243,11 @@
         "messages": {
           "values": [
             {
-              "content": "={{ $json.prompt }}"
+              "content": "={{ $('Build prompt').first().json.prompt }}"
             }
           ]
         },
+        "jsonOutput": true,
         "builtInTools": {},
         "options": {}
       },
@@ -264,11 +265,12 @@
           "name": "Google Gemini(PaLM) Api account"
         }
       },
-      "notes": "Gemini 3.5 Flash Lite: 15 requests per minute and 500 per day on the free tier, against 20 per day for the non-Lite models. Schema options are not passed through by this node, so JSON is requested in the prompt and verified afterwards."
+      "notes": "Gemini 3.5 Flash Lite: 15 requests per minute and 500 per day on the free tier, against 20 per day for the non-Lite models. 'Output Content as JSON' sets responseMimeType application/json; this node has no response schema option, so the shape is requested in the prompt and verified afterwards. Reads the prompt by node name because a retry arrives here from 'Try again?', not from 'Build prompt'.",
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
-        "jsCode": "// Parses the model's text answer and enforces everything the schema cannot.\n// Throwing here reaches the error workflow, so a bad generation is reported\n// by mail instead of silently landing in the public library.\nconst q = $('Check quota').first().json;\nconst r = q.request;\nconst text = $input.first().json?.content?.parts?.[0]?.text ?? '';\nconst cleaned = text.replace(/^\\s*```(?:json)?/i, '').replace(/```\\s*$/, '').trim();\n\nlet parsed;\ntry { parsed = JSON.parse(cleaned); }\ncatch (e) { throw new Error(`Model did not return parsable JSON: ${e.message}. First 300 chars: ${cleaned.slice(0,300)}`); }\n\nconst recipes = parsed.recipes;\nif (!Array.isArray(recipes)) throw new Error('No recipes array in the reply');\nif (recipes.length !== 3) throw new Error(`Expected exactly 3 recipes, got ${recipes.length}`);\n\nconst UNITS = ['gram','ml','piece'];\nconst BRACKET = { quick: [1,20], medium: [20,45], complex: [45,600] };\nconst createdAt = Date.now();\n\nconst cleanIng = (arr, where) => {\n  if (!Array.isArray(arr)) throw new Error(`${where} is not an array`);\n  return arr.map(i => {\n    if (!i || typeof i.name !== 'string' || !i.name.trim()) throw new Error(`${where}: ingredient without a name`);\n    if (!UNITS.includes(i.unit)) throw new Error(`${where}: bad unit ${i.unit} for ${i.name}`);\n    const amount = Number(i.amount);\n    if (!(amount > 0)) throw new Error(`${where}: bad amount for ${i.name}`);\n    return { name: i.name.trim(), amount, unit: i.unit };\n  });\n};\n\nreturn recipes.map((rec, idx) => {\n  const where = `recipe ${idx + 1}`;\n  if (typeof rec.title !== 'string' || !rec.title.trim()) throw new Error(`${where}: missing title`);\n  if (rec.cuisine !== r.cuisine) throw new Error(`${where}: cuisine ${rec.cuisine} does not match requested ${r.cuisine}`);\n  if (rec.diet !== r.diet) throw new Error(`${where}: diet ${rec.diet} does not match requested ${r.diet}`);\n  if (rec.timeCategory !== r.cookingTime) throw new Error(`${where}: timeCategory ${rec.timeCategory} does not match requested ${r.cookingTime}`);\n\n  const minutes = Number(rec.cookingTimeMinutes);\n  const [lo, hi] = BRACKET[r.cookingTime];\n  if (!(minutes >= lo && minutes <= hi)) throw new Error(`${where}: ${minutes} min is outside bracket ${r.cookingTime}`);\n\n  const used = cleanIng(rec.ingredientsUsed, `${where} ingredientsUsed`);\n  const missing = cleanIng(rec.ingredientsMissing ?? [], `${where} ingredientsMissing`);\n\n  // US7: each suggestion has to use at least 70 percent of the ingredients the\n  // user listed, capped at 8. Matched against the request by normalised name -\n  // counting the array alone would accept invented ingredients.\n  const norm = (s) => s.trim().toLowerCase();\n  const wanted = new Set(r.ingredients.map(i => norm(i.name)));\n  const hits = new Set(used.map(i => norm(i.name)).filter(n => wanted.has(n)));\n  const required = Math.min(Math.ceil(wanted.size * 0.7), 8);\n  if (hits.size < required) {\n    throw new Error(`${where}: uses ${hits.size} of the user's ingredients, needs at least ${required}`);\n  }\n  if (missing.length > 3) throw new Error(`${where}: ${missing.length} missing ingredients, at most 3 allowed`);\n\n  if (!Array.isArray(rec.steps) || rec.steps.length < 2) throw new Error(`${where}: needs at least 2 steps`);\n  const steps = rec.steps.map((s, i) => {\n    const assignedTo = Number(s.assignedTo ?? 1);\n    if (!(assignedTo >= 1 && assignedTo <= r.helpers)) throw new Error(`${where}: step ${i+1} assigned to cook ${assignedTo}, only ${r.helpers} cooking`);\n    if (typeof s.text !== 'string' || !s.text.trim()) throw new Error(`${where}: step ${i+1} has no text`);\n    if (typeof s.title !== 'string' || !s.title.trim()) throw new Error(`${where}: step ${i+1} has no title`);\n    return { number: i + 1, title: s.title.trim(), text: s.text.trim(), parallel: Boolean(s.parallel), assignedTo };\n  });\n\n  const n = rec.nutrition || {};\n  const num = (v, f) => { const x = Number(v); if (!(x >= 0)) throw new Error(`${where}: bad nutrition ${f}`); return x; };\n  // Portion weight (in grams) is stored for n8n's own records even though\n  // the frontend no longer displays it (it briefly fed a per-100g nutrition\n  // display, reverted 2026-10-01 to match User Story 10's \"per portion\"\n  // wording) - unlike the other nutrition fields it must be a positive\n  // integer, and missing/invalid values are rejected outright rather than\n  // silently defaulted.\n  const portionWeightG = Number(n.portionWeightG);\n  if (!Number.isInteger(portionWeightG) || portionWeightG <= 0) {\n    throw new Error(`${where}: missing or invalid portionWeightG`);\n  }\n  const nutrition = {\n    caloriesPerPortion: num(n.caloriesPerPortion, 'caloriesPerPortion'),\n    proteinG: num(n.proteinG, 'proteinG'),\n    carbsG: num(n.carbsG, 'carbsG'),\n    fatG: num(n.fatG, 'fatG'),\n    portionWeightG,\n  };\n  if (!(nutrition.caloriesPerPortion > 0)) throw new Error(`${where}: calories must be positive`);\n\n  // US9: with more than one cook, each needs one fixed, named area of the\n  // dish - responsibilities is what the UI shows above the steps (\"Chef 1:\n  // pasta · Chef 2: sauce\"). Checked structurally only (right length,\n  // non-empty labels); whether a cook's steps genuinely stay one coherent\n  // area is down to the prompt, not something code can verify.\n  const responsibilities = Array.isArray(rec.responsibilities)\n    ? rec.responsibilities.map((s) => (typeof s === 'string' ? s.trim() : ''))\n    : [];\n  if (responsibilities.length !== r.helpers || responsibilities.some((s) => !s)) {\n    throw new Error(`${where}: responsibilities must have ${r.helpers} non-empty label(s), got ${JSON.stringify(rec.responsibilities)}`);\n  }\n\n  return { json: {\n    createdAt, title: rec.title.trim(), cuisine: r.cuisine, diet: r.diet,\n    timeCategory: r.cookingTime, cookingTimeMinutes: minutes,\n    portions: r.portions, helpers: r.helpers,\n    ingredientsUsed: used, ingredientsMissing: missing, steps, nutrition, responsibilities,\n  } };\n});"
+        "jsCode": "// Parses the model's text answer and enforces everything the schema cannot.\n// Throwing here sends the item to the error output: the first failure asks the\n// model once more ('Try again?'), the second answers the webhook with a 500 and\n// fails the run in 'Report failure', so a bad generation is reported by mail\n// instead of landing in the public library or leaving the visitor waiting.\n// No colons in the error messages: the Code node's task runner splits a thrown\n// message at ':' and keeps only the last part.\nconst q = $('Check quota').first().json;\nconst r = q.request;\nconst text = $input.first().json?.content?.parts?.[0]?.text ?? '';\nconst cleaned = text.replace(/^\\s*```(?:json)?/i, '').replace(/```\\s*$/, '').trim();\n\nlet parsed;\ntry { parsed = JSON.parse(cleaned); }\ncatch (e) { throw new Error(`Model did not return parsable JSON (${e.message}), the full reply is in the Generate recipes output of this execution`); }\n\nconst recipes = parsed.recipes;\nif (!Array.isArray(recipes)) throw new Error('No recipes array in the reply');\nif (recipes.length !== 3) throw new Error(`Expected exactly 3 recipes, got ${recipes.length}`);\n\nconst UNITS = ['gram','ml','piece'];\nconst BRACKET = { quick: [1,20], medium: [20,45], complex: [45,600] };\nconst createdAt = Date.now();\n\nconst cleanIng = (arr, where) => {\n  if (!Array.isArray(arr)) throw new Error(`${where} is not an array`);\n  return arr.map(i => {\n    if (!i || typeof i.name !== 'string' || !i.name.trim()) throw new Error(`${where} - ingredient without a name`);\n    if (!UNITS.includes(i.unit)) throw new Error(`${where} - bad unit ${i.unit} for ${i.name}`);\n    const amount = Number(i.amount);\n    if (!(amount > 0)) throw new Error(`${where} - bad amount for ${i.name}`);\n    return { name: i.name.trim(), amount, unit: i.unit };\n  });\n};\n\nreturn recipes.map((rec, idx) => {\n  const where = `recipe ${idx + 1}`;\n  if (typeof rec.title !== 'string' || !rec.title.trim()) throw new Error(`${where} - missing title`);\n  if (rec.cuisine !== r.cuisine) throw new Error(`${where} - cuisine ${rec.cuisine} does not match requested ${r.cuisine}`);\n  if (rec.diet !== r.diet) throw new Error(`${where} - diet ${rec.diet} does not match requested ${r.diet}`);\n  if (rec.timeCategory !== r.cookingTime) throw new Error(`${where} - timeCategory ${rec.timeCategory} does not match requested ${r.cookingTime}`);\n\n  const minutes = Number(rec.cookingTimeMinutes);\n  const [lo, hi] = BRACKET[r.cookingTime];\n  if (!(minutes >= lo && minutes <= hi)) throw new Error(`${where} - ${minutes} min is outside bracket ${r.cookingTime}`);\n\n  const used = cleanIng(rec.ingredientsUsed, `${where} ingredientsUsed`);\n  const missing = cleanIng(rec.ingredientsMissing ?? [], `${where} ingredientsMissing`);\n\n  // US7: each suggestion has to use at least 70 percent of the ingredients the\n  // user listed, capped at 8. Matched against the request by normalised name -\n  // counting the array alone would accept invented ingredients.\n  const norm = (s) => s.trim().toLowerCase();\n  const wanted = new Set(r.ingredients.map(i => norm(i.name)));\n  const hits = new Set(used.map(i => norm(i.name)).filter(n => wanted.has(n)));\n  const required = Math.min(Math.ceil(wanted.size * 0.7), 8);\n  if (hits.size < required) {\n    throw new Error(`${where} - uses ${hits.size} of the user's ingredients, needs at least ${required}`);\n  }\n  if (missing.length > 3) throw new Error(`${where} - ${missing.length} missing ingredients, at most 3 allowed`);\n\n  if (!Array.isArray(rec.steps) || rec.steps.length < 2) throw new Error(`${where} - needs at least 2 steps`);\n  const steps = rec.steps.map((s, i) => {\n    const assignedTo = Number(s.assignedTo ?? 1);\n    if (!(assignedTo >= 1 && assignedTo <= r.helpers)) throw new Error(`${where} - step ${i+1} assigned to cook ${assignedTo}, only ${r.helpers} cooking`);\n    if (typeof s.text !== 'string' || !s.text.trim()) throw new Error(`${where} - step ${i+1} has no text`);\n    if (typeof s.title !== 'string' || !s.title.trim()) throw new Error(`${where} - step ${i+1} has no title`);\n    return { number: i + 1, title: s.title.trim(), text: s.text.trim(), parallel: Boolean(s.parallel), assignedTo };\n  });\n\n  const n = rec.nutrition || {};\n  const num = (v, f) => { const x = Number(v); if (!(x >= 0)) throw new Error(`${where} - bad nutrition ${f}`); return x; };\n  // Portion weight (in grams) is stored for n8n's own records even though\n  // the frontend no longer displays it (it briefly fed a per-100g nutrition\n  // display, reverted 2026-10-01 to match User Story 10's \"per portion\"\n  // wording) - unlike the other nutrition fields it must be a positive\n  // integer, and missing/invalid values are rejected outright rather than\n  // silently defaulted.\n  const portionWeightG = Number(n.portionWeightG);\n  if (!Number.isInteger(portionWeightG) || portionWeightG <= 0) {\n    throw new Error(`${where} - missing or invalid portionWeightG`);\n  }\n  const nutrition = {\n    caloriesPerPortion: num(n.caloriesPerPortion, 'caloriesPerPortion'),\n    proteinG: num(n.proteinG, 'proteinG'),\n    carbsG: num(n.carbsG, 'carbsG'),\n    fatG: num(n.fatG, 'fatG'),\n    portionWeightG,\n  };\n  if (!(nutrition.caloriesPerPortion > 0)) throw new Error(`${where} - calories must be positive`);\n\n  // US9: with more than one cook, each needs one fixed, named area of the\n  // dish - responsibilities is what the UI shows above the steps (\"Chef 1:\n  // pasta · Chef 2: sauce\"). Checked structurally only (right length,\n  // non-empty labels); whether a cook's steps genuinely stay one coherent\n  // area is down to the prompt, not something code can verify.\n  const responsibilities = Array.isArray(rec.responsibilities)\n    ? rec.responsibilities.map((s) => (typeof s === 'string' ? s.trim() : ''))\n    : [];\n  if (responsibilities.length !== r.helpers || responsibilities.some((s) => !s)) {\n    throw new Error(`${where} - responsibilities must have ${r.helpers} non-empty label(s), got ${JSON.stringify(rec.responsibilities)}`);\n  }\n\n  return { json: {\n    createdAt, title: rec.title.trim(), cuisine: r.cuisine, diet: r.diet,\n    timeCategory: r.cookingTime, cookingTimeMinutes: minutes,\n    portions: r.portions, helpers: r.helpers,\n    ingredientsUsed: used, ingredientsMissing: missing, steps, nutrition, responsibilities,\n  } };\n});"
       },
       "id": "40df63a2-5925-4ad5-9ee8-7e8ab6d94f6f",
       "name": "Parse and verify recipes",
@@ -278,7 +280,8 @@
         1888,
         240
       ],
-      "notes": "Enforces what the schema cannot: exactly three recipes, at most three missing ingredients, matching cuisine/diet/time, steps renumbered, assignedTo within the helper count, nutrition present. Throws otherwise, which reaches the error workflow."
+      "notes": "Enforces what the schema cannot: exactly three recipes, at most three missing ingredients, matching cuisine/diet/time, steps renumbered, assignedTo within the helper count, nutrition present. Throws otherwise, which reaches the error workflow.",
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -311,7 +314,8 @@
           "name": "Google Service Account account"
         }
       },
-      "notes": "Runs once per recipe because the previous node emits three items. Firebase POST generates the key and returns it as body.name - that key becomes the recipe id."
+      "notes": "Runs once per recipe because the previous node emits three items. Firebase POST generates the key and returns it as body.name - that key becomes the recipe id.",
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -325,7 +329,8 @@
         2224,
         240
       ],
-      "notes": "Gathers the three generated Firebase keys and prepares the new quota counters."
+      "notes": "Gathers the three generated Firebase keys and prepares the new quota counters.",
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -358,7 +363,8 @@
           "name": "Google Service Account account"
         }
       },
-      "notes": "PATCH merges both counters in one call. Deliberately after the recipes are stored: a failed write must not consume quota."
+      "notes": "PATCH merges both counters in one call. Deliberately after the recipes are stored: a failed write must not consume quota.",
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -388,6 +394,73 @@
         2816,
         240
       ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "r1",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $runIndex === 0 }}",
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "491cdd84-a5b8-4c0a-b045-ef1541bc133c",
+      "name": "Try again?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1752,
+        448
+      ],
+      "notes": "Second attempt after the model failed or its reply did not pass verification. $runIndex is this node's own run count, so it lets exactly one retry through: at most two Gemini calls per request. Quota is only raised after storing, so a retry is never counted twice."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: \"Recipe generation failed. Please try again.\" }) }}",
+        "options": {
+          "responseCode": 500
+        }
+      },
+      "id": "06d9e599-1874-48cd-b433-f693af32f4fe",
+      "name": "Respond with error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2064,
+        640
+      ],
+      "notes": "Without this the webhook (response mode: Respond to Webhook node) never answers a failed run and the frontend spinner runs until its own timeout."
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ 'Recipe generation failed: ' + (typeof $json.error === 'string' ? $json.error : ($json.error?.message ?? JSON.stringify($json.error ?? 'unknown error'))) }}"
+      },
+      "id": "ad53e03a-5e0c-455a-997a-2177d8cf6f61",
+      "name": "Report failure",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2272,
+        640
+      ],
+      "notes": "Fails the run after the visitor got the 500, so the error workflow still mails the original error."
     }
   ],
   "pinData": {},
@@ -502,6 +575,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Try again?",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -510,6 +590,13 @@
         [
           {
             "node": "Store recipes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try again?",
             "type": "main",
             "index": 0
           }
@@ -524,6 +611,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Respond with error",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -535,6 +629,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Respond with error",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -543,6 +644,13 @@
         [
           {
             "node": "Build response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond with error",
             "type": "main",
             "index": 0
           }
@@ -570,6 +678,35 @@
           }
         ]
       ]
+    },
+    "Try again?": {
+      "main": [
+        [
+          {
+            "node": "Generate recipes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond with error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond with error": {
+      "main": [
+        [
+          {
+            "node": "Report failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -578,7 +715,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "2c47ddb5-f7e9-40ad-8a3d-719968058c65",
+  "versionId": "ad9e0fae-5256-4177-9da3-a9eabcfa1720",
   "meta": {
     "instanceId": "bac6d6b4551ad7378a76726246e1bf0d049ba303359eb5443ff82ca8d3250ed3"
   },
