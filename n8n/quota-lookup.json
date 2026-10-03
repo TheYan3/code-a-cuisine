@@ -9,7 +9,7 @@
         "options": {}
       },
       "id": "ccccccc1-0000-4000-8000-000000000001",
-      "name": "Webhook",
+      "name": "GET /quota (from Angular app)",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -109,17 +109,34 @@
         "options": {}
       },
       "id": "ccccccc5-0000-4000-8000-000000000005",
-      "name": "Respond to Webhook",
+      "name": "Return 200 – generations left today",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
         880,
         0
+      ],
+      "notes": "Answers 200 with the QuotaStatus (remaining, limit, systemLimitReached)."
+    },
+    {
+      "parameters": {
+        "content": "## GET /webhook/quota\nRead-only counterpart of the quota check in recipe generation: hashes the caller IP the same way, reads today's counters from Firebase /quota/<date> and answers **200** with how many generations are left. Never writes anything.",
+        "height": 580,
+        "width": 1060,
+        "color": 1
+      },
+      "id": "4043df8d-4291-5589-bf60-8667c26a88a0",
+      "name": "Note – endpoint",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -400
       ]
     }
   ],
   "connections": {
-    "Webhook": {
+    "GET /quota (from Angular app)": {
       "main": [
         [
           {
@@ -156,7 +173,7 @@
       "main": [
         [
           {
-            "node": "Respond to Webhook",
+            "node": "Return 200 – generations left today",
             "type": "main",
             "index": 0
           }
@@ -179,6 +196,6 @@
     "errorWorkflow": "bq4jguv5xe3kvFWB"
   },
   "active": true,
-  "versionId": "ab40f159-ab6d-445b-b016-91909c862bce",
+  "versionId": "e67af257-fd4d-45bc-a671-fffac93a1185",
   "id": "mXucg9ClUjSoFVSZ"
 }

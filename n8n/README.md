@@ -8,7 +8,11 @@ generation.
 | `recipe-generation.json` | `POST /webhook/generate-recipe` | Validates the request, checks the daily quota, asks Gemini, verifies the reply, stores three recipes and answers with their ids |
 | `quota-lookup.json` | `GET /webhook/quota` | How many generations the calling IP has left today |
 | `quota-cleanup.json` | — (daily at 00:05) | Deletes the quota counters of every past day |
-| `error-handler.json` | — | Mails workflow name, failing node, error message and execution link when any workflow fails |
+| `error-handler.json` | — | Mails workflow name, failing node, error message and execution link to `ALERT_MAIL_TO` when one of the three workflows above fails (each sets it as its Error Workflow) |
+
+Inside n8n, sticky notes frame each section of a workflow, and the webhook and
+response nodes are named after their method/path and status code
+(`POST /generate-recipe (from Angular app)`, `Return 429 – daily quota used up`, …).
 
 ## Why the generation workflow verifies so much
 
@@ -30,20 +34,21 @@ What happens then is described under _When generation fails_ below.
 
 ## When generation fails
 
-The webhook answers through `Respond to Webhook` nodes, so a run that simply
+The webhook answers through Respond to Webhook nodes (named after the status
+code they send, e.g. `Return 200 – three recipes to app`), so a run that simply
 stops never answers and the frontend would wait forever. Every node after the
 quota check that can realistically fail therefore has its error output wired
 up (`On Error: Continue (using error output)`):
 
-- `Generate recipes` and `Parse and verify recipes` go to `Try again?`, which
+- `Generate recipes` and `Parse and verify recipes` go to `Retry Gemini once?`, which
   sends the request to the model **once more**. It lets exactly one retry
   through because it checks its own `$runIndex`, so a request costs at most
   two Gemini calls. The quota is only raised after the recipes are stored, so
   a retry is never counted twice.
 - The second failure, and any failure of `Store recipes`,
   `Collect ids and raise counters` or `Raise quota counters`, goes to
-  `Respond with error` (HTTP 500, `{"error": "..."}`) and then to
-  `Report failure`, a Stop and Error node. That fails the run on purpose, so
+  `Return 500 – generation failed` (`{"error": "..."}`) and then to
+  `Fail run → error workflow emails admin`, a Stop and Error node. That fails the run on purpose, so
   the error workflow still mails the original message.
 - `Build prompt` and `Build response` only rearrange data and have no error
   output.
@@ -112,10 +117,14 @@ down rather than rediscovered:
 - **The error trigger ignores manual runs** by design, so test through the
   webhook or a schedule. `n8n-nodes-base.stopAndError` is the documented way
   to fail a workflow on purpose.
-- **Addresses come from the environment.** The mail node reads its sender
-  from `JOIN_MAIL_USER` and its recipient from `ALERT_MAIL_TO`, so no address
-  is committed here. Both must be set on the n8n container, and n8n must be
-  allowed to read environment variables in expressions.
+- **Addresses come from the environment.** The mail node
+  (`Email failure alert to admin`) reads its sender from `JOIN_MAIL_USER` and
+  its recipient from `ALERT_MAIL_TO`, the admin address of the n8n instance,
+  so no address is committed here. Both live in the `.env` next to the n8n
+  stack's `docker-compose.yml`, are passed through in its `environment:`
+  list, and need `N8N_BLOCK_ENV_ACCESS_IN_NODE=false` so expressions can read
+  them. After changing them, recreate the container
+  (`docker compose up -d`).
 - Handler runs show up in the execution list a moment _after_ the failing run,
   so checking immediately gives a false negative.
 

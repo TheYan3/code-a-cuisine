@@ -97,6 +97,22 @@
         }
       },
       "notes": "A PATCH with null values deletes those children, so all past days go in one atomic call."
+    },
+    {
+      "parameters": {
+        "content": "## Nightly quota cleanup\nRuns every night at 00:05 Europe/Berlin and deletes the counters of every day before today under Firebase /quota in one PATCH. No webhook, nobody calls it.",
+        "height": 420,
+        "width": 840,
+        "color": 1
+      },
+      "id": "3d35047d-e0e8-535f-871d-29837e84d62b",
+      "name": "Note – overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -240
+      ]
     }
   ],
   "connections": {
@@ -140,6 +156,6 @@
     "timezone": "Europe/Berlin"
   },
   "active": true,
-  "versionId": "22c1f3a8-a052-48e4-bda7-b0d227925d0e",
+  "versionId": "1f04e27e-4a72-4bf0-a9b2-69a5aba3929d",
   "id": "UhqBs2L32dft5dpY"
 }

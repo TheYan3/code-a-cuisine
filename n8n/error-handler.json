@@ -11,19 +11,19 @@
         0,
         0
       ],
-      "notes": "Feuert, wenn ein Workflow scheitert, der diesen hier unter Settings als 'Error Workflow' eingetragen hat. Feuert NICHT automatisch fuer alle Workflows."
+      "notes": "Fires when a workflow fails that has this one set under Settings → Error Workflow. It does NOT fire for every workflow automatically."
     },
     {
       "parameters": {
         "fromEmail": "={{ $env.JOIN_MAIL_USER }}",
         "toEmail": "={{ $env.ALERT_MAIL_TO }}",
-        "subject": "=n8n-Fehler: {{ $json.workflow.name }}",
+        "subject": "=n8n failure: {{ $json.workflow.name }}",
         "emailFormat": "text",
-        "text": "=Ein n8n-Workflow ist fehlgeschlagen.\n\nWorkflow : {{ $json.workflow.name }} ({{ $json.workflow.id }})\nZeitpunkt: {{ $now.setZone('Europe/Berlin').toFormat('dd.MM.yyyy HH:mm:ss') }}\nLetzter Node: {{ $json.execution.lastNodeExecuted }}\n\nFehlermeldung:\n{{ $json.execution.error.message }}\n\nAusfuehrung: {{ $json.execution.url }}\n",
+        "text": "=An n8n workflow failed.\n\nWorkflow : {{ $json.workflow.name }} ({{ $json.workflow.id }})\nTime     : {{ $now.setZone('Europe/Berlin').toFormat('yyyy-MM-dd HH:mm:ss') }} (Europe/Berlin)\nLast node: {{ $json.execution.lastNodeExecuted }}\n\nError message:\n{{ $json.execution.error.message }}\n\nExecution: {{ $json.execution.url }}\n",
         "options": {}
       },
       "id": "aaaaaaa2-0000-4000-8000-000000000002",
-      "name": "Notify Yannic by email",
+      "name": "Email failure alert to admin",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
@@ -36,8 +36,24 @@
           "name": "SMTP account"
         }
       },
-      "notes": "Schickt Workflow-Name, letzten Node, Fehlermeldung und Link zur Ausfuehrung. Erfuellt den Checklistenpunkt 'Fehlerbehandlung und Logging ... Email-Benachrichtigung bei Fehlern'.",
+      "notes": "Sends workflow name, last node, error message and a link to the execution. Recipient is ALERT_MAIL_TO, the admin address of this n8n instance; sender is JOIN_MAIL_USER. Both are environment variables of the n8n container, set in the .env next to its docker-compose.yml and passed through in that compose file, so no address is stored in the workflow. Covers the checklist item 'error handling and logging: email notification on errors'.",
       "webhookId": "773f7275-a4a7-480d-aa7c-556bf1c0eb14"
+    },
+    {
+      "parameters": {
+        "content": "## Error handler\nSet as **Settings → Error Workflow** in: Recipe generation, Quota lookup, Quota cleanup.\n\nWhen one of them fails, the email to ALERT_MAIL_TO contains the workflow name and id, the time (Europe/Berlin), the last executed node, the error message and a link to the failed execution.",
+        "height": 480,
+        "width": 600,
+        "color": 1
+      },
+      "id": "3d35047d-e0e8-535f-871d-29837e84d62b",
+      "name": "Note – overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -300
+      ]
     }
   ],
   "connections": {
@@ -45,7 +61,7 @@
       "main": [
         [
           {
-            "node": "Notify Yannic by email",
+            "node": "Email failure alert to admin",
             "type": "main",
             "index": 0
           }
@@ -53,5 +69,8 @@
       ]
     }
   },
-  "settings": {}
+  "settings": {},
+  "active": true,
+  "versionId": "b784933c-9621-43cf-92be-09983bef5e7a",
+  "id": "bq4jguv5xe3kvFWB"
 }
