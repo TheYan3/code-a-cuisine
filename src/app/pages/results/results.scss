@@ -194,8 +194,11 @@
   object-fit: cover;
   object-position: 50% 40%;
 
+  // Beside the text: a fixed 280px tall band that fills its column, with
+  // `object-fit: cover` cropping the photo to whatever width that column has.
   @include tablet-up {
-    aspect-ratio: 574 / 222;
+    height: 280px;
+    aspect-ratio: auto;
   }
 }
 
