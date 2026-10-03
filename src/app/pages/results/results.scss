@@ -1,4 +1,3 @@
-@use 'sass:math';
 @use '../../../styles/abstracts' as *;
 
 // Full-bleed green background from the Figma frame — carried by this outer
@@ -54,15 +53,21 @@
 }
 
 // Figma "Text + visual" mobile: title, hero image, subtitle and tags stack
-// in that order with a 16px gap; desktop-up restores the side-by-side row
-// (text column left, hero image right) with its 96px gap.
+// in that order with a 16px gap. From tablet-up the desktop side-by-side row
+// (text column left, hero image right) takes over — there is room for both
+// columns from 768px, no need to wait for desktop. The gap borrows the
+// mobile 48px content rhythm until desktop-up restores Figma's 96px.
 .results__intro {
   display: flex;
   flex-direction: column;
   gap: 16px;
 
-  @include desktop-up {
+  @include tablet-up {
     flex-direction: row;
+    gap: 48px;
+  }
+
+  @include desktop-up {
     gap: 96px;
   }
 }
@@ -70,17 +75,24 @@
 // `display: contents` on mobile un-boxes this wrapper so title, subtitle
 // and tags become direct flex items of `.results__intro` — needed because
 // the mobile frame interleaves the hero image between the title and the
-// subtitle, while desktop groups all three as one text column beside the
-// image. The `order` values below place them without touching the HTML.
+// subtitle, while the two-column row groups all three as one text column
+// beside the image. The `order` values below place them without touching
+// the HTML. Tablet keeps the mobile 16px rhythm (mobile type sizes still
+// apply there); desktop-up restores Figma's 24px and 610px column.
 .results__text {
   display: contents;
 
-  @include desktop-up {
+  @include tablet-up {
     display: flex;
+    flex: 1 1 0;
     flex-direction: column;
-    gap: 24px;
-    flex: 0 1 610px;
+    gap: 16px;
     min-width: 0;
+  }
+
+  @include desktop-up {
+    flex: 0 1 610px;
+    gap: 24px;
   }
 }
 
@@ -144,47 +156,46 @@
   color: var(--color-heading-green);
 }
 
-// Clips the hero image to the frame's rounded corners; the image itself is
-// taller than the frame and shifted up, matching the crop in the Figma
-// export. Below desktop-up the frame spans the content column (flush with the
-// recipe cards; 3px wider than Figma's 340px at 375px) up to an 800px cap;
-// height follows via the 340×131 ratio, so it never overflows narrow phones.
+// Same treatment as the cookbook's `.cuisine-tile__frame`: 20px corners
+// clip the image, plus the tiles' soft shadow. Mobile: full content width
+// (flush with the recipe cards). Tablet-up: the right-hand column at 40% of
+// the row — at 1023px that is 396px, so the 372px desktop column at 1024px
+// (Figma's 574/610 split shrunk into the 80px-padded row) is no visible jump.
 .results__hero-frame {
   order: 2;
-  width: min(800px, 100%);
-  aspect-ratio: 340 / 131;
   overflow: hidden;
   border-radius: 20px;
-  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
 
-  // Desktop-up: 574×222 at 1440px, shrinking with the text column below
-  // that (aspect-ratio keeps the crop) so neither overflows at 1024px.
-  @include desktop-up {
-    flex: 0 1 574px;
+  @include tablet-up {
+    flex: 0 0 40%;
     // Without it the row's default stretch makes the frame as tall as the
     // text column, past the image — the bottom corners end up in empty space.
     align-self: flex-start;
-    width: auto;
-    aspect-ratio: 574 / 222;
+  }
+
+  // 574px at 1440px as in Figma, shrinking with the text column below that.
+  @include desktop-up {
+    flex: 0 1 574px;
   }
 }
 
-// Mobile 344×229 image with a -40px offset in the 340px frame, as
-// percentages so the crop scales with the frame (vertical margin % resolves
-// against the frame's width).
+// Like `.cuisine-tile__image`: fills its column, fixed ratio, height follows.
+// Ratios are the Figma "Visual" frames (mobile 340×131, desktop 574×222 —
+// 0.3% apart, so the 768px switch is invisible). `object-position` 40%
+// reproduces both Figma crops (−40px of 229px mobile, −65px of 383px
+// desktop), keeping the cloche and the robot hand in view at every width.
 .results__hero {
   display: block;
-  width: math.percentage(math.div(344, 340));
+  width: 100%;
+  // `height="383"` on the <img> would otherwise win over `aspect-ratio`.
   height: auto;
-  aspect-ratio: 344 / 229;
-  margin-top: math.percentage(math.div(-40, 340));
+  aspect-ratio: 340 / 131;
+  object-fit: cover;
+  object-position: 50% 40%;
 
-  // Percentages keep the Figma 574×383 / -65px crop at any frame width
-  // (vertical margin % resolves against the frame's width: 65 / 574).
-  @include desktop-up {
-    width: 100%;
-    aspect-ratio: 574 / 383;
-    margin-top: -11.32%;
+  @include tablet-up {
+    aspect-ratio: 574 / 222;
   }
 }
 
