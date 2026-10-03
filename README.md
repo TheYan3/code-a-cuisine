@@ -59,6 +59,9 @@ the daily quota for no reason.
   generations system-wide, both enforced server-side before the paid model
   call runs. The IP itself is never stored — only an HMAC-SHA256 hash of it
   keyed under the day, deleted every night for days that have passed.
+- **Remaining generations shown before generating**: the preferences page
+  tells the visitor how many of today's generations are left and disables
+  "Generate a recipe" once they or the system-wide cap are used up.
 - **Imprint and privacy policy**, reachable from every page's own footer.
 
 ## Architecture

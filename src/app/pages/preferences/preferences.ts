@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 
 import { Counter } from '../../components/counter/counter';
@@ -6,6 +7,7 @@ import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { NotEnoughPopup } from '../../components/not-enough-popup/not-enough-popup';
 import { Tag } from '../../components/tag/tag';
+import { RecipeApi } from '../../core/recipe-api';
 import { Cuisine, CookingTime, Diet, RecipeRequestService } from '../../core/recipe-request';
 
 /** A cooking time option: a tag plus the sublabel shown underneath it. */
@@ -27,7 +29,8 @@ interface PreferenceOption<T extends string> {
  * directly — the counters and tags are presentational, this page owns the
  * mapping between their generic string values and the service's fixed
  * preference keys, plus the completeness check before "Generate a recipe"
- * does anything.
+ * does anything. Also shows how many generations the visitor has left today
+ * (User Story 11) and disables the button once none are left.
  */
 @Component({
   imports: [Counter, Footer, Header, NotEnoughPopup, Tag],
@@ -38,6 +41,32 @@ interface PreferenceOption<T extends string> {
 export class Preferences {
   protected readonly recipeRequest = inject(RecipeRequestService);
   private readonly router = inject(Router);
+  private readonly recipeApi = inject(RecipeApi);
+
+  /**
+   * Today's quota, loaded once when the page is entered. Stays without a
+   * value while loading and when the lookup fails — the line is left out
+   * then and generating stays possible, the webhook checks the quota anyway.
+   */
+  private readonly quota = rxResource({ stream: () => this.recipeApi.quota() });
+
+  /** Whether the visitor or the whole system has no generations left today. */
+  protected readonly quotaUsedUp = computed(() => {
+    if (!this.quota.hasValue()) return false;
+    const { remaining, systemLimitReached } = this.quota.value();
+    return remaining <= 0 || systemLimitReached;
+  });
+
+  /** The quota line under "Generate a recipe", or an empty string while there is nothing to show. */
+  protected readonly quotaMessage = computed(() => {
+    if (!this.quota.hasValue()) return '';
+    const { remaining, limit, systemLimitReached } = this.quota.value();
+    if (remaining <= 0) return `You used all ${limit} generations for today. Come back tomorrow.`;
+    if (systemLimitReached) {
+      return 'The daily limit for everyone is reached. Come back tomorrow.';
+    }
+    return `${remaining} of ${limit} recipe generations left today`;
+  });
 
   /**
    * Whether the "Ups! Not quite enough..." dialog (Figma frames "pop-up" /
@@ -98,7 +127,7 @@ export class Preferences {
   /**
    * Hands over to the loading page, which runs the generation. Does nothing
    * while the request is incomplete — at least one ingredient and all three
-   * preference groups have to be chosen. Also does nothing, and shows the
+   * preference groups have to be chosen — or today's quota is used up. Also does nothing, and shows the
    * "not quite enough" dialog instead, when the chosen ingredients don't add
    * up to enough food for the chosen number of portions.
    *
@@ -107,7 +136,7 @@ export class Preferences {
    * second slot of the daily quota.
    */
   protected onGenerate(): void {
-    if (!this.recipeRequest.isComplete()) return;
+    if (!this.recipeRequest.isComplete() || this.quotaUsedUp()) return;
     if (!this.recipeRequest.hasEnoughFood()) {
       this.showNotEnough.set(true);
       return;

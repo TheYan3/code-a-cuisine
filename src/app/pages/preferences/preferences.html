@@ -93,11 +93,13 @@
     <button
       type="button"
       class="btn btn--primary btn--green preferences__submit"
-      [disabled]="!recipeRequest.isComplete()"
+      [disabled]="!recipeRequest.isComplete() || quotaUsedUp()"
       (click)="onGenerate()"
     >
       Generate a recipe
     </button>
+    <!-- Always rendered so screen readers pick up the text once the quota arrives. -->
+    <p class="fine-print preferences__quota" aria-live="polite">{{ quotaMessage() }}</p>
   </main>
 
   <app-not-enough-popup

@@ -120,7 +120,7 @@
     },
     {
       "parameters": {
-        "content": "## GET /webhook/quota\nRead-only counterpart of the quota check in recipe generation: hashes the caller IP the same way, reads today's counters from Firebase /quota/<date> and answers **200** with how many generations are left. Never writes anything.",
+        "content": "## GET /webhook/quota\nCalled by the Angular app's preferences page when it opens, to show the visitor how many generations are left today and to disable \"Generate a recipe\" once none are.\n\nRead-only counterpart of the quota check in recipe generation: hashes the caller IP the same way, reads today's counters from Firebase /quota/<date> and answers **200** with how many generations are left. Never writes anything.",
         "height": 580,
         "width": 1060,
         "color": 1
@@ -196,6 +196,6 @@
     "errorWorkflow": "bq4jguv5xe3kvFWB"
   },
   "active": true,
-  "versionId": "e67af257-fd4d-45bc-a671-fffac93a1185",
+  "versionId": "311c334b-8910-4bec-84a5-7b05c7f5f740",
   "id": "mXucg9ClUjSoFVSZ"
 }

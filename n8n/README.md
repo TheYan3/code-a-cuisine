@@ -6,7 +6,7 @@ generation.
 | File | Endpoint | Purpose |
 | --- | --- | --- |
 | `recipe-generation.json` | `POST /webhook/generate-recipe` | Validates the request, checks the daily quota, asks Gemini, verifies the reply, stores three recipes and answers with their ids |
-| `quota-lookup.json` | `GET /webhook/quota` | How many generations the calling IP has left today |
+| `quota-lookup.json` | `GET /webhook/quota` | How many generations the calling IP has left today — called by the Angular app's preferences page when it opens, which shows the number and disables "Generate a recipe" at zero |
 | `quota-cleanup.json` | — (daily at 00:05) | Deletes the quota counters of every past day |
 | `error-handler.json` | — | Mails workflow name, failing node, error message and execution link to `ALERT_MAIL_TO` when one of the three workflows above fails (each sets it as its Error Workflow) |
 
