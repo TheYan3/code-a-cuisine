@@ -1,4 +1,5 @@
-import { Component, computed, input } from '@angular/core';
+import { Location, NgTemplateOutlet } from '@angular/common';
+import { booleanAttribute, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 /**
@@ -19,7 +20,7 @@ import { RouterLink } from '@angular/router';
  * frame that uses it), so this component does not render one.
  */
 @Component({
-  imports: [RouterLink],
+  imports: [NgTemplateOutlet, RouterLink],
   selector: 'app-header',
   styleUrl: './header.scss',
   templateUrl: './header.html',
@@ -42,6 +43,25 @@ export class Header {
    * uses the same padding.
    */
   readonly spacious = input(false);
+  /**
+   * Makes the back link return to the page the visitor came from (browser
+   * history) instead of `backLink`. `backLink` stays the fallback when the
+   * page was opened directly, e.g. from a bookmark or another website.
+   */
+  readonly historyBack = input(false, { transform: booleanAttribute });
+
+  private readonly location = inject(Location);
+  /**
+   * Whether an earlier in-app page exists to return to. The router numbers
+   * its navigations in `history.state`; the first page loaded has id 1.
+   */
+  protected readonly canGoBack = (history.state?.navigationId ?? 1) > 1;
+
+  /** Returns to the previous page in the browser history. */
+  protected goBack(event: Event): void {
+    event.preventDefault();
+    this.location.back();
+  }
 
   /** Path to the logo asset matching the current variant. */
   protected readonly logoSrc = computed(() =>
