@@ -37,6 +37,8 @@
 }
 
 .btn--primary {
+  // Same 5px corners as `.btn--secondary` on every primary button.
+  border-radius: 5px;
   // Fixed (not hug) 52px on mobile — the Figma "Mobile primary button"
   // component sets it explicitly, unlike its desktop counterpart, which
   // hugs to 60px via its own padding/line-height instead (`height: auto`
