@@ -248,6 +248,7 @@
 
 .preferences__submit {
   align-self: center;
+  border-radius: 5px;
   margin-top: 40px;
 
   @include desktop-up {

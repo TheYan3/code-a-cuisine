@@ -93,6 +93,7 @@
     <button
       type="button"
       class="btn btn--primary btn--green preferences__submit"
+      [disabled]="!recipeRequest.isComplete()"
       (click)="onGenerate()"
     >
       Generate a recipe

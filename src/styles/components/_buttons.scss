@@ -119,11 +119,19 @@
   background-color: var(--color-green);
   color: var(--color-linen);
 
-  &:hover,
-  &:active {
+  &:hover:not(:disabled),
+  &:active:not(:disabled) {
     background-color: var(--color-hover-green);
     color: #ffffff;
     font-weight: 700;
+  }
+
+  // Greyed out until the step is complete (e.g. "Generate a recipe" before
+  // all three preference groups are chosen).
+  &:disabled {
+    background-color: var(--color-border);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
   }
 }
 
