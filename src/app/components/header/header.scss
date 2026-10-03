@@ -67,7 +67,7 @@
   gap: 10px;
   text-decoration: none;
 
-  // Mobile shows only the 32x20px icon chip (the label is visually hidden,
+  // Mobile shows only the 32x20px arrow box (the label is visually hidden,
   // see `.site-header__back-label` below) — expand the tap area invisibly.
   @include touch-target;
 
@@ -77,8 +77,17 @@
   }
 }
 
-// Figma mobile-only chip behind the arrow ("Back button green"/"cremy");
-// the desktop "Back" frame has no chip, just the bare arrow.
+// Figma mobile "Back button green": the chip fill is hidden in the
+// "Default" variant every mobile frame uses and only shows in "on click",
+// so the chip is the pressed state. The desktop "Back" frame has no chip.
+.site-header__back:active .site-header__back-icon {
+  background-color: var(--color-back-chip);
+
+  @include desktop-up {
+    background-color: transparent;
+  }
+}
+
 .site-header__back-icon {
   display: flex;
   flex-shrink: 0;
@@ -88,13 +97,11 @@
   height: 20px;
   padding: 6px;
   border-radius: 2px; // Figma "Back button green/cremy": fixed 2px corner radius
-  background-color: var(--color-back-chip);
 
   @include desktop-up {
     width: auto;
     height: 16px;
     padding: 0;
-    background-color: transparent;
   }
 }
 

@@ -10,9 +10,10 @@ import { RouterLink } from '@angular/router';
  * it, 136px — both fall out of the flex layout naturally, no fixed height
  * needed.
  *
- * Mobile (Figma "Menu bar mob.") shows the back link as an icon-only chip
- * with no visible label — the label stays in the DOM for accessibility and
- * only becomes visible from the desktop breakpoint up (Figma "Menu bar").
+ * Mobile (Figma "Menu bar mob.") shows the back link as a bare arrow (its
+ * chip only appears while pressed) with no visible label — the label stays
+ * in the DOM for accessibility and only becomes visible from the desktop
+ * breakpoint up (Figma "Menu bar").
  * No real page instance in the Figma export ever shows the header's own
  * CTA button (it exists in the component library but is hidden on every
  * frame that uses it), so this component does not render one.

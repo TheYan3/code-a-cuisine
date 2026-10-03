@@ -12,10 +12,12 @@
   @if (backLink()) {
     <a [routerLink]="backLink()" [queryParams]="backQueryParams()" class="site-header__back">
       <span class="site-header__back-icon">
+        <!-- Figma "Arrow 11": 20px line, 2px stroke in user units 1:1; the round caps overflow by 1px. -->
         <svg
           width="20"
           height="20"
-          viewBox="0 0 24 24"
+          viewBox="0 0 20 20"
+          overflow="visible"
           fill="none"
           stroke="#1e5515"
           stroke-width="2"
@@ -24,8 +26,8 @@
           aria-hidden="true"
           focusable="false"
         >
-          <path d="M23 12H1" />
-          <path d="M7 6L1 12L7 18" />
+          <path d="M20 10H0" />
+          <path d="M6 4L0 10L6 16" />
         </svg>
       </span>
       <span class="site-header__back-label">{{ backLabel() }}</span>
