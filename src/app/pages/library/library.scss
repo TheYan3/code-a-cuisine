@@ -152,6 +152,20 @@ $liked-card-desktop: 370px;
   list-style: none;
   overflow-x: auto;
   scroll-snap-type: x proximity;
+  // Swiped (touch) or dragged (mouse, see DragScroll) — no visible scrollbar.
+  scrollbar-width: none;
+  cursor: grab;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  // Snapping would fight the drag; it snaps again once the mouse is released.
+  &.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    user-select: none;
+  }
 }
 
 .most-liked__item {

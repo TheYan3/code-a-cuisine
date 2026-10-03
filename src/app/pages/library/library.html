@@ -25,7 +25,7 @@
               Recipes could not be loaded. Please try again later.
             </p>
           } @else {
-            <ul class="most-liked">
+            <ul class="most-liked" appDragScroll>
               @for (recipe of mostLiked(); track recipe.id) {
                 <li class="most-liked__item">
                   <a [routerLink]="['/recipe', recipe.id]" class="most-liked__card">

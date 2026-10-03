@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { CUISINES } from '../../core/cuisine-meta';
+import { DragScroll } from '../../core/drag-scroll';
 import { Recipe } from '../../core/recipe';
 import { RecipeApi } from '../../core/recipe-api';
 
@@ -16,7 +17,7 @@ const MAX_MOST_LIKED = 10;
  * `/library/:cuisine`.
  */
 @Component({
-  imports: [Footer, Header, RouterLink],
+  imports: [DragScroll, Footer, Header, RouterLink],
   selector: 'app-library',
   styleUrl: './library.scss',
   templateUrl: './library.html',
