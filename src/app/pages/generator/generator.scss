@@ -1,8 +1,18 @@
 @use '../../../styles/abstracts' as *;
 
-.page {
+// Fills the viewport so the legal footer below `.page` always sits at the
+// bottom edge, in normal flow — it never overlaps content when it gets tall.
+:host {
   display: flex;
   flex-direction: column;
+  min-height: 100dvh;
+}
+
+.page {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  width: 100%;
   gap: 40px;
   max-width: 1440px;
   margin: 0 auto;
