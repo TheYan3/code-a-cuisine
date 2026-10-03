@@ -1,5 +1,6 @@
-// No secrets here: the database rules deny all client writes (only the n8n
-// service account writes), and the webhook is rate-limited at the proxy.
+// No secrets here: the database rules deny all client writes except a ±1
+// change of a recipe's like counter (recipes come only from the n8n service
+// account), and the webhook is rate-limited at the proxy.
 export const environment = {
   production: true,
   /** Firebase Realtime Database base URL – recipes are stored here by the n8n workflow. */

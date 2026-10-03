@@ -72,7 +72,8 @@ posts the recipe request to an n8n webhook, which checks the quota, calls
 Gemini, verifies and normalizes the reply, stores the three recipes in
 Firebase and answers with their ids. The app then reads recipes back from
 Firebase directly (library, results, detail) and is only allowed to write
-one thing itself: incrementing a recipe's like counter, enforced by the
+one thing itself: a recipe's like counter, by exactly +1 or -1 (never below
+zero), enforced by the
 Firebase database rules. See [`n8n/README.md`](n8n/README.md) for the
 workflow details — quota handling, response verification and error
 reporting.
@@ -128,7 +129,7 @@ after what it shows, not the URL segment.
 
 `src/environments/environment.ts` is committed and contains no secrets: it
 only holds the Firebase Realtime Database URL and the n8n webhook URLs.
-Firebase's database rules deny every client write except incrementing a
-recipe's `likes` field, and the n8n webhooks are rate-limited at the proxy
+Firebase's database rules deny every client write except changing a
+recipe's `likes` field by exactly one, and the n8n webhooks are rate-limited at the proxy
 — so neither URL grants anything an attacker couldn't already see by
 opening the deployed app.
