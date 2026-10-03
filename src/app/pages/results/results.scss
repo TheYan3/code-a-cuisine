@@ -146,13 +146,12 @@
 
 // Clips the hero image to the frame's rounded corners; the image itself is
 // taller than the frame and shifted up, matching the crop in the Figma
-// export. Below desktop-up the frame keeps the mobile frame's share of the
-// content column (340 of 343px at 375px, so 375px stays exact) and grows
-// with it up to an 800px cap; height follows via the 340×131 ratio, so it
-// never overflows narrow phones and fills the width on tablets.
+// export. Below desktop-up the frame spans the content column (flush with the
+// recipe cards; 3px wider than Figma's 340px at 375px) up to an 800px cap;
+// height follows via the 340×131 ratio, so it never overflows narrow phones.
 .results__hero-frame {
   order: 2;
-  width: min(800px, math.percentage(math.div(340, 343)));
+  width: min(800px, 100%);
   aspect-ratio: 340 / 131;
   overflow: hidden;
   border-radius: 20px;
