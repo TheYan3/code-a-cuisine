@@ -10,7 +10,8 @@ import { RecipeRequestService } from '../../core/recipe-request';
 
 /**
  * Full-screen loading state that actually runs the generation. Calls the n8n
- * webhook on init and hands over to the results page with the new recipe ids.
+ * webhook on init and hands over to the results page with the new recipe ids,
+ * emptying the ingredient list once the recipes exist.
  *
  * The call is synchronous on purpose: n8n keeps the connection open until the
  * model answered, the reply was verified and the recipes were stored, so the
@@ -35,6 +36,8 @@ export class Loading {
   constructor() {
     this.api.generate(this.recipeRequest.toRequest()).subscribe({
       next: (response) => {
+        // Only on success: after a failure the user retries with the same list.
+        this.recipeRequest.clearIngredients();
         const ids = response.recipes.map((recipe) => recipe.id).join(',');
         this.router.navigate(['/generator/results'], { queryParams: { ids } });
       },

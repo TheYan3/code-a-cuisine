@@ -201,6 +201,11 @@ export class RecipeRequestService {
     this.ingredients.set(this.ingredients().filter((i) => i.id !== id));
   }
 
+  /** Empties the ingredient list, e.g. once recipes were generated from it. */
+  clearIngredients(): void {
+    this.ingredients.set([]);
+  }
+
   /** Increments portions, staying within [1, 12]. */
   incrementPortions(): void {
     this.portions.set(clamp(this.portions() + 1, PORTIONS_MIN, PORTIONS_MAX));
