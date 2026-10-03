@@ -1,0 +1,37 @@
+// Figma "Frame 935" (desktop and mobile alike): 32px pill, padding 6/12,
+// #396039 at 30% behind an outlined 20px heart and the count; the filled
+// heart marks this browser's own like.
+.like-pill {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 30px;
+  background-color: color-mix(in srgb, var(--color-green) 30%, transparent);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-green);
+  cursor: pointer;
+
+  // Stretches the hit area to 44px high without changing the 32px pill —
+  // the pill is at least 50px wide already.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -6px 0;
+  }
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--color-green) 45%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-heading-green);
+    outline-offset: 2px;
+  }
+}

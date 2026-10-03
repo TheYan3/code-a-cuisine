@@ -87,18 +87,14 @@
   background: url('/icons/heart_default.svg') no-repeat center / contain;
   cursor: pointer;
 
-  &:hover:not(:disabled),
-  &:active:not(:disabled) {
+  &:hover:not(.like__heart--liked),
+  &:active:not(.like__heart--liked) {
     background-image: url('/icons/heart_hover.svg');
   }
 
   &:focus-visible {
     outline: 2px solid var(--color-heading-green);
     outline-offset: 2px;
-  }
-
-  &:disabled {
-    cursor: default;
   }
 }
 

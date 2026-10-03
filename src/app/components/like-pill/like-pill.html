@@ -1,0 +1,20 @@
+<button
+  type="button"
+  class="like-pill"
+  [attr.aria-pressed]="isLiked()"
+  [attr.aria-label]="
+    (isLiked() ? 'Take back your like for this recipe' : 'Like this recipe') +
+    ', ' +
+    count() +
+    (count() === 1 ? ' like' : ' likes')
+  "
+  (click)="toggled.emit()"
+>
+  <img
+    [src]="isLiked() ? '/icons/heart_tag.svg' : '/icons/heart_tag_outline.svg'"
+    alt=""
+    width="20"
+    height="18"
+  />
+  {{ count() }}
+</button>

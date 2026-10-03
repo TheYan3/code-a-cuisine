@@ -7,7 +7,7 @@ import { GenerateRecipesResponse, QuotaStatus, Recipe } from './recipe';
 import { RecipeRequest } from './recipe-request';
 
 /**
- * How many times {@link RecipeApi.like} retries a like after Firebase
+ * How many times {@link RecipeApi.changeLikes} retries after Firebase
  * rejects the write because another visitor's like landed first (HTTP 412,
  * stale ETag) — a couple of quick retries clear a real race, more than that
  * points at something else being wrong.
@@ -91,28 +91,31 @@ export class RecipeApi {
   }
 
   /**
-   * Increments one recipe's `likes` counter by exactly 1 — the only write the
-   * database rules allow from the client, and only when the new value is
-   * exactly the old value plus 1. That is enforced with Firebase's ETag
-   * concurrency control (see the Firebase REST API docs on conditional
-   * requests): a GET with `X-Firebase-ETag: true` returns the current value
-   * and its ETag, and the PUT carries that ETag in `if-match`. If another
-   * visitor's like won the race, Firebase answers 412 and hands back the
-   * fresh value and ETag in the same response — used here to retry without a
-   * second GET, up to {@link LIKE_RETRY_LIMIT} times.
+   * Changes one recipe's `likes` counter by exactly `delta` — +1 for a like,
+   * -1 for taking it back — the only write the database rules allow from the
+   * client, and only as a step of exactly 1 that never drops below 0. That is
+   * enforced with Firebase's ETag concurrency control (see the Firebase REST
+   * API docs on conditional requests): a GET with `X-Firebase-ETag: true`
+   * returns the current value and its ETag, and the PUT carries that ETag in
+   * `if-match`. If another visitor's write won the race, Firebase answers 412
+   * and hands back the fresh value and ETag in the same response — used here
+   * to retry without a second GET, up to {@link LIKE_RETRY_LIMIT} times.
    *
-   * Resolves with the new like count once the write is accepted.
+   * Resolves with the new like count once the write is accepted. An unlike
+   * on a counter that is already 0 writes nothing and resolves with 0.
    */
-  like(id: string): Observable<number> {
-    return this.likeAttempt(id, undefined, undefined, 0);
+  changeLikes(id: string, delta: 1 | -1): Observable<number> {
+    return this.likeAttempt(id, delta, undefined, undefined, 0);
   }
 
   /**
-   * One try of {@link like}. `current`/`etag` are only set on a retry, where
-   * they come straight from the 412 response instead of a fresh GET.
+   * One try of {@link changeLikes}. `current`/`etag` are only set on a
+   * retry, where they come straight from the 412 response instead of a fresh
+   * GET.
    */
   private likeAttempt(
     id: string,
+    delta: 1 | -1,
     current: number | undefined,
     etag: string | undefined,
     attempt: number,
@@ -136,7 +139,8 @@ export class RecipeApi {
 
     return current$.pipe(
       switchMap(({ value, etag: currentEtag }) => {
-        const next = value + 1;
+        const next = value + delta;
+        if (next < 0) return of(0);
         return this.http
           .put(url, next, { headers: { 'if-match': currentEtag }, responseType: 'text' })
           .pipe(
@@ -145,7 +149,7 @@ export class RecipeApi {
               if (error.status === 412 && attempt < LIKE_RETRY_LIMIT) {
                 const freshEtag = error.headers.get('ETag') ?? undefined;
                 const freshValue = typeof error.error === 'number' ? error.error : undefined;
-                return this.likeAttempt(id, freshValue, freshEtag, attempt + 1);
+                return this.likeAttempt(id, delta, freshValue, freshEtag, attempt + 1);
               }
               return throwError(() => error);
             }),

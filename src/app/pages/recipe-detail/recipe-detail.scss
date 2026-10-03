@@ -247,18 +247,6 @@
   line-height: 18px;
 }
 
-// Figma "Frame 935": the like count as a third pill, distinct from the
-// diet/time tags above it — a stronger 30% tint, smaller 16px text, and the
-// heart icon and count colored `--color-green` instead of inheriting
-// `.detail`'s text-dark.
-.recipe__tag--like {
-  gap: 0;
-  background-color: color-mix(in srgb, var(--color-green) 30%, transparent);
-  font-size: 16px;
-  line-height: 20px;
-  color: var(--color-green);
-}
-
 .recipe__nutrition {
   order: 1;
   display: flex;

@@ -21,7 +21,7 @@ export function hasLiked(id: string): boolean {
 
 /**
  * Marks a recipe as liked by this browser, so a reload keeps the heart
- * disabled. Only call this after the server write actually succeeded — a
+ * filled. Only call this after the server write actually succeeded — a
  * failed like must not be remembered as done.
  */
 export function markLiked(id: string): void {
@@ -31,5 +31,22 @@ export function markLiked(id: string): void {
     // ponytail: storage unavailable (private mode / full) — the like still
     // succeeded server-side, only the "already liked" memory is lost, so a
     // reload in this browser could offer the heart again.
+  }
+}
+
+/**
+ * Forgets a like of this browser after it was taken back, so a reload shows
+ * the empty heart again. Like {@link markLiked}, only call this after the
+ * server write succeeded.
+ */
+export function unmarkLiked(id: string): void {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(readLikedIds().filter((liked) => liked !== id)),
+    );
+  } catch {
+    // ponytail: storage unavailable — same trade-off as in markLiked; a
+    // reload could show the heart as still given.
   }
 }

@@ -4,8 +4,9 @@ import { RouterLink } from '@angular/router';
 import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { LikeButton } from '../../components/like-button/like-button';
+import { LikePill } from '../../components/like-pill/like-pill';
 import { cuisineMeta } from '../../core/cuisine-meta';
-import { hasLiked, markLiked } from '../../core/liked-recipes';
+import { hasLiked, markLiked, unmarkLiked } from '../../core/liked-recipes';
 import { Recipe, RecipeIngredient } from '../../core/recipe';
 import { RecipeApi } from '../../core/recipe-api';
 
@@ -23,7 +24,7 @@ const CHEF_BADGES = [
  * as a shared link without any state from the generator.
  */
 @Component({
-  imports: [Footer, Header, RouterLink, LikeButton],
+  imports: [Footer, Header, RouterLink, LikeButton, LikePill],
   selector: 'app-recipe-detail',
   styleUrl: './recipe-detail.scss',
   templateUrl: './recipe-detail.html',
@@ -52,10 +53,12 @@ export class RecipeDetail implements OnInit {
   protected readonly recipe = signal<Recipe | null>(null);
   /** True until the request settled, so the page does not flash "not found". */
   protected readonly loading = signal(true);
-  /** Like count shown next to the heart — starts at the loaded value, then tracks the pending/confirmed like. */
+  /** Like count shown next to both hearts — starts at the loaded value, then tracks the pending/confirmed change. */
   protected readonly likeCount = signal(0);
-  /** Whether this browser already gave (or just gave) this recipe its heart. */
+  /** Whether this browser has given this recipe its heart — drives both hearts (pill and CTA). */
   protected readonly isLiked = signal(false);
+  /** True while a like/unlike write is in flight; further presses are ignored until it settles. */
+  private readonly likePending = signal(false);
 
   /** Display data for `cuisine()`, or `undefined` when it is empty or not a known key. */
   private readonly cuisineInfo = computed(() => cuisineMeta(this.cuisine()));
@@ -149,28 +152,37 @@ export class RecipeDetail implements OnInit {
   }
 
   /**
-   * Fired once by `app-like-button` when a visitor gives this recipe a
-   * heart. Shows the +1 and the liked state immediately (the button is
-   * already disabled at that point), then persists it through `RecipeApi`.
-   * A successful write remembers the id in `localStorage` so a reload keeps
-   * the heart disabled; a failed write reverts both the count and the liked
-   * state, since nothing was actually saved.
+   * Fired by both hearts (`app-like-pill` in the header, `app-like-button`
+   * under the steps): likes the recipe, or takes the like back when this
+   * browser already gave it. Shows the new count and state immediately,
+   * then persists the ±1 through `RecipeApi`. A successful write updates
+   * the remembered ids in `localStorage` so a reload shows the same heart; a
+   * failed write rolls count and state back, since nothing was saved.
+   * Presses while a write is in flight are ignored, so each write starts
+   * from a settled state.
    */
-  protected onLiked(): void {
+  protected toggleLike(): void {
     const recipe = this.recipe();
-    if (!recipe) return;
+    if (!recipe || this.likePending()) return;
 
-    this.likeCount.update((count) => count + 1);
-    this.isLiked.set(true);
+    const like = !this.isLiked();
+    const delta = like ? 1 : -1;
+    const previousCount = this.likeCount();
+    this.likePending.set(true);
+    this.likeCount.set(Math.max(0, previousCount + delta));
+    this.isLiked.set(like);
 
-    this.api.like(recipe.id).subscribe({
+    this.api.changeLikes(recipe.id, delta).subscribe({
       next: (newCount) => {
         this.likeCount.set(newCount);
-        markLiked(recipe.id);
+        if (like) markLiked(recipe.id);
+        else unmarkLiked(recipe.id);
+        this.likePending.set(false);
       },
       error: () => {
-        this.likeCount.update((count) => count - 1);
-        this.isLiked.set(false);
+        this.likeCount.set(previousCount);
+        this.isLiked.set(!like);
+        this.likePending.set(false);
       },
     });
   }

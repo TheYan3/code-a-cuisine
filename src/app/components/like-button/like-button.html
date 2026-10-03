@@ -9,10 +9,11 @@
       type="button"
       class="like__heart"
       [class.like__heart--liked]="isLiked()"
-      [disabled]="isLiked()"
       [attr.aria-pressed]="isLiked()"
-      aria-label="Mark this recipe as cooked and liked"
-      (click)="onClick()"
+      [attr.aria-label]="
+        isLiked() ? 'Take back your like for this recipe' : 'Mark this recipe as cooked and liked'
+      "
+      (click)="toggled.emit()"
     ></button>
     <span class="like__count">{{ count() }}</span>
   </div>
