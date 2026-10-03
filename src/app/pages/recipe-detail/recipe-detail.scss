@@ -346,6 +346,8 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  // Sizes the banner artwork switch below.
+  container-type: inline-size;
 }
 
 // No Figma frame for this (User Story 9, added after the design export) —
@@ -373,13 +375,20 @@
 // jug at the bottom), which is why the SVG is taller than the visible strip
 // and is placed as a background rather than an <img> behind the heading.
 //
-// Below desktop-up the mobile artwork (word baked in at 24px per 320px of
-// width) would otherwise stretch to the full card — ~800px wide and twice
-// the desktop banner's height on tablets. Its width is instead interpolated
-// linearly between the two Figma frames: the full 327px card at 375px, and
-// at 1440px the width where the baked word reaches the desktop's 32px
-// (320 * 32 / 24 = 427px). Centered, so it reads as the mobile pill; on
-// phones up to 375px `100%` wins, desktop-up returns to the full band.
+// The desktop artwork is built for the full band and takes over as soon as
+// the section is 720px wide (768px viewport, the tablet breakpoint), not
+// only at desktop-up: from there the band is at least 92px (ingredients) /
+// 84px (directions) tall and the word drawn into the directions artwork at
+// least 20px (32px per 1152px). Narrower, both shrink below that and the
+// bowl/jug start to dwarf the band, so the mobile artwork stays.
+//
+// Below that threshold the mobile artwork (word baked in at 24px per 320px
+// of width) would otherwise stretch to the full card. Its width is instead
+// interpolated linearly between the two Figma frames: the full 327px card
+// at 375px, and at 1440px the width where the baked word reaches the
+// desktop's 32px (320 * 32 / 24 = 427px). Centered, so it reads as the
+// mobile pill; on phones up to 375px `100%` wins.
+$banner-full-min-width: 720px;
 $banner-mobile-viewport: 375px;
 $banner-mobile-width: 327px;
 $banner-desktop-viewport: 1440px;
@@ -407,66 +416,69 @@ $banner-slope: math.div(
   line-height: 40px;
   color: var(--color-heading-green);
 
-  @include desktop-up {
+  @container (min-width: #{$banner-full-min-width}) {
     width: 100%;
   }
 }
 
-// Mobile artwork ("mob-ingredients") bakes the word "Ingredients" into the
-// image itself (unlike the desktop asset, which doesn't) — so, like the
-// "Directions" banner below, the heading text is for screen readers only
-// below the desktop breakpoint, and becomes the visible heading again once
-// the desktop artwork (without the baked word) takes over.
-.recipe__banner--ingredients {
-  aspect-ratio: 320 / 87;
-  background-image: url('/images/results/ingredients-mob.svg');
-
-  @include desktop-up {
-    aspect-ratio: 1152 / 148;
-    background-image: url('/icons/Ingredients.svg');
-  }
-
-  .recipe__banner-text {
-    // Not `@extend .visually-hidden`: `@extend` relocates this declaration
-    // to that rule's place in the stylesheet, which put it after (and so
-    // losing to) the `desktop-up` override below.
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-
-    @include desktop-up {
-      position: static;
-      width: auto;
-      height: auto;
-      overflow: visible;
-      clip-path: none;
-      white-space: normal;
-    }
-  }
-}
-
-.recipe__banner--directions {
-  aspect-ratio: 320 / 90;
-  background-image: url('/images/results/directions-mob.svg');
-
-  @include desktop-up {
-    aspect-ratio: 1152 / 134;
-    background-image: url('/icons/Directions.svg');
-  }
-}
-
-// For headings whose word is already drawn into the banner artwork: keep the
-// text in the document for screen readers, take it out of the picture.
-.visually-hidden {
+// Both mobile artworks bake their word into the image itself, so below the
+// full-band threshold the heading text is for screen readers only; it
+// becomes the visible heading once the full-band artwork (without a word)
+// takes over.
+.recipe__banner-text {
   position: absolute;
   width: 1px;
   height: 1px;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+
+  @container (min-width: #{$banner-full-min-width}) {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+  }
+}
+
+.recipe__banner--ingredients {
+  aspect-ratio: 320 / 87;
+  background-image: url('/images/results/ingredients-mob.svg');
+
+  @container (min-width: #{$banner-full-min-width}) {
+    aspect-ratio: 1152 / 148;
+    background-image: url('/icons/Ingredients.svg');
+  }
+}
+
+// The desktop "Directions" artwork draws its word into the image, scaled
+// with the band (only ~20px at 720px vs. the 32px "Ingredients" text). On
+// tablets the `#no-word` fragment hides that word (a `:target` rule inside
+// the same SVG, so no second download) and the heading text stands in at
+// the "Ingredients" size, nudged down to where the drawn word sat (its
+// strip lies below the box's middle: 24px per 1152px of top padding, which
+// percentages resolve against the band's own width). desktop-up keeps the
+// Figma artwork with its word, so the text is clipped away again there
+// (still read out).
+.recipe__banner--directions {
+  aspect-ratio: 320 / 90;
+  background-image: url('/images/results/directions-mob.svg');
+
+  @container (min-width: #{$banner-full-min-width}) {
+    aspect-ratio: 1152 / 134;
+    padding-top: math.percentage(math.div(24, 1152));
+    background-image: url('/icons/Directions.svg#no-word');
+  }
+
+  @include desktop-up {
+    background-image: url('/icons/Directions.svg');
+
+    .recipe__banner-text {
+      clip-path: inset(50%);
+    }
+  }
 }
 
 // Figma "Mob ingredients"/"Mob Directions": the accordion content and its
