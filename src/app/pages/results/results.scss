@@ -1,3 +1,4 @@
+@use 'sass:math';
 @use '../../../styles/abstracts' as *;
 
 // Full-bleed green background from the Figma frame — carried by this outer
@@ -145,14 +146,14 @@
 
 // Clips the hero image to the frame's rounded corners; the image itself is
 // taller than the frame and shifted up, matching the crop in the Figma
-// export. Fixed px at both breakpoints — same "flows" pattern as the rest
-// of the app: the mobile size (340×131 frame, 344×229 image) holds until
-// desktop-up swaps in the 574×383/222px-frame values, no interpolation
-// in between (no tablet frame exists to interpolate towards).
+// export. Below desktop-up the frame keeps the mobile frame's share of the
+// content column (340 of 343px at 375px, so 375px stays exact) and grows
+// with it up to an 800px cap; height follows via the 340×131 ratio, so it
+// never overflows narrow phones and fills the width on tablets.
 .results__hero-frame {
   order: 2;
-  width: 340px;
-  height: 131px;
+  width: min(800px, math.percentage(math.div(340, 343)));
+  aspect-ratio: 340 / 131;
   overflow: hidden;
   border-radius: 20px;
   flex-shrink: 0;
@@ -165,22 +166,24 @@
     // text column, past the image — the bottom corners end up in empty space.
     align-self: flex-start;
     width: auto;
-    height: auto;
     aspect-ratio: 574 / 222;
   }
 }
 
+// Mobile 344×229 image with a -40px offset in the 340px frame, as
+// percentages so the crop scales with the frame (vertical margin % resolves
+// against the frame's width).
 .results__hero {
   display: block;
-  width: 344px;
-  height: 229px;
-  margin-top: -40px;
+  width: math.percentage(math.div(344, 340));
+  height: auto;
+  aspect-ratio: 344 / 229;
+  margin-top: math.percentage(math.div(-40, 340));
 
   // Percentages keep the Figma 574×383 / -65px crop at any frame width
   // (vertical margin % resolves against the frame's width: 65 / 574).
   @include desktop-up {
     width: 100%;
-    height: auto;
     aspect-ratio: 574 / 383;
     margin-top: -11.32%;
   }
