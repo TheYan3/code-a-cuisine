@@ -295,14 +295,14 @@ $liked-card-desktop: 370px;
 
 .cuisine-tile__emoji {
   font-size: 28px;
-  transition: font-size 0.15s ease;
 }
 
-// `:active` mirrors `:hover` — touch has no hover, so the emoji still needs
-// to grow on press instead of only on a mouse-only hover.
-.cuisine-tile:hover .cuisine-tile__emoji,
-.cuisine-tile:active .cuisine-tile__emoji {
-  font-size: 38px;
+// Same 20px corners as the cookbook intro box above; the frame clips the
+// image so the hover zoom below stays inside the rounded shape.
+.cuisine-tile__frame {
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
 }
 
 .cuisine-tile__image {
@@ -312,10 +312,22 @@ $liked-card-desktop: 370px;
   height: auto;
   aspect-ratio: 320 / 260;
   object-fit: cover;
+  transition: transform 0.3s ease;
 
   @include desktop-up {
     aspect-ratio: 1 / 1;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// `:active` mirrors `:hover` so touch gets the same feedback on press.
+.cuisine-tile:hover .cuisine-tile__image,
+.cuisine-tile:active .cuisine-tile__image,
+.cuisine-tile:focus-visible .cuisine-tile__image {
+  transform: scale(1.04);
 }
 
 .library__generate {

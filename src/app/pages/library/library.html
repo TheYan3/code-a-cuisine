@@ -56,13 +56,15 @@
                 {{ cuisine.label }}
                 <span class="cuisine-tile__emoji" aria-hidden="true">{{ cuisine.emoji }}</span>
               </h2>
-              <img
-                class="cuisine-tile__image"
-                [src]="cuisine.image"
-                [alt]="cuisine.alt"
-                width="400"
-                height="400"
-              />
+              <div class="cuisine-tile__frame">
+                <img
+                  class="cuisine-tile__image"
+                  [src]="cuisine.image"
+                  [alt]="cuisine.alt"
+                  width="400"
+                  height="400"
+                />
+              </div>
             </a>
           </li>
         }
